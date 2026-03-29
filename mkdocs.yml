@@ -1,0 +1,107 @@
+site_name: SplashEdit Documentation
+site_description: Build PlayStation 1 games using Unity and SplashEdit
+site_url: https://psxsplash.github.io/docs/
+repo_url: https://github.com/psxsplash/psxsplash
+repo_name: psxsplash/psxsplash
+
+theme:
+  name: material
+  palette:
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  font:
+    text: Inter
+    code: JetBrains Mono
+  features:
+    - navigation.sections
+    - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - navigation.tabs
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.keys
+  - tables
+  - attr_list
+  - md_in_html
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - toc:
+      permalink: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/psxsplash
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started/index.md
+    - Installation: getting-started/installation.md
+    - Quick Start: getting-started/quick-start.md
+    - Control Panel: getting-started/control-panel.md
+    - Building & Running: getting-started/building.md
+  - Scene Components:
+    - components/index.md
+    - Scene Exporter: components/scene-exporter.md
+    - Objects & Meshes: components/objects.md
+    - Player: components/player.md
+    - Textures & VRAM: components/textures.md
+    - Navigation & Collision: components/navigation.md
+    - Rooms & Portals: components/rooms-portals.md
+    - UI System: components/ui.md
+    - Custom Fonts: components/fonts.md
+    - Audio: components/audio.md
+    - Interactables: components/interactables.md
+    - Trigger Boxes: components/trigger-boxes.md
+    - Cutscenes: components/cutscenes.md
+    - Animations: components/animations.md
+    - Loading Screens: components/loading-screens.md
+  - Lua Scripting:
+    - lua/index.md
+    - Fixed-Point Math: lua/fixed-point.md
+    - Event Callbacks: lua/events.md
+    - API Reference: lua/api-reference.md
+    - Patterns & Best Practices: lua/patterns.md
+  - Tutorials:
+    - tutorials/index.md
+    - Collectible Pickups: tutorials/collectibles.md
+    - NPC Dialogue: tutorials/npc-dialogue.md
+    - Animated Doors: tutorials/animated-doors.md
+    - Scene Transitions: tutorials/scene-transitions.md
+    - Health & Damage: tutorials/health-damage.md
+  - Reference:
+    - reference/index.md
+    - Multi-Scene Projects: reference/multi-scene.md
+    - Memory & Performance: reference/memory.md
+    - Known Issues: reference/known-issues.md
+    - Contributing: reference/contributing.md
