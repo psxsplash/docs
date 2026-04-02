@@ -324,6 +324,84 @@ end
 
 ---
 
+## Pattern: Lua Free Cam
+
+Disclaimer: onUpdate runs every frame so you can very easily lag out your project if you start using it for everything. 
+
+Only use onUpdate if you really need to. This example script just demonstrates how you would make a smooth free cam but you could also modify it to have the camera jump to the next position/rotation in a large step with each button press and completely remove onUpdate.
+
+```lua
+-- Example Lua Free Cam --
+-- Author: Latch
+--
+-- This script allows you to fully control the camera
+-- with lua. You can also save the camera position+rotation
+-- with square, move the camera somewhere else, and then
+-- use circle to load the saved position+rotation
+--
+-- Warning!
+-- PsxPlayer player will overwrite these values
+--
+
+local camRotStep = FixedPoint.new(1) / 128
+local camMoveStep = FixedPoint.new(1) / 1024
+
+local savedCamRotation = Vec3.new(0,0,0)
+local savedCamPosition = Vec3.new(0,0,0)
+ 
+function onUpdate(self, dt)
+
+    local camPos = Camera.GetPosition()
+    
+    -- Camera Movement
+    if Input.IsHeld(Input.UP) then
+        Camera.MoveForward(camMoveStep)
+    elseif Input.IsHeld(Input.DOWN) then
+        Camera.MoveBackward(camMoveStep)
+    elseif Input.IsHeld(Input.LEFT) then
+        Camera.MoveLeft(camMoveStep)
+    elseif Input.IsHeld(Input.RIGHT) then
+        Camera.MoveRight(camMoveStep)
+    elseif Input.IsHeld(Input.TRIANGLE) then
+        Camera.SetPosition(Vec3.new(camPos.x,camPos.y-camMoveStep,camPos.z))
+    elseif Input.IsHeld(Input.CROSS) then
+        Camera.SetPosition(Vec3.new(camPos.x,camPos.y+camMoveStep,camPos.z))
+        
+    end
+
+    local camRot = Camera.GetRotation()
+
+    -- Camera Rotation
+    if Input.IsHeld(Input.L1) then
+        Camera.SetRotation(Vec3.new(camRot.x,camRot.y-camRotStep,camRot.z))   
+    elseif Input.IsHeld(Input.R1) then
+        Camera.SetRotation(Vec3.new(camRot.x,camRot.y+camRotStep,camRot.z))
+    elseif Input.IsHeld(Input.L2) then
+        Camera.SetRotation(Vec3.new(camRot.x-camRotStep,camRot.y,camRot.z)) 
+    elseif Input.IsHeld(Input.R2) then
+        Camera.SetRotation(Vec3.new(camRot.x+camRotStep,camRot.y,camRot.z))
+    end
+end
+
+function onButtonPress(self, button)
+    
+    -- Camera Saving And Loading
+    if button == Input.SQUARE then
+        Debug.Log("Saving cam position and rotation")
+        savedCamPosition = Camera.GetPosition()        
+        savedCamRotation = Camera.GetRotation()
+    elseif button == Input.CIRCLE then
+        Debug.Log("Loading saved position and rotation")
+        Camera.SetPosition(savedCamPosition);
+        Camera.SetRotation(savedCamRotation);
+    end
+end
+
+-- Debug.Log("Cam Position \n" .. "x" .. camPos.x .. " y" .. camPos.y .. " z" .. camPos.z)
+```
+
+---
+
 ## Pattern: Cutscene Trigger Zone
 
 One-time area trigger that plays a cutscene:
