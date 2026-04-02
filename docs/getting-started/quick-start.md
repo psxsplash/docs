@@ -39,20 +39,13 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. This adds a GameObject 
 
 The player is invisible at runtime - it represents the camera and controller.
 
-## 7. Add the Nav Region
-
-1. Open the PlayStation 1 > Nav Region Builder
-2. Click **Build Nav Regions**
-
-Note: Closing the Nav Region Builder window will hide the visual but it's still there
-
-## 8. Add the Scene to the Build
+## 7. Add the Scene to the Build
 
 1. Open the Control Panel (++ctrl+shift+l++)
 2. Go to the **Scenes** tab
 3. Click **"+ Add Current Scene"**
 
-## 9. Build and Run
+## 8. Build and Run
 
 1. Go to the **Build** tab
 2. Set Target to **Emulator**
@@ -60,7 +53,7 @@ Note: Closing the Nav Region Builder window will hide the visual but it's still 
 
 SplashEdit exports the scene, compiles the PS1 executable, and launches PCSX-Redux. You should see your textured floor with camera controls.
 
-## 10. Enjoy
+## 9. Enjoy
 
 You should now be able to walk around. Left joystick for movement and right joystick for camera controls. If you aren't getting proper input. See the trouble shooting section below.
 
@@ -87,7 +80,7 @@ Behind the scenes, SplashEdit:
 ## Trouble Shooting
 
 Problem: 
-The game runs but I can't move around with the Joysticks. Inputs don't work / are wrong
+The game runs but I can't move around with the Joysticks. Inputs don't work / are wrong.
 
 Solution 1:
 
@@ -97,4 +90,4 @@ Make sure "Controller Type" is analog and "Analog Mode" is checked. Also if you 
 
 Solution 2: 
 
-If that still doesn't work review steps 5, 6, and 7 for a step that was missed.
+If that still doesn't work review steps 5 and 6 for a step that was missed.
