@@ -689,6 +689,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#9-enjoy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Enjoy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-just-happened" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -704,6 +715,17 @@
     <span class="md-ellipsis">
       
         Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trouble-shooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trouble Shooting
       
     </span>
   </a>
@@ -2011,6 +2033,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#9-enjoy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Enjoy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#what-just-happened" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2026,6 +2059,17 @@
     <span class="md-ellipsis">
       
         Next Steps
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#trouble-shooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trouble Shooting
       
     </span>
   </a>
@@ -2071,6 +2115,7 @@
 <li>Import a subdivided floor mesh from your 3D tool</li>
 <li>Assign a material with a texture</li>
 <li>Add the <code>PSXObjectExporter</code> component to it</li>
+<li>In the component set Collision&gt;Type to Static</li>
 </ol>
 <div class="admonition danger">
 <p class="admonition-title">Texture Requirements</p>
@@ -2096,6 +2141,8 @@
 <li>Click <strong>BUILD &amp; RUN</strong></li>
 </ol>
 <p>SplashEdit exports the scene, compiles the PS1 executable, and launches PCSX-Redux. You should see your textured floor with camera controls.</p>
+<h2 id="9-enjoy">9. Enjoy<a class="headerlink" href="#9-enjoy" title="Permanent link">&para;</a></h2>
+<p>You should now be able to walk around. Left joystick for movement and right joystick for camera controls. If you aren't getting proper input. See the trouble shooting section below.</p>
 <h2 id="what-just-happened">What Just Happened?<a class="headerlink" href="#what-just-happened" title="Permanent link">&para;</a></h2>
 <p>Behind the scenes, SplashEdit:</p>
 <ol>
@@ -2114,6 +2161,15 @@
 <li><a href="../../components/interactables/">Add interactables</a> the player can interact with</li>
 <li>Check out the <a href="../../tutorials/">tutorials</a> for complete game mechanics</li>
 </ul>
+<h2 id="trouble-shooting">Trouble Shooting<a class="headerlink" href="#trouble-shooting" title="Permanent link">&para;</a></h2>
+<p>Problem: 
+The game runs but I can't move around with the Joysticks. Inputs don't work / are wrong.</p>
+<p>Solution 1:</p>
+<p>When your game launches there should be some tabs at the top. If you don't see them press ESC to bring them up. Then go to
+Configuration &gt; Controls
+Make sure "Controller Type" is analog and "Analog Mode" is checked. Also if you are using an original controller you may have to physically click the "ANALOG" button between the joysticks to get proper input.</p>
+<p>Solution 2: </p>
+<p>If that still doesn't work review steps 5 and 6 for a step that was missed.</p>
 
 
 
