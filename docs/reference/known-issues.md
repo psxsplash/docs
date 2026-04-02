@@ -52,9 +52,6 @@ In scenes with a PSXPlayer and navigation regions, the navigation controller con
 ### Camera.LookAt is incomplete
 The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
 
-### Camera.GetRotation always returns {0, 0, 0}
-Rotation decomposition from the internal matrix representation is not implemented.
-
 ### Persist storage limited to 16 entries
 The cross-scene persistent data system supports only 16 key-value pairs. Exceeding this limit silently fails with no error.
 
