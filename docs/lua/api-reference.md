@@ -183,25 +183,62 @@ Control the scene camera.
 ```lua
 Camera.GetPosition()
 ```
-Returns the camera's world position as `{x, y, z}`.
+Returns the camera's world position as vec3 `{x, y, z}`.
 
 ```lua
 Camera.SetPosition(x, y, z)
-Camera.SetPosition({x, y, z})
+Camera.SetPosition(vec3) -- {x, y, z}
 ```
-Set camera position. Accepts three numbers or a Vec3 table.
+Set camera position. Accepts three numbers or a vec3 table.
 
 ```lua
-Camera.SetRotation(x, y, z)
+Camera.GetRotation()
 ```
-Set camera rotation in pi-units. Applied as Y * X * Z rotation matrix.
+Returns the camera's world position as Vec3 `{x, y, z}`
+
+```lua
+Camera.SetRotation(vec3)
+```
+Set camera rotation in pi-units. Applied as Y * X * Z rotation matrix. Accepts Vec3
+
+```lua
+Camera.GetRotation()
+```
+Returns the camera's world position as Vec3 `{x, y, z}`
+
+```lua
+Camera.MoveForward(stepAmount)
+```
+Moves the camera forward based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveBackward(stepAmount)
+```
+Moves the camera backward based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveLeft(stepAmount)
+```
+Moves the camera left based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveRight(stepAmount)
+```
+Moves the camera right based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.GetForward()
+```
+Returns the camera's forward vector as Vec3 `{x, y, z}`
 
 !!! warning "Navigation controller override"
     In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Manual camera changes via these functions will be overwritten on the next frame. The Camera API is primarily useful during cutscenes, which temporarily suspend the navigation controller.
 
 !!! warning "Incomplete functions"
-    `Camera.GetRotation()` exists but always returns `{0, 0, 0}` - rotation decomposition is not implemented.
     `Camera.LookAt()` exists but is a placeholder - it does not correctly point the camera at the target.
+
+!!! tip "Check out the example script"
+    "Lua Free Cam" in the patterns section uses these camera functions.
 
 ---
 
