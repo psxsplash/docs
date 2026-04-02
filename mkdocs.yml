@@ -58,6 +58,9 @@ markdown_extensions:
       permalink: true
 
 extra:
+  version:
+    provider: mike
+    alias: true
   social:
     - icon: fontawesome/brands/github
       link: https://github.com/psxsplash
