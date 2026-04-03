@@ -4,23 +4,23 @@ The following are known issues with the current version of SplashEdit and psxspl
 
 ## Rendering
 
-### Exterior scene BVH rendering is very broken
-The Bounding Volume Hierarchy culling system for exterior scenes needs a full rewrite. **Use Interior scene type with rooms and portals whenever possible.**
+### Exterior scene BVH rendering may have issues
+The BVH frustum culling system has been rewritten with a proper frustum extraction and AABB test, but may still have edge cases. **Interior scene type with rooms and portals is still recommended for best performance.**
 
 ### BVH preview visualization is broken
 The BVH preview toggle in the Scene Exporter inspector does not display correctly. The Rooms/Portals preview works fine.
 
-### Polygon subdivision stitching issues
-When polygons are subdivided to fit within the PS1's rasterizer limits, seams can appear between subdivided pieces.
+### Near-plane triangle artifacts
+Triangles crossing the near plane are subdivided in 3D and re-projected. Rasterizer-limit triangles use vertex clamping instead of subdivision to avoid T-junction cracks. Minor visual artifacts may still appear on triangles very close to the camera.
 
-### Fog not working correctly
-Distance fog is implemented but has visual issues in certain configurations.
+### Fog edge cases
+Distance fog uses a Silent Hill-style two-pass approach (per-vertex fog blending with additive overlay). Most configurations work well, but extreme density values or very close geometry may produce visual artifacts.
 
 ### PSX UI images overblown with white tint
 Using a full white tint (255, 255, 255) on `PSXUIImage` elements causes washed-out, overblown colors. Use a tint around 128, 128, 128 for normal appearance.
 
 ### Portal visibility at close range
-When standing directly in front of a portal, the connected room may not render correctly. The portal screen-rect calculation has issues at very close distances.
+Portal projection has been improved (int16 overflow fix, conservative fullscreen rect for near-camera portals), but edge cases may remain when standing exactly on a portal boundary.
 
 ## Scene Setup
 

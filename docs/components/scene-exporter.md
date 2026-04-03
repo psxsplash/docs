@@ -13,9 +13,9 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. SplashEdit enforces a s
 | Scene Type | **Interior** or **Exterior** (see below) | Exterior |
 | GTE Scaling | Vertex position scale factor. Higher = more precision, but can overflow on large scenes. | 100.0 |
 | Scene Lua File | Optional [Lua script](../lua/index.md) that runs at the scene level. Used for initialization, UI setup, and shared functions. | None |
-| Fog Color | RGB color for distance fog | Black |
+| Fog Color | RGB color for distance fog. Also used as the background/clear color. | Black |
 | Fog Enabled | Toggle fog on/off | Off |
-| Fog Density | How quickly fog appears with distance | 0 |
+| Fog Density | How quickly fog appears with distance (higher = closer fog) | 0 |
 | Cutscenes | Array of [PSXCutsceneClip](cutscenes.md) assets used in this scene | Empty |
 | Animations | Array of [PSXAnimationClip](animations.md) assets used in this scene | Empty |
 | Loading Screen Prefab | Optional prefab shown while the scene [loads](loading-screens.md) | None |
@@ -24,12 +24,12 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. SplashEdit enforces a s
 
 ### Exterior
 
-Uses a **Bounding Volume Hierarchy (BVH)** for frustum culling. The BVH groups triangles spatially and culls entire branches that fall outside the camera's view.
+Uses a **Bounding Volume Hierarchy (BVH)** for frustum culling. The BVH groups triangles spatially and culls entire branches that fall outside the camera's view frustum.
 
 Best for: open areas, outdoor environments.
 
 !!! warning
-    Exterior BVH rendering currently has significant issues and needs a full rewrite. See [Known Issues](../reference/known-issues.md). **Use Interior scene type whenever possible.**
+    Exterior BVH rendering has been improved with proper frustum culling but may still have edge cases. See [Known Issues](../reference/known-issues.md). **Interior scene type is still recommended for best performance.**
 
 ### Interior
 
@@ -59,7 +59,7 @@ When you export (via the [Control Panel](../getting-started/control-panel.md) or
 
 1. Collects all `PSXObjectExporter` components in the scene
 2. Quantizes and deduplicates textures, packs into VRAM
-3. Converts meshes to PS1 format with pre-baked lighting
+3. Converts meshes to PS1 format with vertex colors (baked lighting, flat color, or mesh vertex colors depending on each object's settings)
 4. Builds BVH (exterior) or room/portal structure (interior)
 5. Generates navigation regions from walkable geometry
 6. Exports UI canvases, custom fonts, and font pixel data

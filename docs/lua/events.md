@@ -33,9 +33,10 @@ end
 ### Per-Frame
 
 ```lua
-function onUpdate(self, deltaFrames)
-    -- Called every frame. deltaFrames is usually 1, but can be 2+ if the
-    -- game is lagging (frame skip compensation).
+function onUpdate(self, dt)
+    -- Called every frame. dt is a 4.12 fixed-point delta time value.
+    -- 4096 = one 30fps frame (normal speed). Higher values mean the
+    -- previous frame took longer (lag compensation). Capped at 4096*4.
     --
     -- Use sparingly. Every object with onUpdate runs this every frame.
     -- Prefer event-driven patterns instead.
@@ -116,7 +117,7 @@ During gameplay, per frame:
 3. Interaction checks (distance, button)
 4. Enable/disable events batched and fired
 5. Cutscenes and animations tick
-6. `onUpdate(self, deltaFrames)` for each object with the callback
+6. `onUpdate(self, dt)` for each object with the callback
 7. Collision checks -> `onCollideWithPlayer`, `onTriggerEnter/Exit`
 
 ## Event Optimization

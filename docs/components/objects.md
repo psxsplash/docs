@@ -19,6 +19,8 @@ The object must have both a **MeshFilter** and a **MeshRenderer** with at least 
 | Is Active | Include this object in the export. Uncheck to skip. | On |
 | Bit Depth | Texture color depth: 4-bit (16 colors), 8-bit (256 colors), or 16-bit (32768 colors) | 4-bit |
 | Lua File | Optional [Lua script](../lua/index.md) for this object's behavior | None |
+| Vertex Colors | How vertex colors are computed: Baked Lighting, Flat Color, or Mesh Vertex Colors | Baked Lighting |
+| Flat Vertex Color | (Flat Color mode only) Solid color applied to all vertices | 128, 128, 128 |
 | Collision Type | None, Static, or Dynamic | None |
 
 ## Bit Depth
@@ -50,9 +52,11 @@ SplashEdit converts Unity meshes to PS1 format automatically:
 
 - Vertices are converted to **4.12 fixed-point** coordinates (scaled by the Scene Exporter's GTE Scaling)
 - Normals are recalculated as smooth normals
-- **Vertex colors are pre-baked from scene lighting** - the PS1 has no real-time dynamic lighting
+- **Vertex colors** depend on the Vertex Colors mode:
+    - **Baked Lighting** (default): Pre-baked from scene lighting. Material base colors are baked into vertex colors for untextured objects.
+    - **Flat Color**: All vertices get the same configurable color (default 128, 128, 128). Useful for unlit objects or stylized looks.
+    - **Mesh Vertex Colors**: Uses the vertex colors already present on the mesh (e.g., painted in Blender). Falls back to gray if the mesh has no vertex colors.
 - UVs are mapped to the VRAM texture atlas position
-- Material base colors are baked into vertex colors for untextured objects
 
 ## Geometry Guidelines
 

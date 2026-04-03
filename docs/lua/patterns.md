@@ -330,6 +330,9 @@ Disclaimer: onUpdate runs every frame so you can very easily lag out your projec
 
 Only use onUpdate if you really need to. This example script just demonstrates how you would make a smooth free cam but you could also modify it to have the camera jump to the next position/rotation in a large step with each button press and completely remove onUpdate.
 
+!!! tip "dt is fixed-point"
+    The `dt` parameter is a 4.12 fixed-point delta time (4096 = one 30fps frame). You can multiply movement values by `dt / 4096` for frame-rate-independent motion, though at a fixed 30fps target it's usually fine to ignore it.
+
 ```lua
 -- Example Lua Free Cam --
 -- Author: Latch
