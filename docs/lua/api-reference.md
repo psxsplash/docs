@@ -231,6 +231,25 @@ Camera.GetForward()
 ```
 Returns the camera's forward vector as Vec3 `{x, y, z}`
 
+```lua
+Camera.GetH()
+```
+Returns the current projection plane distance (H register). Default is 120. Higher values = narrower FOV (more telephoto), lower = wider FOV.
+
+```lua
+Camera.SetH(h)
+```
+Set the projection H register. Clamped to 1-1024. Use this to change the field of view at runtime.
+
+The relationship between H and vertical FOV is: $\text{vFOV} = 2 \cdot \arctan\left(\frac{120}{H}\right)$
+
+| H | Approx. Vertical FOV |
+|---|-----|
+| 60 | ~127° (ultra wide) |
+| 120 | ~90° (default) |
+| 200 | ~62° |
+| 400 | ~33° (telephoto) |
+
 !!! warning "Navigation controller override"
     In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Manual camera changes via these functions will be overwritten on the next frame. The Camera API is primarily useful during cutscenes, which temporarily suspend the navigation controller.
 

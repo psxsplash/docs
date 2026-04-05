@@ -11,7 +11,7 @@ The BVH frustum culling system has been rewritten with a proper frustum extracti
 The BVH preview toggle in the Scene Exporter inspector does not display correctly. The Rooms/Portals preview works fine.
 
 ### Near-plane triangle artifacts
-Triangles crossing the near plane are subdivided in 3D and re-projected. Rasterizer-limit triangles use vertex clamping instead of subdivision to avoid T-junction cracks. Minor visual artifacts may still appear on triangles very close to the camera.
+Triangles crossing the near plane are subdivided in 3D and re-projected. This replaced the previous Sutherland-Hodgman clipping approach. Rasterizer-limit triangles use vertex clamping instead of subdivision to avoid T-junction cracks. Minor visual artifacts may still appear on triangles very close to the camera.
 
 ### Fog edge cases
 Distance fog uses a Silent Hill-style two-pass approach (per-vertex fog blending with additive overlay). Most configurations work well, but extreme density values or very close geometry may produce visual artifacts.
@@ -42,7 +42,7 @@ Player jumping currently has no collision interaction with the environment. The 
 The Nav Cell Height parameter on PSXPlayer does not work correctly. Leave it at the default value.
 
 ### Rotating objects doesn't update collision bounds
-Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation.
+Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` now correctly shift the AABB and mark the object as dynamically moved for proper frustum culling.
 
 ## API Limitations
 
@@ -63,8 +63,8 @@ The memory preview in the Control Panel is very limited and approximate. Do not 
 ### Can get a little moody on Linux
 Some editor functionality may behave inconsistently on Linux. The primary development and testing platform is Windows.
 
-### No macOS support
-SplashEdit does not support macOS. The developer does not have a Mac to develop and test on.
+### macOS support is experimental
+macOS (Apple Silicon) is now supported with automatic toolchain detection and PCSX-Redux downloads, but it has not been extensively tested. Build PATH detection for GUI apps has special handling, but edge cases may exist.
 
 ## Build Pipeline
 

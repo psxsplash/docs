@@ -15,7 +15,7 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. SplashEdit enforces a s
 | Scene Lua File | Optional [Lua script](../lua/index.md) that runs at the scene level. Used for initialization, UI setup, and shared functions. | None |
 | Fog Color | RGB color for distance fog. Also used as the background/clear color. | Black |
 | Fog Enabled | Toggle fog on/off | Off |
-| Fog Density | How quickly fog appears with distance (higher = closer fog) | 0 |
+| Fog Density | How quickly fog appears with distance (higher = closer fog). Uses a Silent Hill-style two-pass approach with per-vertex fog blending and additive overlay. | 0 |
 | Cutscenes | Array of [PSXCutsceneClip](cutscenes.md) assets used in this scene | Empty |
 | Animations | Array of [PSXAnimationClip](animations.md) assets used in this scene | Empty |
 | Loading Screen Prefab | Optional prefab shown while the scene [loads](loading-screens.md) | None |
@@ -24,12 +24,12 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. SplashEdit enforces a s
 
 ### Exterior
 
-Uses a **Bounding Volume Hierarchy (BVH)** for frustum culling. The BVH groups triangles spatially and culls entire branches that fall outside the camera's view frustum.
+Uses a **Bounding Volume Hierarchy (BVH)** for frustum culling. The BVH groups triangles spatially and culls entire branches that fall outside the camera's view frustum. Objects moved via `Entity.SetPosition` are automatically marked as dynamically moved and bypass the static BVH, using their shifted AABB for frustum culling instead.
 
 Best for: open areas, outdoor environments.
 
 !!! warning
-    Exterior BVH rendering has been improved with proper frustum culling but may still have edge cases. See [Known Issues](../reference/known-issues.md). **Interior scene type is still recommended for best performance.**
+    Interior scene type with rooms and portals is still recommended for best performance. Exterior BVH mode works well for most scenes but interior mode gives tighter culling.
 
 ### Interior
 

@@ -44,7 +44,7 @@ See [Textures & VRAM](textures.md) for more detail on how textures are packed.
 | Dynamic | Moveable collider. For objects repositioned via Lua. |
 
 !!! warning "Dynamic collision limitation"
-    Rotating objects via Lua does **not** recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Only position changes update correctly for dynamic colliders.
+    Rotating objects via Lua does **not** recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` will correctly shift the AABB and mark the object for proper frustum culling.
 
 ## Mesh Conversion
 
