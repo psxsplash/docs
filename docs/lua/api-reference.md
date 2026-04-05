@@ -194,17 +194,12 @@ Set camera position. Accepts three numbers or a vec3 table.
 ```lua
 Camera.GetRotation()
 ```
-Returns the camera's world position as Vec3 `{x, y, z}`
+Returns the camera's world rotation as Vec3 `{x, y, z}`
 
 ```lua
 Camera.SetRotation(vec3)
 ```
 Set camera rotation in pi-units. Applied as Y * X * Z rotation matrix. Accepts Vec3
-
-```lua
-Camera.GetRotation()
-```
-Returns the camera's world position as Vec3 `{x, y, z}`
 
 ```lua
 Camera.MoveForward(stepAmount)
@@ -239,6 +234,36 @@ Returns the camera's forward vector as Vec3 `{x, y, z}`
 
 !!! tip "Check out the example script"
     "Lua Free Cam" in the patterns section uses these camera functions.
+
+---
+
+## Player
+
+Control the PsxPlayer
+
+```lua
+Player.GetPosition()
+```
+Returns the player's position as Vec3 `{x, y, z}`.
+
+```lua
+Player.SetPosition(x, y, z)
+Player.SetPosition(Vec3) -- {x, y, z}
+```
+Set player position. Accepts three numbers or a Vec3 table.
+
+```lua
+Player.GetRotation()
+```
+Returns the player's rotation as Vec3 `{x, y, z}`
+
+```lua
+Player.SetRotation(Vec3)
+```
+Set players rotation. Accepts Vec3
+
+!!! tip "Check out the example script"
+    "PsxPlayer Position and Rotation" in the patterns section.
 
 ---
 
