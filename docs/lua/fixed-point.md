@@ -127,6 +127,9 @@ Debug.Log("Position: " .. pos.x .. ", " .. pos.y .. ", " .. pos.z)
 
 ## Common Gotchas
 
+!!! tip "onUpdate dt is fixed-point"
+    The `dt` parameter passed to `onUpdate(self, dt)` is a 4.12 fixed-point value where 4096 = one 30fps frame. To scale a movement by dt: `local scaled = step * dt / 4096`.
+
 !!! warning "Integer division is silent"
     `1/2` silently evaluates to `0`. There's no error, no warning. Your code runs, but with wrong values. Always use `FixedPoint.new()` for fractions.
 

@@ -63,7 +63,7 @@ Behind the scenes, SplashEdit:
 
 1. Quantized your texture to PS1-compatible color depth
 2. Packed it into VRAM alongside the framebuffers and system font
-3. Converted your mesh to fixed-point PS1 vertex format with pre-baked lighting
+3. Converted your mesh to fixed-point PS1 vertex format with vertex colors (baked lighting by default)
 4. Wrote everything into a `.splashpack` binary
 5. Compiled the psxsplash C++ runtime with your configuration
 6. Launched PCSX-Redux serving your data via PCdrv

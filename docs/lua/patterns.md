@@ -324,6 +324,160 @@ end
 
 ---
 
+## Pattern: Lua Free Cam
+
+Disclaimer: onUpdate runs every frame so you can very easily lag out your project if you start using it for everything. 
+
+Only use onUpdate if you really need to. This example script just demonstrates how you would make a smooth free cam but you could also modify it to have the camera jump to the next position/rotation in a large step with each button press and completely remove onUpdate.
+
+!!! tip "dt is fixed-point"
+    The `dt` parameter is a 4.12 fixed-point delta time (4096 = one 30fps frame). You can multiply movement values by `dt / 4096` for frame-rate-independent motion, though at a fixed 30fps target it's usually fine to ignore it.
+
+```lua
+-- Example Lua Free Cam --
+-- Author: Latch
+--
+-- This script allows you to fully control the camera
+-- with lua. You can also save the camera position+rotation
+-- with square, move the camera somewhere else, and then
+-- use circle to load the saved position+rotation
+--
+-- Warning!
+-- PsxPlayer player will overwrite these values
+--
+
+local camRotStep = FixedPoint.new(1) / 128
+local camMoveStep = FixedPoint.new(1) / 1024
+
+local savedCamRotation = Vec3.new(0,0,0)
+local savedCamPosition = Vec3.new(0,0,0)
+ 
+function onCreate(self)
+    -- Make sure we have control of the camera
+    Camera.FollowPsxPlayer(false)
+end
+
+function onUpdate(self, dt)
+
+    local camPos = Camera.GetPosition()
+    
+    -- Camera Movement
+    if Input.IsHeld(Input.UP) then
+        Camera.MoveForward(camMoveStep)
+    elseif Input.IsHeld(Input.DOWN) then
+        Camera.MoveBackward(camMoveStep)
+    elseif Input.IsHeld(Input.LEFT) then
+        Camera.MoveLeft(camMoveStep)
+    elseif Input.IsHeld(Input.RIGHT) then
+        Camera.MoveRight(camMoveStep)
+    elseif Input.IsHeld(Input.TRIANGLE) then
+        Camera.SetPosition(Vec3.new(camPos.x,camPos.y-camMoveStep,camPos.z))
+    elseif Input.IsHeld(Input.CROSS) then
+        Camera.SetPosition(Vec3.new(camPos.x,camPos.y+camMoveStep,camPos.z))
+        
+    end
+
+    local camRot = Camera.GetRotation()
+
+    -- Camera Rotation
+    if Input.IsHeld(Input.L1) then
+        Camera.SetRotation(Vec3.new(camRot.x,camRot.y-camRotStep,camRot.z))   
+    elseif Input.IsHeld(Input.R1) then
+        Camera.SetRotation(Vec3.new(camRot.x,camRot.y+camRotStep,camRot.z))
+    elseif Input.IsHeld(Input.L2) then
+        Camera.SetRotation(Vec3.new(camRot.x-camRotStep,camRot.y,camRot.z)) 
+    elseif Input.IsHeld(Input.R2) then
+        Camera.SetRotation(Vec3.new(camRot.x+camRotStep,camRot.y,camRot.z))
+    end
+end
+
+function onButtonPress(self, button)
+    
+    -- Camera Saving And Loading
+    if button == Input.SQUARE then
+        Debug.Log("Saving cam position and rotation")
+        savedCamPosition = Camera.GetPosition()        
+        savedCamRotation = Camera.GetRotation()
+    elseif button == Input.CIRCLE then
+        Debug.Log("Loading saved position and rotation")
+        Camera.SetPosition(savedCamPosition);
+        Camera.SetRotation(savedCamRotation);
+    end
+end
+
+-- Debug.Log("Cam Position \n" .. "x" .. camPos.x .. " y" .. camPos.y .. " z" .. camPos.z)
+```
+
+---
+
+## Pattern: PsxPlayer Position and Rotation
+
+Control the PsxPlayer with lua functions
+
+```lua
+-- Example PsxPlayer Teleportation and Rotation --
+-- Author: Latch
+--
+-- Multiple ways to teleport the player
+-- Save Position+Rotation
+-- Load Position+Rotation
+-- Show Player Coordinates 
+-- Player rotation by step amount
+
+local savedPlayerPos = Vec3.new(0,0,0)
+local savedPlayerRot = Vec3.new(0,0,0)
+
+-- 1 is 180 Degrees
+local rotStep = FixedPoint.new(1) / 4 
+-- rotStep is 45 degrees
+
+-- Location in world coordinates (int)
+local locationX = -918; 
+local locationY = 88;
+local locationZ = 27;
+
+function onButtonPress(self, button)
+  
+    -- Save Position and Rotation in a vec3
+    if button == Input.SQUARE then 
+        savedPlayerPos = Player.GetPosition()
+        savedPlayerRot = Player.GetRotation()
+        Debug.Log("\nSaved Player Position \n" .. "x:" .. savedPlayerPos.x .. " y:" .. savedPlayerPos.y .. " z:" .. savedPlayerPos.z)
+        Debug.Log("Saved Player Rotation \n" .. "x:" .. savedPlayerRot.x .. " y:" .. savedPlayerRot.y .. " z:" .. savedPlayerRot.z .. "\n")
+
+    -- Teleport to the player saved vec3 position+rotation 
+    elseif button == Input.CIRCLE then  
+        Player.SetPosition(savedPlayerPos)
+        Player.SetRotation(savedPlayerRot)
+        Debug.Log("Teleporting Player > Saved Vec3")
+
+    -- Teleport to the location variable
+    elseif button == Input.L1 then
+        Player.SetPosition(locationX,locationY,locationZ)
+        Debug.Log("Teleporting Player > Var Coords")
+    
+    -- Teleport to passed coordinates
+    elseif button == Input.R1 then 
+        Player.SetPosition(-93,88,329)
+        Debug.Log("Teleporting Player > Given Coords")
+    
+    -- Show player coordinates 
+    elseif button == Input.L2 then  
+        local playerPos = Player.GetPosition()
+        Debug.Log("\nPlayer Position FixedPoint\n" .. "x:" .. playerPos.x .. " y:" .. playerPos.y .. " z:" .. playerPos.z)
+        Debug.Log("\nPlayer Position World / Int\n" .. "x:" .. playerPos.x*4096 .. " y:" .. playerPos.y*4096 .. " z:" .. playerPos.z*4096)
+
+    -- Rotate the player 45 degrees to the right
+    elseif button == Input.TRIANGLE then
+        local playerRot = Player.GetRotation();
+        Player.SetRotation(Vec3.new(playerRot.x,playerRot.y+rotStep,playerRot.z))
+        Debug.Log("Rotating player 45 degrees")
+    end
+end
+```
+
+---
+
 ## Pattern: Cutscene Trigger Zone
 
 One-time area trigger that plays a cutscene:

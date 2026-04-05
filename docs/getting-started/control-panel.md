@@ -44,6 +44,7 @@ Build configuration and the main build button. See [Building & Running](building
 | Clean Build | Full rebuild from scratch | On |
 | Memory Overlay | Show heap/RAM usage bar at runtime | Off |
 | FPS Overlay | Show frame rate counter at runtime | Off |
+| Room Debug Overlay | Render all room triangles in per-room colors for culling diagnosis | Off |
 | OT Size | Ordering table size (depth sorting precision) | 8192 |
 | Bump Alloc Size | Per-frame GPU primitive buffer size | 129536 |
 

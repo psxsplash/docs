@@ -181,27 +181,113 @@ local x, y = Input.GetAnalog(0)  -- left stick
 Control the scene camera.
 
 ```lua
+Camera.FollowPsxPlayer(bool)
+```
+Sets if the camera should be controlled by the PsxPlayer. Set false if you want to use the lua functions below to control the camera. 
+
+```lua
 Camera.GetPosition()
 ```
-Returns the camera's world position as `{x, y, z}`.
+Returns the camera's world position as vec3 `{x, y, z}`.
 
 ```lua
 Camera.SetPosition(x, y, z)
-Camera.SetPosition({x, y, z})
+Camera.SetPosition(vec3) -- {x, y, z}
 ```
-Set camera position. Accepts three numbers or a Vec3 table.
+Set camera position. Accepts three numbers or a vec3 table.
 
 ```lua
-Camera.SetRotation(x, y, z)
+Camera.GetRotation()
 ```
-Set camera rotation in pi-units. Applied as Y * X * Z rotation matrix.
+Returns the camera's world rotation as Vec3 `{x, y, z}`
+
+```lua
+Camera.SetRotation(vec3)
+```
+Set camera rotation in pi-units. Applied as Y * X * Z rotation matrix. Accepts Vec3
+
+```lua
+Camera.MoveForward(stepAmount)
+```
+Moves the camera forward based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveBackward(stepAmount)
+```
+Moves the camera backward based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveLeft(stepAmount)
+```
+Moves the camera left based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.MoveRight(stepAmount)
+```
+Moves the camera right based on it's rotation and a fixed point number stepAmount
+
+```lua
+Camera.GetForward()
+```
+Returns the camera's forward vector as Vec3 `{x, y, z}`
+
+```lua
+Camera.GetH()
+```
+Returns the current projection plane distance (H register). Default is 120. Higher values = narrower FOV (more telephoto), lower = wider FOV.
+
+```lua
+Camera.SetH(h)
+```
+Set the projection H register. Clamped to 1-1024. Use this to change the field of view at runtime.
+
+The relationship between H and vertical FOV is: $\text{vFOV} = 2 \cdot \arctan\left(\frac{120}{H}\right)$
+
+| H | Approx. Vertical FOV |
+|---|-----|
+| 60 | ~127° (ultra wide) |
+| 120 | ~90° (default) |
+| 200 | ~62° |
+| 400 | ~33° (telephoto) |
 
 !!! warning "Navigation controller override"
     In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Manual camera changes via these functions will be overwritten on the next frame. The Camera API is primarily useful during cutscenes, which temporarily suspend the navigation controller.
 
 !!! warning "Incomplete functions"
-    `Camera.GetRotation()` exists but always returns `{0, 0, 0}` - rotation decomposition is not implemented.
     `Camera.LookAt()` exists but is a placeholder - it does not correctly point the camera at the target.
+
+!!! tip "Check out the example script"
+    "Lua Free Cam" in the patterns section uses these camera functions.
+
+---
+
+## Player
+
+Control the PsxPlayer
+
+```lua
+Player.GetPosition()
+```
+Returns the player's position as Vec3 `{x, y, z}`.
+
+```lua
+Player.SetPosition(x, y, z)
+Player.SetPosition(Vec3) -- {x, y, z}
+```
+Set player position. Accepts three numbers or a Vec3 table.
+
+```lua
+Player.GetRotation()
+```
+Returns the player's rotation as Vec3 `{x, y, z}`
+
+```lua
+Player.SetRotation(Vec3)
+```
+Set players rotation. Accepts Vec3
+
+!!! tip "Check out the example script"
+    "PsxPlayer Position and Rotation" in the patterns section.
 
 ---
 

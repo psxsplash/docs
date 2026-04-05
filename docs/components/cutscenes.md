@@ -25,6 +25,7 @@ Each track targets a specific property:
 |-----------|--------|---------------|
 | Camera Position | Camera | World-space XYZ |
 | Camera Rotation | Camera | Rotation in pi-units |
+| Camera H | Camera | Projection distance (FOV control), X component only |
 | Object Position | Named GameObject | World-space XYZ |
 | Object Rotation | Named GameObject | Rotation in pi-units |
 | Object Active | Named GameObject | Show/hide (step only) |
@@ -44,7 +45,7 @@ Each track has an array of keyframes:
 | Field | Description |
 |-------|-------------|
 | Frame | Frame number (0 = cutscene start) |
-| Value | Vector3 value (interpretation depends on track type) |
+| Value | Vector3 value (interpretation depends on track type; for Camera H only the X component is used) |
 | Interp | Interpolation mode |
 
 ### Interpolation Modes
@@ -115,7 +116,7 @@ The cutscene inspector has **play/preview controls**. Click the play button to s
 
 | Feature | Cutscene | Animation |
 |---------|----------|-----------|
-| Camera tracks | Yes | No |
+| Camera tracks (position, rotation, FOV) | Yes | No |
 | Audio events | Yes | No |
 | Simultaneous playback | One at a time | Up to 8 |
 | Same clip stacking | No | Yes |
