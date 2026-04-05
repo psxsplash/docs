@@ -4,7 +4,7 @@
 
 - **Unity 6000.0+** with a **Universal Render Pipeline (URP)** project
 - **Git** installed and available in your system PATH
-- **Windows** or **Linux**
+- **Windows**, **Linux**, or **macOS** (Apple Silicon)
 
 !!! important "Universal Render Pipeline"
     Your Unity project must use the Universal Render Pipeline. When creating a new project, select the **Universal 3D** template.

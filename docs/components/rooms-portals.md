@@ -68,6 +68,14 @@ Portals appear as **orange rectangles** in the Scene view.
 4. This continues recursively through visible portals (with screen-space clipping)
 5. Only rooms on the render list have their triangles drawn
 
+### Room Cells
+
+Each room is spatially subdivided into **cells** during export. At runtime, each cell's AABB is frustum-culled and tested against the portal clip rectangle before its triangles are processed. This avoids iterating triangles in parts of the room that are off-screen or outside the portal opening.
+
+### Indexed Portal References
+
+Each room stores a list of portal references, so the runtime only checks portals connected to the current room (O(k) where k = neighbor count) instead of scanning all portals in the scene.
+
 ## Triangle Assignment
 
 During export, triangles are automatically assigned to rooms:
@@ -83,4 +91,4 @@ During export, triangles are automatically assigned to rooms:
 ## Known Issues
 
 !!! bug "Portal visibility at close range"
-    When standing directly in front of a portal, the room it connects to may not render correctly. This is a known issue with the portal screen-rect calculation at very close distances.
+    Portal projection has been improved, but edge cases may remain when standing exactly on a portal boundary.

@@ -44,6 +44,7 @@ When you click **BUILD & RUN**, SplashEdit runs this pipeline:
 | Clean Build | Runs `make clean` first (slower but ensures clean state) |
 | Memory Overlay | Shows RAM usage bar at runtime |
 | FPS Overlay | Shows frame counter at runtime |
+| Room Debug Overlay | Renders all room triangles in per-room colors for culling diagnosis |
 
 ## OT Size and Bump Alloc Size
 

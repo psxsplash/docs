@@ -4,23 +4,23 @@ The following are known issues with the current version of SplashEdit and psxspl
 
 ## Rendering
 
-### Exterior scene BVH rendering is very broken
-The Bounding Volume Hierarchy culling system for exterior scenes needs a full rewrite. **Use Interior scene type with rooms and portals whenever possible.**
+### Exterior scene BVH rendering may have issues
+The BVH frustum culling system has been rewritten with a proper frustum extraction and AABB test, but may still have edge cases. **Interior scene type with rooms and portals is still recommended for best performance.**
 
 ### BVH preview visualization is broken
 The BVH preview toggle in the Scene Exporter inspector does not display correctly. The Rooms/Portals preview works fine.
 
-### Polygon subdivision stitching issues
-When polygons are subdivided to fit within the PS1's rasterizer limits, seams can appear between subdivided pieces.
+### Near-plane triangle artifacts
+Triangles crossing the near plane are subdivided in 3D and re-projected. This replaced the previous Sutherland-Hodgman clipping approach. Rasterizer-limit triangles use vertex clamping instead of subdivision to avoid T-junction cracks. Minor visual artifacts may still appear on triangles very close to the camera.
 
-### Fog not working correctly
-Distance fog is implemented but has visual issues in certain configurations.
+### Fog edge cases
+Distance fog uses a Silent Hill-style two-pass approach (per-vertex fog blending with additive overlay). Most configurations work well, but extreme density values or very close geometry may produce visual artifacts.
 
 ### PSX UI images overblown with white tint
 Using a full white tint (255, 255, 255) on `PSXUIImage` elements causes washed-out, overblown colors. Use a tint around 128, 128, 128 for normal appearance.
 
 ### Portal visibility at close range
-When standing directly in front of a portal, the connected room may not render correctly. The portal screen-rect calculation has issues at very close distances.
+Portal projection has been improved (int16 overflow fix, conservative fullscreen rect for near-camera portals), but edge cases may remain when standing exactly on a portal boundary.
 
 ## Scene Setup
 
@@ -42,7 +42,7 @@ Player jumping currently has no collision interaction with the environment. The 
 The Nav Cell Height parameter on PSXPlayer does not work correctly. Leave it at the default value.
 
 ### Rotating objects doesn't update collision bounds
-Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation.
+Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` now correctly shift the AABB and mark the object as dynamically moved for proper frustum culling.
 
 ## API Limitations
 
@@ -51,9 +51,6 @@ In scenes with a PSXPlayer and navigation regions, the navigation controller con
 
 ### Camera.LookAt is incomplete
 The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
-
-### Camera.GetRotation always returns {0, 0, 0}
-Rotation decomposition from the internal matrix representation is not implemented.
 
 ### Persist storage limited to 16 entries
 The cross-scene persistent data system supports only 16 key-value pairs. Exceeding this limit silently fails with no error.
@@ -66,8 +63,8 @@ The memory preview in the Control Panel is very limited and approximate. Do not 
 ### Can get a little moody on Linux
 Some editor functionality may behave inconsistently on Linux. The primary development and testing platform is Windows.
 
-### No macOS support
-SplashEdit does not support macOS. The developer does not have a Mac to develop and test on.
+### macOS support is experimental
+macOS (Apple Silicon) is now supported with automatic toolchain detection and PCSX-Redux downloads, but it has not been extensively tested. Build PATH detection for GUI apps has special handling, but edge cases may exist.
 
 ## Build Pipeline
 

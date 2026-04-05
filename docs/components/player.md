@@ -63,4 +63,4 @@ At runtime, the player has basic physics:
 - **Gravity** pulls the player down each frame
 - **Jumping** applies an upward velocity (visual only, no collision)
 - **Grounding** is detected via collision with the floor
-- **Frame skip compensation** - if the game lags, physics are scaled by `deltaFrames` to maintain consistent speed
+- **Frame-rate compensation** - if the game lags, physics are scaled by `dt` (4.12 fixed-point delta time, where 4096 = one 30fps frame) to maintain consistent speed

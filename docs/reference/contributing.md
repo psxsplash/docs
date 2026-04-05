@@ -16,19 +16,15 @@ PSXSplash and SplashEdit are open-source projects. The codebase has grown signif
 
 ### High Priority
 
-- **Exterior BVH rendering** - The frustum culling system for exterior scenes needs a complete rewrite. Interior room/portal culling works well, but the BVH path is broken.
 - **Navigation code cleanup** - The nav mesh generation works but the code needs refactoring for maintainability.
-- **Fog implementation** - Distance fog is partially implemented but has visual bugs.
 - **Nav Cell Height fix** - The setting is broken and needs debugging.
 
 ### Medium Priority
 
-- **Polygon subdivision stitching** - Seam artifacts appear between subdivided polygons.
 - **Camera.LookAt implementation** - Needs proper atan2 math to correctly orient the camera.
 - **Camera.GetRotation** - Rotation decomposition from the internal matrix.
 - **Jump collision** - Jumping is currently visual only with no environment interaction.
 - **Dynamic collision AABB updates** - Rotated objects don't update their collision bounds.
-- **Portal close-range visibility** - Portals don't render the connected room when standing very close.
 
 ### Nice to Have
 
