@@ -5,7 +5,7 @@ This section walks you through setting up SplashEdit and building your first PS1
 ## System Requirements
 
 - **Unity 6000.0** or later (must be a **Universal Render Pipeline** project)
-- **Windows** or **Linux** (no macOS support - the developer doesn't have a Mac)
+- **Windows** or **Linux** or **MacOS Apple silicon**
 - **Git** (for cloning the native project)
 
 That's it. SplashEdit automatically downloads everything else it needs (MIPS compiler, PCSX-Redux, mkpsxiso, etc.) through the Control Panel.
