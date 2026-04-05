@@ -181,6 +181,11 @@ local x, y = Input.GetAnalog(0)  -- left stick
 Control the scene camera.
 
 ```lua
+Camera.FollowPsxPlayer(bool)
+```
+Sets if the camera should be controlled by the PsxPlayer. Set false if you want to use the lua functions below to control the camera. 
+
+```lua
 Camera.GetPosition()
 ```
 Returns the camera's world position as vec3 `{x, y, z}`.

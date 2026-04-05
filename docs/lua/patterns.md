@@ -349,6 +349,11 @@ local camMoveStep = FixedPoint.new(1) / 1024
 local savedCamRotation = Vec3.new(0,0,0)
 local savedCamPosition = Vec3.new(0,0,0)
  
+function onCreate(self)
+    -- Make sure we have control of the camera
+    Camera.FollowPsxPlayer(false)
+end
+
 function onUpdate(self, dt)
 
     local camPos = Camera.GetPosition()
