@@ -13,8 +13,9 @@ Animations are like [cutscenes](cutscenes.md) but without camera tracks, and **m
 | Field | Description |
 |-------|-------------|
 | Animation Name | Max 24 chars, unique per scene. Used in Lua: `Animation.Play("name")` |
-| Duration Frames | Total length in frames at 30fps |
-| Tracks | Array of tracks (Object and UI types only - no Camera, no Audio) |
+| Duration (s) | Total length in seconds. Stored internally as frames at 30fps. |
+| Tracks | Array of tracks (Object and UI types only — no Camera, no Audio) |
+| Skin Anim Events | Timed triggers for [skinned mesh animations](skinned-meshes.md) (see below) |
 
 !!! note
     If you accidentally add a Camera track to an animation, it will be filtered out with a warning during export.
@@ -62,6 +63,31 @@ if Animation.IsPlaying("anim_spinner") then
 end
 ```
 
+## Skin Anim Events
+
+Animations can trigger [skinned mesh animations](skinned-meshes.md) at specific times during playback. This works the same way as [cutscene skin anim events](cutscenes.md#skin-anim-events).
+
+| Field | Description |
+|-------|-------------|
+| Time (s) | When to trigger the skinned animation |
+| Target Object | Name of the target object (must have a `PSXSkinnedObjectExporter`) |
+| Clip Name | Name of the animation clip on the target |
+| Loop | Whether the triggered animation should loop |
+
+```lua
+-- Example: door animation triggers a character reaction
+Animation.Play("door_open", {
+    onComplete = function()
+        -- The skin anim event at 0.5s already started the character's
+        -- "react" animation, so just play the follow-up:
+        SkinnedAnim.Play("NPC", "idle", { loop = true })
+    end
+})
+```
+
+!!! note
+    Skin anim events are processed in frame order. Maximum 16 per animation.
+
 ## Multi-Instance Playback
 
 Unlike cutscenes, the same animation can play **multiple times simultaneously**. Each `Animation.Play()` call creates a new playback instance. Up to 8 instances can be active at once across all animations.
@@ -85,8 +111,15 @@ The `onComplete` callback is stored **per animation name**, not per instance. If
 | Animation clips per scene | 16 |
 | Tracks per animation | 8 |
 | Keyframes per track | 64 |
+| Skin anim events per animation | 16 |
 | Simultaneous instances | 8 (across all animations) |
+
+## Time-Based Playback
+
+Animations use time-based advancement internally (0.12 fixed-point delta time). This means playback speed is consistent regardless of the actual framerate — if the engine dips below 30fps, animations continue at the correct speed rather than slowing down.
+
+The editor displays all timing in seconds. Internally, 30fps frames are used for storage (e.g., 3 seconds = 90 frames).
 
 ## Editor Preview
 
-Like cutscenes, the animation inspector has play/preview controls for scrubbing through tracks in the Scene view.
+The animation inspector has play/preview controls for scrubbing through tracks in the Scene view. If the animation has skin anim events, the targeted skinned meshes will also be previewed in the Scene view with the correct pose at the current time.

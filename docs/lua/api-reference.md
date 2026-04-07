@@ -441,6 +441,71 @@ Animation.IsPlaying(name)     -- True if any instance is active -> boolean
 
 ---
 
+## SkinnedAnim
+
+Control bone-based skinned mesh animations. See [Skinned Meshes](../components/skinned-meshes.md).
+
+Each skinned object can play one clip at a time. Clips are referenced by the **object name** (the GameObject with a `PSXSkinnedObjectExporter`) and the **clip name** (the Unity `AnimationClip` asset name).
+
+### SkinnedAnim.Play
+
+```lua
+SkinnedAnim.Play(objectName, clipName)
+SkinnedAnim.Play(objectName, clipName, {
+    loop = true,                -- Loop the animation (default: false)
+    onComplete = function()     -- Called when a non-looping clip finishes
+        -- ...
+    end
+})
+```
+
+Start playing a skinned animation clip. If the object is already playing, the new clip replaces it immediately.
+
+```lua
+-- Play idle loop
+SkinnedAnim.Play("MyCharacter", "idle", { loop = true })
+
+-- Play attack, then return to idle
+SkinnedAnim.Play("MyCharacter", "attack", {
+    onComplete = function()
+        SkinnedAnim.Play("MyCharacter", "idle", { loop = true })
+    end
+})
+```
+
+### SkinnedAnim.Stop
+
+```lua
+SkinnedAnim.Stop(objectName)
+```
+
+Stop the skinned animation on the given object. The mesh freezes at its current pose. Also releases any `onComplete` callback.
+
+### SkinnedAnim.IsPlaying
+
+```lua
+SkinnedAnim.IsPlaying(objectName) -- -> boolean
+```
+
+Returns `true` if the named skinned object is currently playing an animation.
+
+### SkinnedAnim.GetClip
+
+```lua
+SkinnedAnim.GetClip(objectName) -- -> string or nil
+```
+
+Returns the name of the currently active clip, or `nil` if the object is not playing or not found.
+
+```lua
+local clip = SkinnedAnim.GetClip("MyCharacter")
+if clip == "idle" then
+    SkinnedAnim.Play("MyCharacter", "walk", { loop = true })
+end
+```
+
+---
+
 ## Controls
 
 Enable/disable player input globally.

@@ -13,9 +13,10 @@ Cutscenes are pre-authored sequences of keyframed animations with camera control
 | Field | Description |
 |-------|-------------|
 | Cutscene Name | Max 24 chars, unique per scene. Used in Lua: `Cutscene.Play("name")` |
-| Duration Frames | Total length in frames at 30fps (150 = 5 seconds) |
+| Duration (s) | Total length in seconds. Stored internally as frames at 30fps (e.g., 5s = 150 frames). |
 | Tracks | Array of animation tracks (see below) |
 | Audio Events | Array of timed audio triggers (see below) |
+| Skin Anim Events | Timed triggers for [skinned mesh animations](skinned-meshes.md) (see below) |
 
 ## Track Types
 
@@ -69,6 +70,22 @@ Timed audio triggers within the cutscene:
 | Volume | 0-128 |
 | Pan | 0-127 (0=left, 64=center, 127=right) |
 
+## Skin Anim Events
+
+Timed triggers for [skinned mesh animations](skinned-meshes.md) within the cutscene. Works like audio events — specify a time, target, and clip:
+
+| Field | Description |
+|-------|-------------|
+| Time (s) | When to trigger the skinned animation |
+| Target Object | Name of the target object (must have a `PSXSkinnedObjectExporter`) |
+| Clip Name | Name of the animation clip on the target |
+| Loop | Whether the triggered animation should loop |
+
+The editor validates that the target object exists in the scene and has the specified clip. Events are processed in frame order during playback.
+
+!!! tip
+    Combine skin anim events with camera tracks for cinematic sequences — e.g., cut to a character, trigger their animation, and move the camera simultaneously.
+
 ## Lua Playback
 
 ```lua
@@ -99,9 +116,15 @@ end
 !!! note "Callback timing"
     The `onComplete` callback fires once when the cutscene finishes. For looping cutscenes, it fires when `Cutscene.Stop()` is called, not on each loop.
 
+## Time-Based Playback
+
+Cutscenes use time-based advancement internally (0.12 fixed-point delta time). Playback speed is consistent regardless of the actual framerate. The editor displays all timing in seconds.
+
 ## Editor Preview
 
 The cutscene inspector has **play/preview controls**. Click the play button to scrub through the cutscene in the Scene view. Camera tracks move the Scene view camera during preview. The original camera position is restored when preview ends.
+
+If the cutscene has skin anim events, targeted skinned meshes will be previewed with the correct pose at the current time.
 
 ## Limits
 
@@ -111,14 +134,14 @@ The cutscene inspector has **play/preview controls**. Click the play button to s
 | Tracks per cutscene | 8 |
 | Keyframes per track | 64 |
 | Audio events per cutscene | 64 |
+| Skin anim events per cutscene | 16 |
 
 ## Cutscenes vs Animations
 
 | Feature | Cutscene | Animation |
 |---------|----------|-----------|
 | Camera tracks (position, rotation, FOV) | Yes | No |
-| Audio events | Yes | No |
-| Simultaneous playback | One at a time | Up to 8 |
+| Audio events | Yes | No || Skin anim events | Yes | Yes || Simultaneous playback | One at a time | Up to 8 |
 | Same clip stacking | No | Yes |
 | API | `Cutscene.*` | `Animation.*` |
 

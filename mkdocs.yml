@@ -79,6 +79,7 @@ nav:
     - Objects & Meshes: components/objects.md
     - Player: components/player.md
     - Textures & VRAM: components/textures.md
+    - Skinned Meshes: components/skinned-meshes.md
     - Navigation & Collision: components/navigation.md
     - Rooms & Portals: components/rooms-portals.md
     - UI System: components/ui.md
