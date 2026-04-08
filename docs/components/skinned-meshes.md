@@ -38,6 +38,7 @@ At runtime on PS1, the engine:
 | Bit Depth | Texture color depth: 4-bit, 8-bit, or 16-bit | 8-bit |
 | Color Mode | Vertex color mode: Baked Lighting, Flat Color, or Mesh Vertex Colors | Baked Lighting |
 | Flat Vertex Color | (Flat Color mode only) Solid color applied to all vertices | 128, 128, 128 |
+| Smooth Normals | Average normals across shared vertices for smooth lighting. Disable for flat/faceted shading. | On |
 
 ## Lua Playback
 
