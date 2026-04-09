@@ -38,8 +38,8 @@ All textures must be power-of-two in both width and height, with a maximum size 
 ### Jumping is visual only
 Player jumping currently has no collision interaction with the environment. The player moves up and down visually but does not interact with platforms or ceilings.
 
-### Nav Cell Height setting is broken
-The Nav Cell Height parameter on PSXPlayer does not work correctly. Leave it at the default value.
+### Navigation mesh plane error on terrain
+On undulating terrain, some navigation regions may have high floor-plane error, causing the player to float above or sink below the actual surface. Use the **Terrain** preset or lower the **Merge Region Area** and **Max Edge Length** to produce smaller regions that track terrain height more accurately. The build statistics panel in the PSXPlayer inspector flags regions exceeding the Max Plane Error threshold.
 
 ### Rotating objects doesn't update collision bounds
 Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` now correctly shift the AABB and mark the object as dynamically moved for proper frustum culling.
@@ -47,7 +47,7 @@ Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding 
 ## API Limitations
 
 ### Camera API overridden by navigation controller
-In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. The Camera API is primarily useful during cutscenes.
+In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Use `Camera.FollowPsxPlayer(false)` to take manual control of the camera from Lua. The Camera API is also usable during cutscenes, which temporarily suspend the nav controller.
 
 ### Camera.LookAt is incomplete
 The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
@@ -78,8 +78,8 @@ Individual characters in custom bitmap fonts may appear slightly cropped or cut 
 
 ## Internal
 
-### Navigation code is a mess
-The navigation mesh generation system works but the internal code quality needs improvement. A rewrite is planned.
+### Controller rumble has no Lua API
+The PS1 runtime supports DualShock rumble/vibration motors, and they can be driven via Rumble Small and Rumble Large tracks in [cutscenes](../components/cutscenes.md#controller-rumble) and [animations](../components/animations.md#controller-rumble). However, there is no Lua API for controlling rumble directly from scripts yet. This will be exposed in a future update.
 
 ### Default ISO license shows "Made with psxsplash"
 When building an ISO without a custom license file, the default license displays "Made with psxsplash" on boot. Provide your own `.dat` license file in the build settings to override this.

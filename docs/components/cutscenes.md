@@ -35,6 +35,8 @@ Each track targets a specific property:
 | UI Progress | Named element | Progress bar value |
 | UI Position | Named element | Screen-space XY |
 | UI Color | Named element | RGB color |
+| Rumble Small | Controller (global) | On/off (step only) |
+| Rumble Large | Controller (global) | Motor speed 0–255 (interpolated) |
 
 For **Object** tracks, the Object Name field must match the GameObject's name in the scene.
 For **UI** tracks, set the Canvas Name and Element Name to match your [UI setup](ui.md).
@@ -122,9 +124,16 @@ Cutscenes use time-based advancement internally (0.12 fixed-point delta time). P
 
 ## Editor Preview
 
-The cutscene inspector has **play/preview controls**. Click the play button to scrub through the cutscene in the Scene view. Camera tracks move the Scene view camera during preview. The original camera position is restored when preview ends.
+Cutscenes can be edited in the **PSX Timeline** editor window (**PlayStation 1 > Timeline Editor** from the menu, or double-click a cutscene clip asset). The timeline provides:
 
-If the cutscene has skin anim events, targeted skinned meshes will be previewed with the correct pose at the current time.
+- A visual track layout with camera, object, and UI tracks
+- Audio event and skin anim event editing on the timeline
+- Drag-and-drop keyframe editing with interpolation mode selection
+- Play/scrub controls to preview the cutscene in the Scene view
+- Camera tracks move the Scene view camera during preview (original position restored when preview ends)
+- Targeted skinned meshes show the correct pose at the current time
+
+You can also preview directly from the cutscene inspector by clicking the play button.
 
 ## Limits
 
@@ -136,12 +145,32 @@ If the cutscene has skin anim events, targeted skinned meshes will be previewed 
 | Audio events per cutscene | 64 |
 | Skin anim events per cutscene | 16 |
 
+## Controller Rumble
+
+Cutscenes can drive DualShock controller vibration via two dedicated track types:
+
+| Track | Motor | Values | Behavior |
+|-------|-------|--------|----------|
+| **Rumble Small** | Right motor (high-frequency) | 0 = off, non-zero = on | Step only — snaps on/off at each keyframe |
+| **Rumble Large** | Left motor (low-frequency) | 0–255 motor speed | Interpolated — smoothly ramps between keyframes |
+
+Rumble tracks are global (no target object needed). Add keyframes to control when and how strongly the controller vibrates during the cutscene. Motors are automatically stopped when the cutscene ends.
+
+!!! tip "Cinematic rumble"
+    Pair rumble with camera shakes and audio events for impactful cutscene moments — explosions, boss introductions, dramatic falls.
+
+!!! note
+    Rumble requires a DualShock controller (or emulator rumble support). Digital controllers ignore vibration data.
+
 ## Cutscenes vs Animations
 
 | Feature | Cutscene | Animation |
 |---------|----------|-----------|
 | Camera tracks (position, rotation, FOV) | Yes | No |
-| Audio events | Yes | No || Skin anim events | Yes | Yes || Simultaneous playback | One at a time | Up to 8 |
+| Audio events | Yes | No |
+| Skin anim events | Yes | Yes |
+| Controller rumble tracks | Yes | Yes |
+| Simultaneous playback | One at a time | Up to 8 |
 | Same clip stacking | No | Yes |
 | API | `Cutscene.*` | `Animation.*` |
 

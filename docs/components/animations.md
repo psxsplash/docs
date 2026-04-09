@@ -34,6 +34,8 @@ Same as cutscene tracks, minus camera:
 | UI Progress | Named element |
 | UI Position | Named element |
 | UI Color | Named element |
+| Rumble Small | Controller (global) |
+| Rumble Large | Controller (global) |
 
 ## Lua Playback
 
@@ -88,6 +90,23 @@ Animation.Play("door_open", {
 !!! note
     Skin anim events are processed in frame order. Maximum 16 per animation.
 
+## Controller Rumble
+
+Animations can drive DualShock controller vibration via two dedicated track types:
+
+| Track | Motor | Values | Behavior |
+|-------|-------|--------|----------|
+| **Rumble Small** | Right motor (high-frequency) | 0 = off, non-zero = on | Step only — snaps on/off at each keyframe |
+| **Rumble Large** | Left motor (low-frequency) | 0–255 motor speed | Interpolated — smoothly ramps between keyframes |
+
+Rumble tracks are global (no target object needed). Add keyframes to control when and how strongly the controller vibrates during the animation.
+
+!!! tip "Combining motors"
+    Use the small motor for sharp impacts (gunshots, hits) and the large motor for sustained rumble (engines, earthquakes). Combine both for layered effects.
+
+!!! note
+    Rumble requires a DualShock controller (or emulator rumble support). Digital controllers ignore vibration data.
+
 ## Multi-Instance Playback
 
 Unlike cutscenes, the same animation can play **multiple times simultaneously**. Each `Animation.Play()` call creates a new playback instance. Up to 8 instances can be active at once across all animations.
@@ -122,4 +141,11 @@ The editor displays all timing in seconds. Internally, 30fps frames are used for
 
 ## Editor Preview
 
-The animation inspector has play/preview controls for scrubbing through tracks in the Scene view. If the animation has skin anim events, the targeted skinned meshes will also be previewed in the Scene view with the correct pose at the current time.
+Animations can be edited in the **PSX Timeline** editor window (**PlayStation 1 > Timeline Editor** from the menu, or double-click an animation clip asset). The timeline provides:
+
+- A visual track layout showing all keyframe tracks and skin anim events
+- Drag-and-drop keyframe editing with interpolation mode selection
+- Play/scrub controls to preview the animation in the Scene view
+- If the animation has skin anim events, targeted skinned meshes show the correct pose at the current time
+
+You can also preview directly from the animation inspector by clicking the play button.
