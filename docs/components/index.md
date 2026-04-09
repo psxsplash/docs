@@ -15,6 +15,7 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 | Component | Purpose |
 |-----------|---------|
 | [Textures & VRAM](textures.md) | How textures are quantized and packed |
+| [Skinned Meshes](skinned-meshes.md) | Bone-based character animation |
 | [Custom Fonts](fonts.md) | Bitmap fonts for UI text |
 | [Loading Screens](loading-screens.md) | Shown during scene transitions |
 

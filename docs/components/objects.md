@@ -21,6 +21,7 @@ The object must have both a **MeshFilter** and a **MeshRenderer** with at least 
 | Lua File | Optional [Lua script](../lua/index.md) for this object's behavior | None |
 | Vertex Colors | How vertex colors are computed: Baked Lighting, Flat Color, or Mesh Vertex Colors | Baked Lighting |
 | Flat Vertex Color | (Flat Color mode only) Solid color applied to all vertices | 128, 128, 128 |
+| Smooth Normals | Average normals across shared vertices for smooth lighting. Disable for flat/faceted shading. | On |
 | Collision Type | None, Static, or Dynamic | None |
 
 ## Bit Depth
@@ -51,7 +52,7 @@ See [Textures & VRAM](textures.md) for more detail on how textures are packed.
 SplashEdit converts Unity meshes to PS1 format automatically:
 
 - Vertices are converted to **4.12 fixed-point** coordinates (scaled by the Scene Exporter's GTE Scaling)
-- Normals are recalculated as smooth normals
+- Normals are recalculated as smooth normals by default (disable with the **Smooth Normals** toggle for flat/faceted shading)
 - **Vertex colors** depend on the Vertex Colors mode:
     - **Baked Lighting** (default): Pre-baked from scene lighting. Material base colors are baked into vertex colors for untextured objects.
     - **Flat Color**: All vertices get the same configurable color (default 128, 128, 128). Useful for unlit objects or stylized looks.

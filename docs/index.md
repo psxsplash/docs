@@ -30,7 +30,8 @@ You work entirely in Unity. SplashEdit handles texture quantization, mesh conver
 - **VRAM packing** with deduplication
 - **Lua scripting** for all game logic (event-driven architecture)
 - **UI system** with canvases, text, images, progress bars, and custom fonts
-- **Cutscene and animation** system with keyframed tracks and easing
+- **Cutscene and animation** system with keyframed tracks, easing, and time-based playback
+- **Skinned mesh animation** with bone-based character animation and sub-frame interpolation
 - **Navigation mesh** generation via DotRecast
 - **Room/portal occlusion** for interior scenes
 - **Audio** conversion to PS1 SPU ADPCM format

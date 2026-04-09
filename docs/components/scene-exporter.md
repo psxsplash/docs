@@ -58,11 +58,15 @@ The inspector has debug toggles at the bottom:
 When you export (via the [Control Panel](../getting-started/control-panel.md) or directly), the exporter runs this sequence:
 
 1. Collects all `PSXObjectExporter` components in the scene
-2. Quantizes and deduplicates textures, packs into VRAM
-3. Converts meshes to PS1 format with vertex colors (baked lighting, flat color, or mesh vertex colors depending on each object's settings)
-4. Builds BVH (exterior) or room/portal structure (interior)
-5. Generates navigation regions from walkable geometry
-6. Exports UI canvases, custom fonts, and font pixel data
-7. Exports cutscenes, animations, audio, interactables, and trigger boxes
-8. Writes the complete `.splashpack` binary
-9. Optionally writes a `.loading` file for the loading screen
+2. Discovers `PSXSkinnedObjectExporter` components and creates temporary bind-pose proxy objects
+3. Quantizes and deduplicates textures, packs into VRAM
+4. Converts meshes to PS1 format with vertex colors (baked lighting, flat color, or mesh vertex colors depending on each object's settings)
+5. Bakes skinned mesh bone matrices for every animation clip at the configured FPS
+6. Builds BVH (exterior) or room/portal structure (interior)
+7. Generates navigation regions from walkable geometry
+8. Exports UI canvases, custom fonts, and font pixel data
+9. Exports cutscenes, animations (with skin anim events), audio, interactables, and trigger boxes
+10. Writes skinned mesh data (bone indices, baked frames) to the splashpack binary
+11. Writes the complete `.splashpack` binary
+12. Optionally writes a `.loading` file for the loading screen
+13. Destroys temporary skinned mesh proxy objects

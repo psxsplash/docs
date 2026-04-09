@@ -21,7 +21,7 @@ After exporting from the [Control Panel](../getting-started/control-panel.md), a
 |---------|-------------|
 | Ordering Table (OT) | Depth sorting buckets - configurable via OT Size |
 | Bump Allocator | Per-frame GPU command buffer - configurable via Bump Alloc Size |
-| Scene Data | Objects, nav regions, collision, UI, cutscenes, animations |
+| Scene Data | Objects, nav regions, collision, UI, cutscenes, animations, skinned mesh data |
 | Other | Lua VM, engine state, stack |
 
 ### VRAM Breakdown
@@ -56,6 +56,14 @@ After exporting from the [Control Panel](../getting-started/control-panel.md), a
 2. **Use Interior scenes with rooms/portals.** Only visible rooms are rendered, dramatically reducing triangle count.
 3. **Reduce OT Size and Bump Size** if you have simple scenes. This frees RAM for Lua and game data.
 4. **Increase Bump Size** if triangles disappear at certain camera angles (buffer overflow).
+
+### Skinned Meshes (RAM)
+
+1. **Bone matrices are the biggest cost.** Each frame of each clip stores 24 bytes per bone. A 20-bone character with a 2-second walk at 15fps = ~14KB per clip.
+2. **Lower Target FPS.** Sub-frame interpolation makes 15fps sampling look smooth. Only go to 30 for fast, precise animations.
+3. **Use fewer bones.** 10-20 bones is typical for PS1 characters. Every bone adds 24 bytes × frame count to the scene data.
+4. **Keep clips short.** Reuse idle/walk loops rather than long unique animations.
+5. **Bone indices add up too.** Each triangle needs 3 bytes for bone assignments. A 500-triangle character = 1.5KB.
 
 ### Audio (SPU RAM)
 
