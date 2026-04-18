@@ -558,6 +558,37 @@ All operate on fixed-point numbers. Use `FixedPoint.new(1) / 2` for fractional a
 
 ---
 
+## Random
+
+Accepts integers and generates random numbers for simulating dice, decks of cards, luck mechanics, etc. The functions Random.Number and Random.Range are generated based on the time. If you want to get the same sequence of numbers every time based on a seed use Random.GeneratorSeed, Random.GeneratorNumber, and Random.GeneratorRange.
+
+```lua
+Random.Number(max) 
+```
+Returns from 1 to max inclusive.
+    
+```lua
+Random.Range(min,max) 
+```
+Returns from min inclusive to max inclusive 
+
+```lua
+Random.GeneratorSeed(newSeed) 
+```
+Sets the seed for the random number generator. 
+
+```lua
+Random.GeneratorNumber(max) 
+```    
+Returns from 1 to max inclusive
+
+```lua
+Random.GeneratorRange(min,max)
+```
+Returns from min inclusive to max inclusive
+
+---
+
 ## FixedPoint
 
 Create fixed-point numbers explicitly.
@@ -573,6 +604,32 @@ Useful for creating precise step sizes:
 local one = FixedPoint.new(1)
 local step = one / 64   -- Very small step (~0.015)
 ```
+
+---
+
+## Convert
+
+Helper functions for working with fixed-point numbers. The raw integer of fixed point 1 equals 4096. 
+
+```lua
+Convert.FpToInt(fixedPoint)
+```
+
+Returns the raw integer representation of the passed fixed point value.
+
+```lua
+Convert.IntToFp(integer);
+```
+
+Returns the fixed point representation of the passed integer.
+
+#### Expected Conversions
+| Fixed Point | Raw Int |
+|---|-----|
+| 1.0 | 4096 |
+| 0.5 | 2048 |
+| 0.25 | 1024 |
+
 
 ---
 

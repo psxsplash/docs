@@ -617,3 +617,79 @@ function onInteract(self)
     end)
 end
 ```
+
+---
+
+# Convert
+
+How to convert between the Fixed Point values and raw integers. 
+
+```lua
+-- FixedPoint and Integer conversion --
+-- Author: Latch
+
+local one = FixedPoint.new(1)
+local half = one / 2              
+local negQuarter = -one / 4       
+
+function onCreate(self)
+        Debug.Log("\n\n ----- To Int Tests -----")
+        local oneInt = Convert.FpToInt(one)
+        Debug.Log("one is " .. one .. " raw int is " .. oneInt)
+
+        local halfInt = Convert.FpToInt(half)
+        Debug.Log("half is " .. half .. " raw int is " .. halfInt )
+
+        local negQuarterInt = Convert.FpToInt(negQuarter)
+        Debug.Log("negQuarter is " .. negQuarter .. " raw int is " .. negQuarterInt )
+
+        Debug.Log("\n ----- To Fixed Point Tests -----")
+        local a = Convert.IntToFp(4096);
+        local b = Convert.IntToFp(2048);
+        local c = Convert.IntToFp(-1024);
+
+        Debug.Log("a (4096) is " .. a)
+        Debug.Log("b (2048) is " .. b)
+        Debug.Log("c (-1024) is " .. c)
+end
+```
+
+---
+
+## Random Numbers
+
+How to generate random numbers for your game
+
+```lua
+-- Random Number Example --
+-- Author: Latch
+ 
+local randNum = 0; 
+
+local deck = {
+    "Ace of Hearts", "2 of Hearts", "3 of Hearts", "4 of Hearts", "5 of Hearts", "6 of Hearts", "7 of Hearts", "8 of Hearts", "9 of Hearts", "10 of Hearts", "Jack of Hearts", "Queen of Hearts", "King of Hearts",
+    "Ace of Diamonds", "2 of Diamonds", "3 of Diamonds", "4 of Diamonds", "5 of Diamonds", "6 of Diamonds", "7 of Diamonds", "8 of Diamonds", "9 of Diamonds", "10 of Diamonds", "Jack of Diamonds", "Queen of Diamonds", "King of Diamonds",
+    "Ace of Clubs", "2 of Clubs", "3 of Clubs", "4 of Clubs", "5 of Clubs", "6 of Clubs", "7 of Clubs", "8 of Clubs", "9 of Clubs", "10 of Clubs", "Jack of Clubs", "Queen of Clubs", "King of Clubs",
+    "Ace of Spades", "2 of Spades", "3 of Spades", "4 of Spades", "5 of Spades", "6 of Spades", "7 of Spades", "8 of Spades", "9 of Spades", "10 of Spades", "Jack of Spades", "Queen of Spades", "King of Spades"
+}
+
+function onButtonPress(self, button)
+
+    -- Simulate a D20 dice being rolled
+    if button == Input.TRIANGLE then 
+        randNum = Random.Range(1,20)
+        Debug.Log("Rolled a " .. randNum);
+
+    -- Randomly pick a card from a full deck of 52 cards
+    elseif button == Input.CIRCLE then  
+        randNum = Random.Number(52)
+        Debug.Log("Your card is " .. deck[randNum])
+
+    end 
+end
+
+-- If you want to set the seed use
+-- Random.GeneratorSeed(123)
+-- Random.GeneratorNumber(52)
+-- Random.GeneratorRange(1,100)
+```
