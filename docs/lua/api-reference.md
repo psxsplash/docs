@@ -372,6 +372,49 @@ Audio.SetVolume(channel, volume, pan)  -- Adjust mid-playback
 Audio.StopAll()          -- Stop all channels
 ```
 
+### CD-DA Playback
+
+Play music tracks burned onto the disc as CD-DA audio. CD-DA only works when running from a disc image (ISO build). Track numbers start at 2 because track 1 is the data track.
+
+```lua
+Audio.PlayCDDA(trackNo)
+```
+Start playing a CD-DA audio track by track number.
+
+```lua
+Audio.PauseCDDA()
+```
+Pause the currently playing CD-DA track.
+
+```lua
+Audio.ResumeCDDA()
+```
+Resume a paused CD-DA track.
+
+```lua
+Audio.StopCDDA()
+```
+Stop CD-DA playback entirely.
+
+```lua
+Audio.TellCDDA(callback)
+```
+Query the current playback position. The result is returned asynchronously through a callback function. The callback receives a single fixed-point value representing the playback position in seconds.
+
+```lua
+Audio.TellCDDA(function(position)
+    Debug.Log("CD-DA position: " .. position)
+end)
+```
+
+```lua
+Audio.SetCDDAVolume(left, right)
+```
+Set the CD-DA output volume for left and right channels independently.
+
+!!! warning "ISO builds only"
+    CD-DA audio requires a disc image. It will not work when running via PCdrv (emulator or real hardware targets). Use the ISO build target to include CD-DA tracks.
+
 ---
 
 ## Scene

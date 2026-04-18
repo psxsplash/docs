@@ -22,6 +22,7 @@ The object must have both a **MeshFilter** and a **MeshRenderer** with at least 
 | Vertex Colors | How vertex colors are computed: Baked Lighting, Flat Color, or Mesh Vertex Colors | Baked Lighting |
 | Flat Vertex Color | (Flat Color mode only) Solid color applied to all vertices | 128, 128, 128 |
 | Smooth Normals | Average normals across shared vertices for smooth lighting. Disable for flat/faceted shading. | On |
+| Is Platform | All boundary edges of nav regions from this mesh allow walkoff. The player can walk off any edge and fall. See [Navigation](navigation.md#platforms). | Off |
 | Collision Type | None, Static, or Dynamic | None |
 
 ## Bit Depth
