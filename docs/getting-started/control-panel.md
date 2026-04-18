@@ -31,6 +31,23 @@ Your project's scene list. Scenes are exported in order - **Scene 0 is loaded fi
 !!! important
     Scene indices are assigned by position in this list. If you reorder scenes, any `Scene.Load(index)` calls in your Lua scripts need to match the new order.
 
+## Music (CD-DA) Tab
+
+Manage audio tracks that get burned onto the disc as CD-DA (Red Book audio). These tracks play through the PS1's CD drive and do not use SPU RAM.
+
+| Action | How |
+|--------|-----|
+| Add a track | Click **"+ Add Audio Clip..."** and browse, or drag audio files from the Project window |
+| Reorder | Use the arrow buttons (track order determines the track number on the disc) |
+| Remove | Click the **X** button |
+
+Track numbers start at 2 because track 1 is always the data track. The first audio clip in the list becomes track 2, the second becomes track 3, and so on.
+
+Play tracks from Lua with `Audio.PlayCDDA(trackNo)`. See [Audio](../components/audio.md#cd-da-music) for the full API.
+
+!!! warning "ISO builds only"
+    CD-DA tracks are embedded in the disc image during ISO builds. They will not play when using the Emulator or Real Hardware build targets.
+
 ## Build Tab
 
 Build configuration and the main build button. See [Building & Running](building.md) for full details.

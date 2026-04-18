@@ -372,6 +372,49 @@ Audio.SetVolume(channel, volume, pan)  -- Adjust mid-playback
 Audio.StopAll()          -- Stop all channels
 ```
 
+### CD-DA Playback
+
+Play music tracks burned onto the disc as CD-DA audio. CD-DA only works when running from a disc image (ISO build). Track numbers start at 2 because track 1 is the data track.
+
+```lua
+Audio.PlayCDDA(trackNo)
+```
+Start playing a CD-DA audio track by track number.
+
+```lua
+Audio.PauseCDDA()
+```
+Pause the currently playing CD-DA track.
+
+```lua
+Audio.ResumeCDDA()
+```
+Resume a paused CD-DA track.
+
+```lua
+Audio.StopCDDA()
+```
+Stop CD-DA playback entirely.
+
+```lua
+Audio.TellCDDA(callback)
+```
+Query the current playback position. The result is returned asynchronously through a callback function. The callback receives a single fixed-point value representing the playback position in seconds.
+
+```lua
+Audio.TellCDDA(function(position)
+    Debug.Log("CD-DA position: " .. position)
+end)
+```
+
+```lua
+Audio.SetCDDAVolume(left, right)
+```
+Set the CD-DA output volume for left and right channels independently.
+
+!!! warning "ISO builds only"
+    CD-DA audio requires a disc image. It will not work when running via PCdrv (emulator or real hardware targets). Use the ISO build target to include CD-DA tracks.
+
 ---
 
 ## Scene
@@ -558,6 +601,37 @@ All operate on fixed-point numbers. Use `FixedPoint.new(1) / 2` for fractional a
 
 ---
 
+## Random
+
+Accepts integers and generates random numbers for simulating dice, decks of cards, luck mechanics, etc. The functions Random.Number and Random.Range are generated based on the time. If you want to get the same sequence of numbers every time based on a seed use Random.GeneratorSeed, Random.GeneratorNumber, and Random.GeneratorRange.
+
+```lua
+Random.Number(max) 
+```
+Returns from 1 to max inclusive.
+    
+```lua
+Random.Range(min,max) 
+```
+Returns from min inclusive to max inclusive 
+
+```lua
+Random.GeneratorSeed(newSeed) 
+```
+Sets the seed for the random number generator. 
+
+```lua
+Random.GeneratorNumber(max) 
+```    
+Returns from 1 to max inclusive
+
+```lua
+Random.GeneratorRange(min,max)
+```
+Returns from min inclusive to max inclusive
+
+---
+
 ## FixedPoint
 
 Create fixed-point numbers explicitly.
@@ -573,6 +647,32 @@ Useful for creating precise step sizes:
 local one = FixedPoint.new(1)
 local step = one / 64   -- Very small step (~0.015)
 ```
+
+---
+
+## Convert
+
+Helper functions for working with fixed-point numbers. The raw integer of fixed point 1 equals 4096. 
+
+```lua
+Convert.FpToInt(fixedPoint)
+```
+
+Returns the raw integer representation of the passed fixed point value.
+
+```lua
+Convert.IntToFp(integer);
+```
+
+Returns the fixed point representation of the passed integer.
+
+#### Expected Conversions
+| Fixed Point | Raw Int |
+|---|-----|
+| 1.0 | 4096 |
+| 0.5 | 2048 |
+| 0.25 | 1024 |
+
 
 ---
 

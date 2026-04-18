@@ -82,7 +82,43 @@ Use **Clear** to remove the preview data. The full export pipeline also builds n
 
 ## Height-Aware Region Selection
 
-The PS1 runtime uses a height-aware approach when finding which navigation region the player is standing on. When multiple regions overlap at the same XZ position (e.g., a floor plus an elevated walkway above it), the runtime selects the region whose floor plane is closest to the player's current Y position. This prevents the player from "snapping" to the wrong floor in multi-level environments.
+The PS1 runtime uses a height-aware approach when finding which navigation region the player is standing on. When multiple regions overlap at the same XZ position (e.g., a floor plus an elevated walkway above it), the runtime selects the region whose floor plane is closest to the player's current Y position. This prevents the player from snapping to the wrong floor in multi-level environments.
+
+Regions that are below the player are skipped during this search. If no region is close enough (within the attach distance), the player is considered off the nav mesh entirely.
+
+## Platforms
+
+Mark a `PSXObjectExporter` as a **platform** by enabling the **Is Platform** toggle in the inspector. All boundary edges of nav regions generated from that mesh will allow the player to walk off freely. The player is not clamped to the region boundary and can fall off any edge.
+
+This is useful for elevated walkways, floating platforms, cliff edges, or any geometry the player should be able to step off of.
+
+When the player walks off a platform, they become ungrounded and fall under gravity until they land on another region or leave the nav mesh entirely.
+
+(There's a weird bug right now. I don't even know when it happens. But sometimes making something a platform makes no platforms work at all. No idea...)
+
+## Walkoff Zones
+
+For finer control over which edges the player can walk off, use a `PSXNavWalkoffZone` component. This is a volume you place along specific edges of a nav region. Any boundary edge whose midpoint falls inside the zone will allow the player to walk off without being clamped.
+
+This is different from platforms: platforms mark all edges of a mesh as walkoff. Walkoff zones let you selectively open up individual edges on otherwise walled geometry.
+
+### Setup
+
+1. Create an **empty GameObject** where you want the walkoff edge
+2. Add a `PSXNavWalkoffZone` component
+3. Set the **Size** to cover the edge(s) you want to open up
+4. Position the zone so it overlaps the boundary edges of the nav region
+
+The zone is visualized as an orange wireframe box in the Scene view.
+
+!!! tip "Use walkoff zones for pits and ledges"
+    If you have a walled room with a pit in the middle, place a walkoff zone along the pit edge. The walls keep the player inside the room, but the player can fall into the pit.
+
+## Grounding and Falling
+
+The runtime tracks whether the player is grounded or airborne. When grounded, the player's Y position is locked to the floor of the current nav region. When the player walks off a platform or walkoff edge, they become ungrounded and fall under gravity.
+
+There is a small coyote time distance that allows the player to still jump shortly after leaving a surface. A downward velocity cap prevents the player from accelerating to extreme speeds during long falls.
 
 ## Collision Types
 

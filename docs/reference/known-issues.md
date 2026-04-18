@@ -35,14 +35,14 @@ All textures must be power-of-two in both width and height, with a maximum size 
 
 ## Physics & Navigation
 
-### Jumping is visual only
-Player jumping currently has no collision interaction with the environment. The player moves up and down visually but does not interact with platforms or ceilings.
-
 ### Navigation mesh plane error on terrain
 On undulating terrain, some navigation regions may have high floor-plane error, causing the player to float above or sink below the actual surface. Use the **Terrain** preset or lower the **Merge Region Area** and **Max Edge Length** to produce smaller regions that track terrain height more accurately. The build statistics panel in the PSXPlayer inspector flags regions exceeding the Max Plane Error threshold.
 
 ### Rotating objects doesn't update collision bounds
 Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` now correctly shift the AABB and mark the object as dynamically moved for proper frustum culling.
+
+### CD-DA audio requires ISO build
+CD-DA playback only works from a disc image. It will not produce any audio when running via PCdrv (Emulator or Real Hardware build targets). Use the ISO build target.
 
 ## API Limitations
 

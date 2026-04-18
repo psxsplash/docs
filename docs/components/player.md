@@ -13,8 +13,8 @@ The `PSXPlayer` component defines your game's player controller. There can only 
 | Move Speed | 3.0 | Walking speed (world units per second) |
 | Sprint Speed | 8.0 | Sprint speed (world units per second) |
 
-!!! warning "Jumping is visual only"
-    Jumping currently has no collision interaction with the environment. The player moves up and down visually but does not interact with platforms, ceilings, or other geometry while airborne.
+!!! note "Jumping and platforms"
+    Jumping works with navigation regions. The player can jump onto and off of platform regions and walkoff edges. When airborne, the player falls under gravity and lands on whichever region they touch. See [Navigation - Platforms](navigation.md#platforms) for how to set up walkable edges.
 
 ### Navigation Mesh
 
@@ -83,6 +83,8 @@ The PSXPlayer draws helpful gizmos in the Scene view:
 At runtime, the player has basic physics:
 
 - **Gravity** pulls the player down each frame
-- **Jumping** applies an upward velocity (visual only, no collision)
-- **Grounding** is detected via collision with the floor
+- **Jumping** applies an upward velocity. The player can land on platform regions and walk off edges.
+- **Grounding** is detected when the player's Y position reaches the floor of a nav region
+- **Coyote time** allows the player to still jump shortly after walking off an edge
+- **Velocity cap** limits the maximum downward speed during long falls
 - **Frame-rate compensation** - if the game lags, physics are scaled by `dt` (4.12 fixed-point delta time, where 4096 = one 30fps frame) to maintain consistent speed

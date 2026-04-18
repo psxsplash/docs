@@ -64,6 +64,52 @@ Audio.StopAll()
 
 Default values if not specified: volume 100, pan 64 (center).
 
+## CD-DA Music
+
+For longer music tracks, you can use CD-DA (Red Book audio) instead of SPU ADPCM. CD-DA tracks are burned directly onto the disc as standard audio tracks, so they do not consume any SPU RAM.
+
+### Setup
+
+1. Open the SplashEdit Control Panel (++ctrl+shift+l++)
+2. Go to the **Music (CD-DA)** tab
+3. Add audio clips (MP3, WAV) using the **+ Add Audio Clip** button or by dragging files from the Project window
+4. Reorder tracks with the arrow buttons. Track numbering starts at 2 because the data track is always track 1.
+
+(Currently you may experience issues. Please import the audio file into your Assets folder first before assigning it.)
+
+### Playing CD-DA from Lua
+
+```lua
+-- Play track 2 (the first audio track on the disc)
+Audio.PlayCDDA(2)
+
+-- Pause and resume
+Audio.PauseCDDA()
+Audio.ResumeCDDA()
+
+-- Stop playback
+Audio.StopCDDA()
+
+-- Set volume (left, right)
+Audio.SetCDDAVolume(16383, 16383)
+
+-- Query playback position
+Audio.TellCDDA(function(position)
+    Debug.Log("Position: " .. position)
+end)
+```
+
+### Limitations
+
+| Constraint | Details |
+|-----------|--------|
+| ISO builds only | CD-DA does not work via PCdrv. You must build an ISO. |
+| Reading pauses audio | The PS1 cannot read data from the disc and play CD-DA at the same time. Scene loads will interrupt playback. |
+| One track at a time | Only one CD-DA track can play. Starting a new track stops the previous one. |
+
+!!! warning "ISO requirement"
+    CD-DA tracks are embedded in the disc image during ISO builds. They will not play when using the Emulator or Real Hardware build targets.
+
 ## Tips
 
 !!! tip "Sample rate"
@@ -74,3 +120,6 @@ Default values if not specified: volume 100, pan 64 (center).
 
 !!! tip "Audio in cutscenes"
     [Cutscenes](cutscenes.md) have built-in audio events that trigger at specific frames. Use those for synchronized audio instead of playing clips from Lua callbacks.
+
+!!! tip "CD-DA for background music"
+    Use SPU ADPCM for short sound effects and CD-DA for background music. This keeps SPU RAM free for more sound effects while still having full quality music.

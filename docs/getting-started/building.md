@@ -84,3 +84,7 @@ The build process creates files in `[Unity Project]/PSXBuild/`:
 | `lua_compiled/` | Compiled Lua bytecode |
 | `build.log` | Make output (on failure) |
 | `psxsplash.bin/.cue` | ISO output (ISO target only) |
+
+### CD-DA Tracks in ISO Builds
+
+If you have added audio clips in the **Music (CD-DA)** tab of the Control Panel, they are included in the disc image as audio tracks. Track 1 is the data track, and your music starts at track 2. The clips are written in the order they appear in the Music tab.

@@ -24,8 +24,7 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 | Component | Purpose |
 |-----------|---------|
 | [Navigation & Collision](navigation.md) | Walkable surfaces and collision |
-| [Rooms & Portals](rooms-portals.md) | Interior scene occlusion culling |
-
+| [Rooms & Portals](rooms-portals.md) | Interior scene occlusion culling || [Walkoff Zones](navigation.md#walkoff-zones) | Allow the player to walk off specific nav region edges |
 ## Interactivity
 
 | Component | Purpose |
