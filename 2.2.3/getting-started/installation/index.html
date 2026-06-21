@@ -625,6 +625,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 4: Install the Toolchain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        macOS Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -1961,6 +1978,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="Step 4: Install the Toolchain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#macos-setup" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        macOS Setup
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -2041,12 +2075,12 @@
 <tr>
 <td>MIPS Cross-Compiler</td>
 <td>Compiles C++ to PS1 machine code</td>
-<td>Click "Install"</td>
+<td>Click "Install" (Win/Linux)</td>
 </tr>
 <tr>
 <td>GNU Make</td>
 <td>Build system</td>
-<td>Click "Install"</td>
+<td>Click "Install" (Win/Linux)</td>
 </tr>
 <tr>
 <td>PCSX-Redux</td>
@@ -2065,11 +2099,45 @@
 </tr>
 </tbody>
 </table>
-<p>Each tool shows a green <strong>Ready</strong> badge when installed. SplashEdit handles downloading and setting up all of these for you.</p>
+<p>Each tool shows a green <strong>Ready</strong> badge when installed. On <strong>Windows</strong> and <strong>Linux</strong>, SplashEdit handles downloading and setting up all of these for you. On <strong>macOS</strong>, some tools require manual Terminal commands first — the Dependencies tab shows yellow badges and the exact commands to run (see <a href="#macos-setup">macOS Setup</a> below).</p>
 <div class="admonition note">
 <p class="admonition-title">Minimum requirements</p>
 <p>You need at minimum the <strong>MIPS compiler</strong> and <strong>Make</strong> to build. <strong>PCSX-Redux</strong> is needed for emulator testing and Lua compilation. <strong>mkpsxiso</strong> is only needed for ISO builds.</p>
 </div>
+<h3 id="macos-setup">macOS Setup<a class="headerlink" href="#macos-setup" title="Permanent link">&para;</a></h3>
+<p>On macOS, some tools can't be auto-installed. The Dependencies tab shows yellow badges for anything that requires manual action — <strong>Needs setup</strong>, <strong>Needs CLT</strong> (Xcode Command Line Tools), <strong>Needs brew</strong> (Homebrew), or <strong>Needs deps</strong> (build dependencies) — with the exact Terminal commands inline. Install the prerequisites below, then click <strong>Refresh</strong> — the badges will turn green.</p>
+<p><strong>Prerequisites (run in Terminal before opening SplashEdit):</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Install Xcode Command Line Tools (provides GNU Make)</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>xcode-select<span class="w"> </span>--install
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="c1"># Install the MIPS cross-compiler helper</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>brew<span class="w"> </span>install<span class="w"> </span>nikitabobko/tap/brew-install-path
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1"># Download the compiler formulas from pcsx-redux</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-binutils.rb
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>curl<span class="w"> </span>-LO<span class="w"> </span>https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-gcc.rb
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="c1"># Install (builds from source — expect 15-30 minutes)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>brew<span class="w"> </span>install-path<span class="w"> </span>./mipsel-none-elf-binutils.rb
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>brew<span class="w"> </span>install-path<span class="w"> </span>./mipsel-none-elf-gcc.rb
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Don't have Homebrew?</p>
+<p>Install it first: <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></p>
+</div>
+<div class="admonition info">
+<p class="admonition-title">Why so many steps?</p>
+<p>There is no prebuilt MIPS compiler for macOS. The formulas above are maintained by the <a href="https://github.com/grumpycoders/pcsx-redux">pcsx-redux</a> project (the same team behind the PCSX-Redux emulator). The <code>brew-install-path</code> helper is needed because Homebrew no longer supports installing from local formula files directly.</p>
+</div>
+<p><strong>psxavenc build dependencies</strong> — psxavenc has no prebuilt macOS binary, so SplashEdit builds it from source. The Dependencies tab will show <strong>Needs deps</strong> until you install:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>brew<span class="w"> </span>install<span class="w"> </span>meson<span class="w"> </span>pkg-config<span class="w"> </span>ffmpeg
+</code></pre></div>
+<p>Once installed, click <strong>Refresh</strong>, then <strong>Download</strong> to build psxavenc.</p>
+<p>The remaining tools are handled automatically:</p>
+<ul>
+<li><strong>PCSX-Redux</strong> — Click "Download." SplashEdit downloads the macOS ARM build, creates a launcher wrapper, and configures font paths.</li>
+<li><strong>mkpsxiso</strong> — Click "Download." Works the same as Windows/Linux.</li>
+</ul>
 <h2 id="verifying-installation">Verifying Installation<a class="headerlink" href="#verifying-installation" title="Permanent link">&para;</a></h2>
 <p>When all required tools show green badges, the Control Panel status bar shows <strong>"Ready"</strong>. You're good to go.</p>
 <p>If SplashEdit detects a missing toolchain on first launch, it automatically opens the Control Panel to guide you through setup.</p>
