@@ -51,6 +51,27 @@ Each tool shows a green **Ready** badge when installed. SplashEdit handles downl
 !!! note "Minimum requirements"
     You need at minimum the **MIPS compiler** and **Make** to build. **PCSX-Redux** is needed for emulator testing and Lua compilation. **mkpsxiso** is only needed for ISO builds.
 
+### Platform notes
+
+On **Windows** and **Linux**, the MIPS cross-compiler and Make are installed automatically when you click **Install**.
+
+!!! info "macOS (Apple Silicon)"
+    There is no prebuilt MIPS compiler for macOS, so the setup wizard **guides you through a one-time manual install** instead of installing silently:
+
+    1. **Xcode Command Line Tools** — required for the compiler. The wizard prompts you if they're missing.
+    2. **Homebrew** — the macOS package manager. If it's not installed, the wizard copies the official install command to your clipboard.
+    3. **MIPS cross-compiler** — installed through Homebrew using the grumpycoders formulae:
+        ```bash
+        brew install nikitabobko/tap/brew-install-path
+        curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-binutils.rb
+        curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-gcc.rb
+        brew install-path ./mipsel-none-elf-binutils.rb
+        brew install-path ./mipsel-none-elf-gcc.rb
+        ```
+       The wizard copies these commands to your clipboard for you.
+
+    **PCSX-Redux** is downloaded automatically as a `.dmg`, unpacked, and wrapped so SplashEdit can launch it (bundled fonts are copied to `~/Library/Fonts/` and the download is de-quarantined). When checking for tools, SplashEdit also searches the Homebrew paths (`/opt/homebrew/bin`, `/usr/local/bin`) and accepts the `mipsel-none-elf` compiler variant in addition to `mipsel-linux-gnu`.
+
 ## Verifying Installation
 
 When all required tools show green badges, the Control Panel status bar shows **"Ready"**. You're good to go.

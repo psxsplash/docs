@@ -29,6 +29,7 @@ Same as cutscene tracks, minus camera:
 | Object Position | Named GameObject |
 | Object Rotation | Named GameObject |
 | Object Active | Named GameObject (step only) |
+| Object UV Offset | Named GameObject (texture scroll, U/V 0-255) |
 | UI Canvas Visible | Named canvas |
 | UI Element Visible | Named element |
 | UI Progress | Named element |
@@ -36,6 +37,9 @@ Same as cutscene tracks, minus camera:
 | UI Color | Named element |
 | Rumble Small | Controller (global) |
 | Rumble Large | Controller (global) |
+
+!!! tip "Animated textures"
+    The **Object UV Offset** track scrolls a textured object's UVs for water, lava, conveyor belts, and flipbook effects. See [UV Offset Animation](objects.md#uv-offset-animation) for setup (including the per-object **UV Offset Material** field).
 
 ## Lua Playback
 

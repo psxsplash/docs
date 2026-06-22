@@ -71,6 +71,9 @@ function onButtonRelease(self, button)
 end
 ```
 
+!!! note "Two players"
+    These callbacks fire for presses on **either** controller and receive only the `button` id — not which player pressed it. To handle players separately, poll the [`Input.*Player1` / `Input.*Player2`](api-reference.md#input) functions directly (typically in `onUpdate`).
+
 ## Scene Callbacks
 
 Defined in the scene-level Lua script (attached to the Scene Exporter). No `self` argument.

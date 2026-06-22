@@ -83,6 +83,94 @@ Entity.SetRotationY(object, angle)
 ```
 Set the Y-axis rotation. Angle is in pi-units (1 = 180 degrees, `FixedPoint.new(1) / 2` = 90 degrees).
 
+```lua
+Entity.SetRotation(object, vec3)
+```
+Set the full rotation from a Vec3 of Euler angles `{x, y, z}` in pi-units. Applied as a Y * X * Z rotation matrix (same convention as `Camera.SetRotation`).
+
+### Direction Vectors
+
+Get an object's local axes in world space, derived from its current rotation. Each returns a Vec3 `{x, y, z}`.
+
+```lua
+Entity.GetForward(object)   -- local +Z in world space
+Entity.GetRight(object)     -- local +X in world space
+Entity.GetUp(object)        -- local +Y in world space
+```
+
+```lua
+-- Spawn something 2 units in front of an object
+local fwd = Entity.GetForward(self)
+local pos = Entity.GetPosition(self)
+local spawnPos = Vec3.add(pos, Vec3.mul(fwd, FixedPoint.new(2)))
+```
+
+### Local Movement
+
+Move an object along its **own** local axes (relative to its rotation), by a fixed-point `step`. These are convenience wrappers over `GetForward`/`GetRight`/`GetUp` + `SetPosition`.
+
+```lua
+Entity.MoveForward(object, step)
+Entity.MoveBackward(object, step)
+Entity.MoveLeft(object, step)
+Entity.MoveRight(object, step)
+Entity.MoveUp(object, step)
+Entity.MoveDown(object, step)
+```
+
+```lua
+-- Drive an object forward along its facing each frame
+function onUpdate(self, dt)
+    Entity.MoveForward(self, FixedPoint.new(1) / 32)
+end
+```
+
+!!! note "No collision"
+    Like `SetPosition`, these move the transform directly — they ignore navigation regions and collision. They affect the object, not the [PsxPlayer](#player).
+
+### Texture Manipulation
+
+Change how an object's polygons are textured at runtime. Useful for scrolling textures, sprite-sheet animation, and swapping texture pages. See [UV Offsetting](../components/objects.md#uv-offset-animation) for the full workflow.
+
+```lua
+Entity.SetUVOffset(object, u, v)
+```
+Set an **absolute** UV offset (0-255 each) applied non-destructively at render time. The source polygon UVs are left untouched, so you can animate this freely every frame. This is the same value driven by the `Object UV Offset` [timeline track](../components/animations.md#track-types).
+
+```lua
+Entity.SetUVs(object, {u, v})
+```
+**Additively** shift the UVs of every polygon on the object by `(u, v)`. Unlike `SetUVOffset`, this mutates the stored polygon UVs, so repeated calls accumulate.
+
+```lua
+Entity.SetTPage(object, {x, y})
+```
+Set the texture page (VRAM page coordinates) for every polygon on the object — effectively swapping which region of VRAM it samples from.
+
+```lua
+-- Scroll a texture horizontally (e.g. a waterfall or conveyor belt)
+local scroll = 0
+function onUpdate(self, dt)
+    scroll = (scroll + 1) % 256
+    Entity.SetUVOffset(self, scroll, 0)
+end
+```
+
+### Parenting
+
+```lua
+Entity.SetParent(parent, child, offset)
+```
+Snap `child` to `parent`: the child is placed at the parent's position plus `offset` (a Vec3 expressed in the **parent's local space**) and inherits the parent's rotation. This is a one-shot reparent each call — to keep a child attached, call it every frame in `onUpdate`.
+
+```lua
+-- Keep a "held item" attached to a character's hand bone offset
+function onUpdate(self, dt)
+    local hand = Entity.Find("Character")
+    Entity.SetParent(hand, self, Vec3.new(FixedPoint.new(0), FixedPoint.new(1), FixedPoint.new(0)))
+end
+```
+
 ### Self Properties
 
 Object scripts have shorthand access via `self`:
@@ -150,29 +238,44 @@ Input.L3             Input.R3
 
 ### State Queries
 
-```lua
-Input.IsPressed(button)
-```
-Returns `true` **only on the frame** the button was pressed (edge trigger). Use in `onButtonPress` callbacks.
+!!! warning "Two-player API change"
+    State queries are **per-player**. Player 1 reads the controller in **port 1**, player 2 reads **port 2**. The old single-controller names (`Input.IsPressed`, `Input.IsReleased`, `Input.IsHeld`, `Input.GetAnalog`) were **removed** — use the `Player1` / `Player2` variants below. If you only support one player, use the `Player1` functions.
 
 ```lua
-Input.IsReleased(button)
+Input.IsPressedPlayer1(button)
+Input.IsPressedPlayer2(button)
+```
+Returns `true` **only on the frame** the button was pressed (edge trigger).
+
+```lua
+Input.IsReleasedPlayer1(button)
+Input.IsReleasedPlayer2(button)
 ```
 Returns `true` **only on the frame** the button was released.
 
 ```lua
-Input.IsHeld(button)
+Input.IsHeldPlayer1(button)
+Input.IsHeldPlayer2(button)
 ```
 Returns `true` **every frame** while the button is held down.
 
 ```lua
-Input.GetAnalog(stick)
+Input.GetAnalogPlayer1(stick)
+Input.GetAnalogPlayer2(stick)
 ```
 Read analog stick position. `stick` 0 = left stick, 1 = right stick. Returns two values: `x, y` in range -127 to +127 (0 = centered).
 
 ```lua
-local x, y = Input.GetAnalog(0)  -- left stick
+-- Player 1, left stick
+local x, y = Input.GetAnalogPlayer1(0)
+
+-- Simple two-player check
+if Input.IsPressedPlayer1(Input.CROSS) then jump(1) end
+if Input.IsPressedPlayer2(Input.CROSS) then jump(2) end
 ```
+
+!!! note "Button events fire for both players"
+    The `onButtonPress` / `onButtonRelease` object callbacks fire for presses on **either** controller. They receive only the button id, not the player number — if you need to tell players apart, poll `Input.*Player1` / `Input.*Player2` directly (e.g. in `onUpdate`).
 
 ---
 
@@ -309,7 +412,7 @@ UI.IsCanvasVisible(nameOrIndex)          -- Check visibility -> boolean
 UI.FindElement(canvasIndex, name)        -- Find element by name -> handle or -1
 UI.GetElementCount(canvasIndex)          -- Number of elements in canvas
 UI.GetElementByIndex(canvasIndex, i)     -- Get element by position -> handle
-UI.GetElementType(handle)               -- 0=Image, 1=Box, 2=Text, 3=Progress
+UI.GetElementType(handle)               -- 0=Image, 1=Box, 2=Text, 3=Progress, 4=Line
 ```
 
 ### Visibility
@@ -349,6 +452,35 @@ UI.GetPosition(handle)                   -- Returns x, y
 UI.SetSize(handle, w, h)
 UI.GetSize(handle)                       -- Returns w, h
 ```
+
+### Immediate-Mode Drawing
+
+Draw primitives straight to the GPU this frame, without any pre-authored element. Coordinates are PS1 screen pixels (320x240); colors are RGB 0-255. Call these from `onUpdate` to keep them on screen — they are **not** persistent and must be re-issued every frame.
+
+```lua
+UI.DrawLine(p1, p2, color)
+```
+Draw a single-pixel gouraud line from `p1` to `p2`. Each argument is a 2- or 3-element array table: `{x, y}` for the points, `{r, g, b}` for the color.
+
+```lua
+UI.DrawTriangle(p1, p2, p3, c1, c2, c3)
+```
+Draw a filled gouraud triangle. `p1`/`p2`/`p3` are `{x, y}` points; `c1`/`c2`/`c3` are per-vertex `{r, g, b}` colors (the fill is smoothly interpolated between them).
+
+```lua
+function onUpdate(self, dt)
+    -- A red line across the screen
+    UI.DrawLine({10, 120}, {310, 120}, {255, 0, 0})
+
+    -- A triangle with a different color at each corner
+    UI.DrawTriangle(
+        {160, 40}, {120, 120}, {200, 120},
+        {255, 0, 0}, {0, 255, 0}, {0, 0, 255})
+end
+```
+
+!!! note "Drawn on top, every frame"
+    These primitives are sent immediately and are not depth-sorted with your scene. Because they don't persist, you must call them each frame you want them visible. Pair with [`PSXMath.Convert3DTo2D`](#psxmath) to anchor them to world objects.
 
 ---
 
@@ -444,6 +576,90 @@ Persist.Get(key)          -- Retrieve -> number or nil if not set
 
 !!! warning "Limits"
     Maximum **16 key-value pairs**. Values are numbers only. Silently fails if the table is full.
+
+!!! tip "RAM vs. memory card"
+    `Persist` keeps data only until power-off. To write a real save that survives a reboot and shows up in the BIOS, use [`MemCard`](#memcard).
+
+---
+
+## MemCard
+
+Read and write real saves on a physical (or emulated) PlayStation memory card. Unlike `Persist`, these survive power-off and appear in the BIOS memory card manager. See the [Memory Cards guide](../components/memory-cards.md) for project setup (region/product code, save title, BIOS icon).
+
+`port` is `0` (slot 1) or `1` (slot 2). **Every function returns two values**: a result and an error string. On success the error is `nil`; on failure the result is `false`/`nil` and the error is a human-readable message — nothing fails silently.
+
+!!! warning "Blocking operations"
+    Saving, loading, formatting and listing **block** for the duration of the card access (tens of milliseconds, occasionally more). Do them at deliberate save points, never every frame.
+
+### MemCard.IsPresent
+
+```lua
+local present, err = MemCard.IsPresent(0)
+```
+Returns whether a card is inserted in the given port. (Absence is reported via `present == false`, not as an error.)
+
+### MemCard.Save
+
+```lua
+local ok, err = MemCard.Save(port, key, table)
+local ok, err = MemCard.Save(port, key, table, title)
+```
+Serialize a Lua table and write it as a save named `key`. Optional `title` overrides the project's configured BIOS title for this save.
+
+Supported value types inside the table: `nil`, booleans, integers, strings, **nested tables**, and `FixedPoint` values. Functions, threads and other userdata cause an error. Tables may nest up to 16 levels deep (cycles are rejected).
+
+```lua
+local ok, err = MemCard.Save(0, "slot1", {
+    level = 3,
+    hp = FixedPoint.new(100),
+    name = "HERO",
+    flags = { door1 = true, bossDead = false },
+})
+if not ok then Debug.Log("Save failed: " .. err) end
+```
+
+### MemCard.Load
+
+```lua
+local data, err = MemCard.Load(port, key)
+```
+Load and deserialize a save. Returns the reconstructed table (with the same value types you saved) or `nil` plus an error if the save is missing or corrupt.
+
+```lua
+local data, err = MemCard.Load(0, "slot1")
+if data then
+    Persist.Set("level", Convert.FpToInt(data.hp))  -- example
+    Debug.Log("Loaded " .. data.name)
+end
+```
+
+### MemCard.Delete
+
+```lua
+local ok, err = MemCard.Delete(port, key)
+```
+Delete a save by key.
+
+### MemCard.List
+
+```lua
+local names, err = MemCard.List(port)
+```
+Return an array of file names on the card (up to 15). Useful for showing existing saves or checking whether a slot is taken.
+
+### MemCard.FreeBlocks
+
+```lua
+local blocks, err = MemCard.FreeBlocks(port)
+```
+Return the number of free 8 KiB blocks on the card (a standard card has 15). Check this before saving to a near-full card.
+
+### MemCard.Format
+
+```lua
+local ok, err = MemCard.Format(port)
+```
+Write a fresh, empty Sony filesystem to the card. **Erases everything on the card** — only offer this behind an explicit "format card" confirmation.
 
 ---
 
@@ -551,14 +767,28 @@ end
 
 ## Controls
 
-Enable/disable player input globally.
+Enable/disable player movement input, per player.
+
+!!! warning "Two-player API change"
+    These are now **per-player**, matching the [Input](#input) split. The old `Controls.SetEnabled` / `Controls.IsEnabled` names were **removed**. For a single-player game use the `Player1` variants.
 
 ```lua
-Controls.SetEnabled(bool)      -- true = player can move, false = frozen
-Controls.IsEnabled()           -- Check state -> boolean
+Controls.SetEnabledPlayer1(bool)   -- true = player 1 can move, false = frozen
+Controls.SetEnabledPlayer2(bool)   -- player 2 (controller port 2)
+Controls.IsEnabledPlayer1()        -- Check state -> boolean
+Controls.IsEnabledPlayer2()        -- Check state -> boolean
 ```
 
-Use this during cutscenes, dialogue, or any time the player shouldn't move.
+Use this during cutscenes, dialogue, or any time the player shouldn't move. Disabling controls only freezes built-in movement/look — button event callbacks still fire, so menus and dialogue advancement keep working.
+
+```lua
+-- Freeze everyone for a cutscene
+Controls.SetEnabledPlayer1(false)
+Controls.SetEnabledPlayer2(false)
+```
+
+!!! note "Built-in movement is shared"
+    The engine's built-in PsxPlayer movement responds to **both** controller ports moving the **same** player (so a second pad acts as a co-pilot). These toggles enable/disable each port's contribution to that movement. For genuinely independent two-player gameplay, disable the built-in movement and drive a second character yourself from the [`Input.*Player2`](#input) functions plus [`Entity`](#entity) movement.
 
 ---
 
@@ -598,6 +828,38 @@ PSXMath.Max(a, b)                  -- Maximum
 ```
 
 All operate on fixed-point numbers. Use `FixedPoint.new(1) / 2` for fractional arguments like `t` in Lerp.
+
+### Trigonometry
+
+```lua
+PSXMath.Cos(degrees)               -- Cosine, angle in DEGREES (0-360)
+PSXMath.Sin(degrees)               -- Sine, angle in DEGREES (0-360)
+```
+
+These take the angle in **degrees** (a plain integer, not pi-units) and return a fixed-point value using the PS1's hardware trig tables. Convenient for circular/oscillating motion:
+
+```lua
+-- Bob an object up and down
+function onUpdate(self, dt)
+    local t = Timer.GetFrameCount() * 4   -- degrees per frame
+    local pos = Entity.GetPosition(self)
+    Entity.SetPosition(self, Vec3.new(pos.x, PSXMath.Sin(t % 360), pos.z))
+end
+```
+
+### Projection
+
+```lua
+PSXMath.Convert3DTo2D(vec3)        -- Returns screenX, screenY (two numbers)
+```
+Project a 3D world position through the **current camera** to 2D screen coordinates (320x240 space). Returns two numbers. Useful for pinning UI or [immediate-mode lines](#ui) onto a moving 3D object — for example, drawing a marker over an enemy's head.
+
+```lua
+local enemy = Entity.Find("Enemy")
+local p = Entity.GetPosition(enemy)
+local sx, sy = PSXMath.Convert3DTo2D(p)
+UI.DrawLine({sx - 4, sy}, {sx + 4, sy}, {255, 0, 0})
+```
 
 ---
 

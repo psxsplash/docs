@@ -23,6 +23,7 @@ The object must have both a **MeshFilter** and a **MeshRenderer** with at least 
 | Flat Vertex Color | (Flat Color mode only) Solid color applied to all vertices | 128, 128, 128 |
 | Smooth Normals | Average normals across shared vertices for smooth lighting. Disable for flat/faceted shading. | On |
 | Is Platform | All boundary edges of nav regions from this mesh allow walkoff. The player can walk off any edge and fall. See [Navigation](navigation.md#platforms). | Off |
+| UV Offset Material | Which material/submesh index UV-offset animation applies to. See [UV Offset Animation](#uv-offset-animation). | 0 |
 | Collision Type | None, Static, or Dynamic | None |
 
 ## Bit Depth
@@ -59,6 +60,30 @@ SplashEdit converts Unity meshes to PS1 format automatically:
     - **Flat Color**: All vertices get the same configurable color (default 128, 128, 128). Useful for unlit objects or stylized looks.
     - **Mesh Vertex Colors**: Uses the vertex colors already present on the mesh (e.g., painted in Blender). Falls back to gray if the mesh has no vertex colors.
 - UVs are mapped to the VRAM texture atlas position
+
+## UV Offset Animation
+
+You can scroll an object's texture at runtime by shifting its UV coordinates. This is the classic PS1 trick for flowing water, lava, conveyor belts, waterfalls, force-fields, and simple flipbook effects — all without changing geometry.
+
+There are two ways to drive it:
+
+**1. From a timeline track.** Add an **Object UV Offset** track to a [cutscene](cutscenes.md#track-types) or [animation](animations.md#track-types), targeting the object by name. Each keyframe is an integer `(U, V)` offset in the 0-255 range. The **UV Offset Material** field on the object selects which material/submesh the track scrolls (index `0` is the first material).
+
+**2. From Lua.** Call the runtime [texture functions](../lua/api-reference.md#texture-manipulation):
+
+```lua
+-- Scroll the texture horizontally every frame
+local u = 0
+function onUpdate(self, dt)
+    u = (u + 1) % 256
+    Entity.SetUVOffset(self, u, 0)   -- absolute, non-destructive
+end
+```
+
+`Entity.SetUVOffset` applies an absolute offset at render time without touching the stored UVs, so it's safe to animate continuously. `Entity.SetUVs` (additive) and `Entity.SetTPage` (swap texture page) are also available for more advanced effects.
+
+!!! tip "Design textures to tile"
+    For seamless scrolling, the texture should tile along the scroll axis. Because offsets wrap at 256, keeping the meaningful texture region within a tile that repeats cleanly avoids visible seams.
 
 ## Geometry Guidelines
 

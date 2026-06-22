@@ -145,7 +145,7 @@ function startDialogue(lines)
     inDialogue = true
     dialogueLines = lines
     dialogueLine = 1
-    Controls.SetEnabled(false)
+    Controls.SetEnabledPlayer1(false)
     UI.SetCanvasVisible(dialogueCanvas, true)
     UI.SetText(dialogueText, dialogueLines[1])
 end
@@ -162,7 +162,7 @@ end
 
 function endDialogue()
     inDialogue = false
-    Controls.SetEnabled(true)
+    Controls.SetEnabledPlayer1(true)
     UI.SetCanvasVisible(dialogueCanvas, false)
 end
 
@@ -283,11 +283,11 @@ local selected = false
 function onInteract(self)
     selected = not selected
     if selected then
-        Controls.SetEnabled(false)
+        Controls.SetEnabledPlayer1(false)
         Interact.SetEnabled(self, false)
         setStatus("D-pad to move, L1/R1 for height, Triangle to deselect")
     else
-        Controls.SetEnabled(true)
+        Controls.SetEnabledPlayer1(true)
         Interact.SetEnabled(self, true)
     end
 end
@@ -316,7 +316,7 @@ function onButtonPress(self, button)
         Entity.SetRotationY(self, rot + one / 2)  -- Rotate 90 degrees
     elseif button == Input.TRIANGLE then
         selected = false
-        Controls.SetEnabled(true)
+        Controls.SetEnabledPlayer1(true)
         Interact.SetEnabled(self, true)
     end
 end
@@ -362,17 +362,17 @@ function onUpdate(self, dt)
     local camPos = Camera.GetPosition()
     
     -- Camera Movement
-    if Input.IsHeld(Input.UP) then
+    if Input.IsHeldPlayer1(Input.UP) then
         Camera.MoveForward(camMoveStep)
-    elseif Input.IsHeld(Input.DOWN) then
+    elseif Input.IsHeldPlayer1(Input.DOWN) then
         Camera.MoveBackward(camMoveStep)
-    elseif Input.IsHeld(Input.LEFT) then
+    elseif Input.IsHeldPlayer1(Input.LEFT) then
         Camera.MoveLeft(camMoveStep)
-    elseif Input.IsHeld(Input.RIGHT) then
+    elseif Input.IsHeldPlayer1(Input.RIGHT) then
         Camera.MoveRight(camMoveStep)
-    elseif Input.IsHeld(Input.TRIANGLE) then
+    elseif Input.IsHeldPlayer1(Input.TRIANGLE) then
         Camera.SetPosition(Vec3.new(camPos.x,camPos.y-camMoveStep,camPos.z))
-    elseif Input.IsHeld(Input.CROSS) then
+    elseif Input.IsHeldPlayer1(Input.CROSS) then
         Camera.SetPosition(Vec3.new(camPos.x,camPos.y+camMoveStep,camPos.z))
         
     end
@@ -380,13 +380,13 @@ function onUpdate(self, dt)
     local camRot = Camera.GetRotation()
 
     -- Camera Rotation
-    if Input.IsHeld(Input.L1) then
+    if Input.IsHeldPlayer1(Input.L1) then
         Camera.SetRotation(Vec3.new(camRot.x,camRot.y-camRotStep,camRot.z))   
-    elseif Input.IsHeld(Input.R1) then
+    elseif Input.IsHeldPlayer1(Input.R1) then
         Camera.SetRotation(Vec3.new(camRot.x,camRot.y+camRotStep,camRot.z))
-    elseif Input.IsHeld(Input.L2) then
+    elseif Input.IsHeldPlayer1(Input.L2) then
         Camera.SetRotation(Vec3.new(camRot.x-camRotStep,camRot.y,camRot.z)) 
-    elseif Input.IsHeld(Input.R2) then
+    elseif Input.IsHeldPlayer1(Input.R2) then
         Camera.SetRotation(Vec3.new(camRot.x+camRotStep,camRot.y,camRot.z))
     end
 end
@@ -488,10 +488,10 @@ local played = false
 function onTriggerEnter()
     if played then return end
     played = true
-    Controls.SetEnabled(false)
+    Controls.SetEnabledPlayer1(false)
     Cutscene.Play("camera_flyover", {
         onComplete = function()
-            Controls.SetEnabled(true)
+            Controls.SetEnabledPlayer1(true)
             setStatus("Cutscene complete!")
         end
     })
@@ -533,7 +533,7 @@ function applyDamage(amount)
     updateHealthBar()
     if health <= 0 then
         setStatus("You died! Reloading...")
-        Controls.SetEnabled(false)
+        Controls.SetEnabledPlayer1(false)
         Persist.Set("score", 0)
         Scene.Load(Scene.GetIndex())  -- Reload current scene
     end

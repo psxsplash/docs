@@ -53,7 +53,7 @@ In scenes with a PSXPlayer and navigation regions, the navigation controller con
 The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
 
 ### Persist storage limited to 16 entries
-The cross-scene persistent data system supports only 16 key-value pairs. Exceeding this limit silently fails with no error.
+The cross-scene `Persist` data system supports only 16 key-value pairs (numbers only) and exceeding this limit silently fails. For larger or structured state — and for data that must survive power-off — use the [memory card API](../components/memory-cards.md), which serializes whole nested tables.
 
 ### Memory report is very approximate
 The memory preview in the Control Panel is very limited and approximate. Do not trust the numbers as accurate. A safe margin is when it shows around 50%.
@@ -64,7 +64,7 @@ The memory preview in the Control Panel is very limited and approximate. Do not 
 Some editor functionality may behave inconsistently on Linux. The primary development and testing platform is Windows.
 
 ### macOS support is experimental
-macOS (Apple Silicon) is now supported with automatic toolchain detection and PCSX-Redux downloads, but it has not been extensively tested. Build PATH detection for GUI apps has special handling, but edge cases may exist.
+macOS (Apple Silicon) is supported end-to-end via the setup wizard: it detects the toolchain across Homebrew paths, downloads and wraps PCSX-Redux from the `.dmg` (with a font fallback to avoid an ImGui crash), and guides you through the one-time MIPS compiler install through Homebrew. See [Installation → Platform notes](../getting-started/installation.md#platform-notes). It has not been as extensively tested as Windows, so edge cases may remain — especially around GUI-app PATH detection.
 
 ## Build Pipeline
 

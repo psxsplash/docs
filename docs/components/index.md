@@ -40,3 +40,9 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 |-----------|---------|
 | [Cutscenes](cutscenes.md) | Keyframed sequences with camera control |
 | [Animations](animations.md) | Multi-instance object/UI animations |
+
+## Persistence
+
+| Feature | Purpose |
+|---------|---------|
+| [Memory Cards](memory-cards.md) | Save games to a physical/emulated memory card |

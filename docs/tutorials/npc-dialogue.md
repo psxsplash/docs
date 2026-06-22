@@ -38,7 +38,7 @@ function startDialogue(lines)
     inDialogue = true
     dialogueLines = lines
     dialogueLine = 1
-    Controls.SetEnabled(false)
+    Controls.SetEnabledPlayer1(false)
     UI.SetCanvasVisible(dialogueCanvas, true)
     UI.SetText(dialogueText, dialogueLines[1])
 end
@@ -55,7 +55,7 @@ end
 
 function endDialogue()
     inDialogue = false
-    Controls.SetEnabled(true)
+    Controls.SetEnabledPlayer1(true)
     UI.SetCanvasVisible(dialogueCanvas, false)
 end
 
