@@ -40,37 +40,57 @@ Still in the **Dependencies** tab, the toolchain section shows the status of eac
 
 | Tool | Purpose | Install Method |
 |------|---------|---------------|
-| MIPS Cross-Compiler | Compiles C++ to PS1 machine code | Click "Install" |
-| GNU Make | Build system | Click "Install" |
+| MIPS Cross-Compiler | Compiles C++ to PS1 machine code | Click "Install" (Win/Linux) |
+| GNU Make | Build system | Click "Install" (Win/Linux) |
 | PCSX-Redux | PS1 emulator for testing | Click "Download" |
 | psxavenc | Audio conversion to ADPCM | Click "Download" |
 | mkpsxiso | ISO image creation | Click "Download" |
 
-Each tool shows a green **Ready** badge when installed. SplashEdit handles downloading and setting up all of these for you.
+Each tool shows a green **Ready** badge when installed. On **Windows** and **Linux**, SplashEdit handles downloading and setting up all of these for you. On **macOS**, some tools require manual Terminal commands first — the Dependencies tab shows yellow badges and the exact commands to run (see [macOS Setup](#macos-setup) below).
 
 !!! note "Minimum requirements"
     You need at minimum the **MIPS compiler** and **Make** to build. **PCSX-Redux** is needed for emulator testing and Lua compilation. **mkpsxiso** is only needed for ISO builds.
 
-### Platform notes
+### macOS Setup
 
-On **Windows** and **Linux**, the MIPS cross-compiler and Make are installed automatically when you click **Install**.
+On macOS, some tools can't be auto-installed. The Dependencies tab shows yellow badges for anything that requires manual action — **Needs setup**, **Needs CLT** (Xcode Command Line Tools), **Needs brew** (Homebrew), or **Needs deps** (build dependencies) — with the exact Terminal commands inline. Install the prerequisites below, then click **Refresh** — the badges will turn green.
 
-!!! info "macOS (Apple Silicon)"
-    There is no prebuilt MIPS compiler for macOS, so the setup wizard **guides you through a one-time manual install** instead of installing silently:
+**Prerequisites (run in Terminal before opening SplashEdit):**
 
-    1. **Xcode Command Line Tools** — required for the compiler. The wizard prompts you if they're missing.
-    2. **Homebrew** — the macOS package manager. If it's not installed, the wizard copies the official install command to your clipboard.
-    3. **MIPS cross-compiler** — installed through Homebrew using the grumpycoders formulae:
-        ```bash
-        brew install nikitabobko/tap/brew-install-path
-        curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-binutils.rb
-        curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-gcc.rb
-        brew install-path ./mipsel-none-elf-binutils.rb
-        brew install-path ./mipsel-none-elf-gcc.rb
-        ```
-       The wizard copies these commands to your clipboard for you.
+```bash
+# Install Xcode Command Line Tools (provides GNU Make)
+xcode-select --install
 
-    **PCSX-Redux** is downloaded automatically as a `.dmg`, unpacked, and wrapped so SplashEdit can launch it (bundled fonts are copied to `~/Library/Fonts/` and the download is de-quarantined). When checking for tools, SplashEdit also searches the Homebrew paths (`/opt/homebrew/bin`, `/usr/local/bin`) and accepts the `mipsel-none-elf` compiler variant in addition to `mipsel-linux-gnu`.
+# Install the MIPS cross-compiler helper
+brew install nikitabobko/tap/brew-install-path
+
+# Download the compiler formulas from pcsx-redux
+curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-binutils.rb
+curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-gcc.rb
+
+# Install (builds from source — expect 15-30 minutes)
+brew install-path ./mipsel-none-elf-binutils.rb
+brew install-path ./mipsel-none-elf-gcc.rb
+```
+
+!!! tip "Don't have Homebrew?"
+    Install it first: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+
+!!! info "Why so many steps?"
+    There is no prebuilt MIPS compiler for macOS. The formulas above are maintained by the [pcsx-redux](https://github.com/grumpycoders/pcsx-redux) project (the same team behind the PCSX-Redux emulator). The `brew-install-path` helper is needed because Homebrew no longer supports installing from local formula files directly.
+
+**psxavenc build dependencies** — psxavenc has no prebuilt macOS binary, so SplashEdit builds it from source. The Dependencies tab will show **Needs deps** until you install:
+
+```bash
+brew install meson pkg-config ffmpeg
+```
+
+Once installed, click **Refresh**, then **Download** to build psxavenc.
+
+The remaining tools are handled automatically:
+
+- **PCSX-Redux** — Click "Download." SplashEdit downloads the macOS ARM build, creates a launcher wrapper, and configures font paths.
+- **mkpsxiso** — Click "Download." Works the same as Windows/Linux.
 
 ## Verifying Installation
 
