@@ -73,10 +73,10 @@ local played = false
 function onTriggerEnter()
     if played then return end
     played = true
-    Controls.SetEnabled(false)
+    Controls.SetEnabledPlayer1(false)
     Cutscene.Play("camera_flyover", {
         onComplete = function()
-            Controls.SetEnabled(true)
+            Controls.SetEnabledPlayer1(true)
         end
     })
 end

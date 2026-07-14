@@ -30,6 +30,7 @@ Each track targets a specific property:
 | Object Position | Named GameObject | World-space XYZ |
 | Object Rotation | Named GameObject | Rotation in pi-units |
 | Object Active | Named GameObject | Show/hide (step only) |
+| Object UV Offset | Named GameObject | Texture UV scroll (X=U, Y=V, 0-255) |
 | UI Canvas Visible | Named canvas | Show/hide (step only) |
 | UI Element Visible | Named element | Show/hide (step only) |
 | UI Progress | Named element | Progress bar value |
@@ -40,6 +41,9 @@ Each track targets a specific property:
 
 For **Object** tracks, the Object Name field must match the GameObject's name in the scene.
 For **UI** tracks, set the Canvas Name and Element Name to match your [UI setup](ui.md).
+
+!!! note "Object UV Offset track"
+    The **Object UV Offset** track animates the texture UVs of the target object's polygons — perfect for scrolling water, conveyor belts, or flipbook effects. Keyframe values are integer `(U, V)` offsets in the 0-255 range. Which material/submesh it affects is chosen by the **UV Offset Material** field on the object's [PSXObjectExporter](objects.md#uv-offset-animation). The equivalent runtime call is [`Entity.SetUVOffset`](../lua/api-reference.md#texture-manipulation).
 
 ## Keyframes
 
@@ -98,7 +102,7 @@ Cutscene.Play("intro")
 Cutscene.Play("camera_flyover", {
     loop = false,
     onComplete = function()
-        Controls.SetEnabled(true)
+        Controls.SetEnabledPlayer1(true)
         setStatus("Cutscene done!")
     end
 })

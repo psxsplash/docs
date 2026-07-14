@@ -90,6 +90,7 @@ nav:
     - Cutscenes: components/cutscenes.md
     - Animations: components/animations.md
     - Loading Screens: components/loading-screens.md
+    - Memory Cards: components/memory-cards.md
   - Lua Scripting:
     - lua/index.md
     - Fixed-Point Math: lua/fixed-point.md

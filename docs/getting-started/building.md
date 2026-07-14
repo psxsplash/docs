@@ -45,6 +45,26 @@ When you click **BUILD & RUN**, SplashEdit runs this pipeline:
 | Memory Overlay | Shows RAM usage bar at runtime |
 | FPS Overlay | Shows frame counter at runtime |
 | Room Debug Overlay | Renders all room triangles in per-room colors for culling diagnosis |
+| Profiler Overlay | Shows a per-frame timing breakdown (pie chart) of where each frame is spent |
+
+## Profiler Overlay
+
+Enable **Profiler Overlay** in the build options to compile the runtime with an on-screen profiler. It draws a pie chart and a timing breakdown so you can see exactly where each frame's time goes:
+
+| Section | What it measures |
+|---------|------------------|
+| Animation | Cutscene / animation / skinned-mesh updates |
+| Rendering | Building the ordering table and drawing geometry |
+| Collision | Player collision against the world |
+| Lua | Your scripts and event callbacks |
+| Controls | Reading controllers and applying movement |
+| Navmesh | Navigation-region lookups and gravity |
+| Other | Everything not attributed to a section above |
+
+Use it to find your bottleneck before optimizing: if **Rendering** dominates, reduce polygons or tighten culling; if **Lua** dominates, move work out of `onUpdate`; if **Collision** dominates, simplify your collision meshes.
+
+!!! note "Debug build feature"
+    The profiler is a compile-time option (it passes `PROFILER=1` to the native Makefile and also exports the timings as PCSX-Redux variables). Leave it **off** for release builds — it adds overhead and draws over your game.
 
 ## OT Size and Bump Alloc Size
 

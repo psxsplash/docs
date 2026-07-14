@@ -75,6 +75,23 @@ A two-part bar with background and fill colors.
 | Initial Value | Starting fill percentage, 0-100 |
 | Start Visible | Initial visibility |
 
+### PSXUILine
+
+A straight colored line between two points (rendered as a GPU line primitive). Add it via **Add Component -> PSX/UI/PSX UI Line**.
+
+| Field | Description |
+|-------|-------------|
+| Element Name | Max 24 chars, used in Lua to find this element |
+| Line Color | Line color (RGB) |
+| Point 1 | First endpoint, in PS1 pixel coordinates |
+| Point 2 | Second endpoint, in PS1 pixel coordinates |
+| Start Visible | Initial visibility |
+
+Unlike the other elements, a line is defined by its two **endpoints** rather than a position + size, so its layout comes from the `Point 1` / `Point 2` fields. You can still toggle its visibility and change its color from Lua like any other element (`UI.SetVisible`, `UI.SetColor`). `UI.GetElementType` returns `4` for a line.
+
+!!! tip "Lines vs. immediate-mode drawing"
+    Use `PSXUILine` for lines that are part of an authored layout (HUD frames, dividers, gauges). For lines you compute on the fly each frame — debug rays, aim indicators, markers over 3D objects — use [`UI.DrawLine`](#drawing-directly-from-lua) instead.
+
 ## Coordinate System
 
 UI elements use **PS1 pixel coordinates** (320x240 resolution). Position and size come from the RectTransform in Unity. SplashEdit converts the Unity layout to PS1 coordinates at export time.
@@ -114,6 +131,22 @@ end
 ```
 
 See the [complete API reference](../lua/api-reference.md#ui) for all UI functions.
+
+## Drawing Directly from Lua
+
+Besides the authored elements above, Lua can draw **immediate-mode** primitives straight to the screen each frame — no Canvas element required. This is ideal for things you generate dynamically: debug overlays, aim lines, or markers pinned to moving 3D objects.
+
+```lua
+function onUpdate(self, dt)
+    -- A line and a gouraud-shaded triangle, in PS1 pixel coords (320x240)
+    UI.DrawLine({10, 120}, {310, 120}, {255, 0, 0})
+    UI.DrawTriangle(
+        {160, 40}, {120, 120}, {200, 120},
+        {255, 0, 0}, {0, 255, 0}, {0, 0, 255})
+end
+```
+
+These primitives are **not** persistent — they're drawn for the current frame only, so you must re-issue them every frame (typically from `onUpdate`). Combine with [`PSXMath.Convert3DTo2D`](../lua/api-reference.md#psxmath) to anchor them to a world position. See the [API reference](../lua/api-reference.md#immediate-mode-drawing) for exact signatures.
 
 ## Example: HUD with Score and Health
 

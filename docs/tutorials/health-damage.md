@@ -55,7 +55,7 @@ function applyDamage(amount)
 
     if health <= 0 then
         setStatus("You died! Reloading...")
-        Controls.SetEnabled(false)
+        Controls.SetEnabledPlayer1(false)
         Persist.Set("score", 0)       -- Reset score on death
         Scene.Load(Scene.GetIndex())  -- Reload current scene
     end
