@@ -60,6 +60,30 @@ When navigation regions exist (walkable floor is present), the **navigation cont
 !!! note "Camera API limitations"
     The Camera Lua API (`Camera.SetPosition`, `Camera.SetRotation`) is currently not very useful in scenes with a PSXPlayer and navigation, because the nav controller continuously overrides camera state. Use `Camera.FollowPsxPlayer(false)` to take manual control of the camera from Lua. The Camera API is also usable during cutscenes, which temporarily suspend the nav controller.
 
+### Attaching a camera (or anything else) to a moving entity
+
+!!! important "Unity's parent/child hierarchy is not carried to the runtime"
+    SplashEdit exports each object's transform, not the Unity scene hierarchy.
+    If you parent a camera or prop to a moving object in the Unity editor for
+    convenience, that parenting relationship does **not** exist at runtime —
+    the exported objects are flat. To attach something to a moving entity at
+    runtime, use `Entity.SetParent` from Lua.
+
+`Entity.SetParent(parent, child, offset)` snaps `child` to `parent`: the child is
+placed at the parent's position plus `offset` (a `Vec3` in the **parent's local
+space**) and its rotation is set to match the parent's. It is a one-shot snap,
+not a persistent link — call it every frame (typically from `onUpdate`) to keep
+the child attached as the parent moves or turns. See
+[`Entity.SetParent`](../lua/api-reference.md#parenting) for the full reference.
+
+```lua
+-- Keep a camera-mount object riding just above a moving platform
+function onUpdate(self, dt)
+    local platform = Entity.Find("Platform")
+    Entity.SetParent(platform, self, Vec3.new(FixedPoint.new(0), FixedPoint.new(1.5), FixedPoint.new(0)))
+end
+```
+
 ## GTE Scaling
 
 The **GTE Scaling** setting on the [Scene Exporter](scene-exporter.md) controls how Unity world units map to PS1 fixed-point coordinates. This is important to get right:
