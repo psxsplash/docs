@@ -5,8 +5,8 @@
 | Resource | Limit |
 |----------|-------|
 | Main RAM | 2MB total (engine + scene data + Lua VM) |
-| VRAM | 1MB (1024x512 at 16-bit) |
-| SPU RAM | 512KB (audio samples) |
+| [VRAM](glossary.md#vram) | 1MB (1024x512 at 16-bit) |
+| [SPU](glossary.md#spu-sound-processing-unit) RAM | 512KB (audio samples) |
 | CPU | 33MHz MIPS R3000A, no FPU, no cache |
 | GPU Triangles | ~1000-2000 visible per frame at 30fps |
 | SPU Voices | 24 simultaneous audio channels |
@@ -19,8 +19,8 @@ After exporting from the [Control Panel](../getting-started/control-panel.md), a
 
 | Section | Description |
 |---------|-------------|
-| Ordering Table (OT) | Depth sorting buckets - configurable via OT Size |
-| Bump Allocator | Per-frame GPU command buffer - configurable via Bump Alloc Size |
+| [Ordering Table (OT)](glossary.md#ot-ordering-table) | Depth sorting buckets - configurable via OT Size |
+| [Bump Allocator](glossary.md#bump-allocator) | Per-frame GPU command buffer - configurable via Bump Alloc Size |
 | Scene Data | Objects, nav regions, collision, UI, cutscenes, animations, skinned mesh data |
 | Other | Lua VM, engine state, stack |
 
@@ -30,8 +30,31 @@ After exporting from the [Control Panel](../getting-started/control-panel.md), a
 |---------|-------------|
 | Framebuffers | Two 320x240 buffers (fixed) |
 | Texture Atlases | Your scene textures |
-| CLUTs | Color palettes for 4-bit and 8-bit textures |
+| [CLUTs](glossary.md#clut-color-look-up-table) | Color palettes for 4-bit and 8-bit textures |
 | Font Column | System font + up to 3 custom fonts |
+
+### Fixed-Size Pools
+
+A few subsystems reserve a fixed-size pool at compile time instead of
+allocating per-scene. These are engine constants, not configurable from Unity.
+Per-entry sizes below were computed by compiling each struct's field layout
+standalone with the PS1's 32-bit pointers; the real MIPS compiler may pad
+slightly differently, so treat anything marked **approx.** as an estimate
+rather than an exact figure.
+
+| Pool | Constant | Count | Per entry | Total |
+|------|----------|-------|-----------|-------|
+| Sprites | `SPRITE_MAX` (`spritesystem.hh`) | 128 | approx. 48 bytes (`SpriteInstance`) | approx. 6 KB |
+| UI elements | `UI_MAX_ELEMENTS` (`uisystem.hh`) | 256 | approx. 108 bytes (`UIElement`, includes a per-type union) | approx. 27 KB - the engine's own comment in `uisystem.hh` estimates ~29 KB for this pool |
+| UI canvases | `UI_MAX_CANVASES` (`uisystem.hh`) | 24 | approx. 16 bytes (`UICanvas`) | approx. 384 bytes |
+| [SIO1](glossary.md#sio1) RX ring | `Sio1::c_rxRingSize` (`sio1.hh`) | 4096 bytes of payload | + 8 bytes of head/tail indices, exactly | 4104 bytes |
+| SIO1 TX ring | `Sio1::c_txRingSize` (`sio1.hh`) | 1024 bytes of payload | + 8 bytes of head/tail indices, exactly | 1032 bytes |
+| Per-agent runtime state | `AgentRuntimeState` (`scenemanager.hh`) | one per agent actor - an `eastl::vector` sized at scene load, no fixed max | approx. 224 bytes | approx. 224 bytes x agent count |
+
+!!! note "Sizes at time of writing"
+    These numbers reflect the engine source as of this doc pass and will drift
+    as the structs change. If you need an exact figure, check the struct
+    definitions directly rather than trusting this table long-term.
 
 ### Warning Thresholds
 
