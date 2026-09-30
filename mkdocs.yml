@@ -81,7 +81,10 @@ nav:
     - Textures & VRAM: components/textures.md
     - Skinned Meshes: components/skinned-meshes.md
     - Navigation & Collision: components/navigation.md
+    - Agents & AI: components/agents.md
     - Rooms & Portals: components/rooms-portals.md
+    - Sprites: components/sprites.md
+    - Tilemaps: components/tilemaps.md
     - UI System: components/ui.md
     - Custom Fonts: components/fonts.md
     - Audio: components/audio.md
@@ -91,6 +94,7 @@ nav:
     - Animations: components/animations.md
     - Loading Screens: components/loading-screens.md
     - Memory Cards: components/memory-cards.md
+    - Networking: components/networking.md
   - Lua Scripting:
     - lua/index.md
     - Fixed-Point Math: lua/fixed-point.md
@@ -104,8 +108,10 @@ nav:
     - Animated Doors: tutorials/animated-doors.md
     - Scene Transitions: tutorials/scene-transitions.md
     - Health & Damage: tutorials/health-damage.md
+    - Networked Multiplayer: tutorials/networking.md
   - Reference:
     - reference/index.md
+    - Changelog: reference/changelog.md
     - Multi-Scene Projects: reference/multi-scene.md
     - Memory & Performance: reference/memory.md
     - Known Issues: reference/known-issues.md

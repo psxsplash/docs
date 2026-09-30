@@ -11,6 +11,7 @@ Step-by-step guides for building common game mechanics with SplashEdit. Each tut
 | [Animated Doors](animated-doors.md) | A door that opens and closes with animation and sound |
 | [Scene Transitions](scene-transitions.md) | Portals that transport the player between scenes |
 | [Health & Damage](health-damage.md) | Hazard zones, healing zones, and a color-coded health bar |
+| [Networked Multiplayer](networking.md) | Two consoles on a link cable, then many through a server |
 
 ## Prerequisites
 

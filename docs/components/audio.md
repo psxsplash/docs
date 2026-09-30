@@ -19,6 +19,17 @@ You can put multiple `PSXAudioClip` components on the same GameObject or spread 
 | Sample Rate | 22050 | Target sample rate in Hz (8000-44100). Lower = smaller, worse quality. |
 | Loop | false | Whether the clip loops when played |
 | Default Volume | 100 | Default playback volume (0-127) |
+| Trim Leading Silence | false | Cut dead air off the **start** of the clip at export |
+
+!!! tip "Trim Leading Silence is off on purpose"
+    It rewrites your asset on the way to the disc, and a lead-in you put there
+    deliberately is not the exporter's to remove. Turn it on for a clip whose file
+    genuinely begins with dead air: that silence is latency between the frame that
+    asks for the sound and the frame you hear it, and it occupies SPU RAM for the
+    whole round.
+
+    The **tail** is always kept. On a looping clip the trailing silence is the
+    interval the sound repeats at.
 
 ## Playing Audio from Lua
 

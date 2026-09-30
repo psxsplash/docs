@@ -39,6 +39,43 @@ A textured image on the PS1 screen.
 !!! danger "Image texture requirements"
     UI image textures must also be **power-of-two** in both dimensions, max **256x256**, just like object textures.
 
+### PSXUISprite
+
+One **cell of a sprite sheet**, drawn as a UI element.
+
+| Field | Description |
+|-------|-------------|
+| Element Name | Max 24 chars, used in Lua to find this element |
+| Sprite Sheet | The `PSXSpriteSheet` this cell comes from |
+| Cell | Which cell, left-to-right then top-to-bottom from 0 |
+| Tint | 128 grey is *no tint* — see the warning above |
+| Start Visible | Initial visibility |
+
+This is the element to build **screen furniture** out of: panels, bezels, gauges,
+lamps, keys, digits, button glyphs. A `PSXUIImage` owns a texture, so a panel
+made of forty of them is forty textures in the VRAM atlas; a PSXUISprite points
+at a cell of a sheet that is already resident, so a whole panel costs the sheet
+it was drawn from and nothing else.
+
+The inspector shows the sheet as a **clickable grid** — pick the cell instead of
+typing an index — and a *Snap size* button resizes the RectTransform to the
+sheet's natural cell size.
+
+At run time the cell can change:
+
+```lua
+UI.SetFrame(handle, cell)   -- re-point at another cell of the same sheet
+UI.GetFrame(handle)         -- current cell, or -1 if not sheet-backed
+```
+
+That is what lets a digit become another digit or a chevron point somewhere else
+without the Lua creating anything.
+
+!!! note "The sheet is pulled into VRAM automatically"
+    A sheet referenced only by PSXUISprite elements — a task panel with no world
+    sprites at all — still joins the atlas. You do not also need a `PSXSprite`
+    reference for it.
+
 ### PSXUIBox
 
 A solid-color rectangle.
@@ -95,6 +132,45 @@ Unlike the other elements, a line is defined by its two **endpoints** rather tha
 ## Coordinate System
 
 UI elements use **PS1 pixel coordinates** (320x240 resolution). Position and size come from the RectTransform in Unity. SplashEdit converts the Unity layout to PS1 coordinates at export time.
+
+## Draw Order
+
+Two rules, both the same as Unity's own:
+
+* **Later sibling in the hierarchy draws in front.** The first child of a canvas
+  is the backmost — put a panel's backdrop first and its contents after it.
+* **Higher canvas Sort Order draws in front.**
+
+## Seeing it: the PSX Screen overlay
+
+The scene view cannot show a UI canvas and a tilemap together — a canvas lives in
+the XY plane and a tilemap in XZ — so *"what will the television show"* is not a
+camera angle.
+
+Open the scene view's overlay menu (the **⋮** in its top-right corner) and tick
+**PSX Screen**. It composites the whole frame at exact PS1 pixels: the tilemap
+floor, then every canvas in sort order, with text drawn glyph-by-glyph in the
+real font and its real advance widths. Click an element in the preview to select
+it in the hierarchy; middle-drag (or alt-drag) scrolls the tilemap behind it.
+
+`PlayStation 1 > Show Tilemap in Scene View` additionally draws the painted map
+in the 3D viewport, on the XZ plane where the engine puts it.
+
+## Limits
+
+| | |
+|---|---|
+| Elements, **whole scene** | 256 |
+| Canvases per scene | 24 |
+| Element / canvas name | 24 characters |
+| `UI.SetText` string | 63 characters |
+
+!!! danger "Overflow is silent"
+    The loader **clamps** a canvas's element count against what is left of the
+    pool and carries on: elements past the cap simply do not exist, and
+    `UI.FindElement` returns `-1` for them. Half a panel goes missing with
+    nothing in any log to say why. The exporter logs an error when a scene goes
+    over, and the PSXCanvas inspector shows the scene-wide total.
 
 ## Controlling UI from Lua
 

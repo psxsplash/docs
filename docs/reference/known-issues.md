@@ -52,6 +52,24 @@ In scenes with a PSXPlayer and navigation regions, the navigation controller con
 ### Camera.LookAt is incomplete
 The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
 
+### Debug.DrawLine and Debug.DrawBox draw nothing
+Both are registered and accept their arguments, but neither queues a primitive, so nothing appears on screen. Calls are harmless and can be left in a script.
+
+### onPathBlocked is never fired
+The agent callback is recognised and dispatchable, but nothing in the engine raises it. An agent whose destination is unreachable stops moving with no event. Poll `Agent.IsMoving` against a timeout instead. See [Agents](../components/agents.md).
+
+### Agent onTargetSeen passes nil for the player
+An agent with no explicit `Agent.SetTarget` senses the player by default, and the player has no GameObject, so the callback's `target` argument is `nil`. Treat `nil` as "the player". Hearing a target sets the alert state but does not fire `onTargetSeen` at all.
+
+### Sprites have no per-sprite alpha
+`Sprite.SetColor` tints; it cannot fade. A translucent overlay drawn as a dimmed rectangle comes out fully opaque. To darken part of the screen, draw a mask with a hole cut in it. See [Sprites](../components/sprites.md).
+
+### Tilemap movement deltas are whole pixels
+`Tile.MoveActor` truncates its deltas to integers, so a speed below one pixel per frame rounds to zero and the actor never moves. Accumulate in sub-pixels and spend whole ones. See [Tilemaps](../components/tilemaps.md).
+
+### Network version and scene mismatches are terminal and silent
+`Net.State()` 3 (version mismatch) and 4 (scene mismatch) latch: the console stops talking and nothing retries or times out. Draw the state somewhere the player can see it, or a mismatched pair of discs looks identical to an unplugged cable. See [Networking](../components/networking.md).
+
 ### Persist storage limited to 16 entries
 The cross-scene `Persist` data system supports only 16 key-value pairs (numbers only) and exceeding this limit silently fails. For larger or structured state — and for data that must survive power-off — use the [memory card API](../components/memory-cards.md), which serializes whole nested tables.
 
