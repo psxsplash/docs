@@ -55,6 +55,16 @@ SplashEdit automatically quantizes your Unity textures to PS1-compatible formats
 
 The result is a palette-indexed texture (4-bit or 8-bit) or direct-color (16-bit) packed into VRAM.
 
+## Tiling and Wrapping
+
+!!! warning "Texture window tiling/wrapping is not supported"
+    SplashEdit does not expose the GPU's texture window repeat/wrap mode.
+    Materials that rely on Unity's tiling/offset to repeat a texture across a
+    surface will not repeat on PS1. For a repeating surface, either author a
+    pre-tiled texture (bake the repeats into the source image) or split the
+    geometry into multiple UV-unique faces that each sample a single copy of
+    the texture.
+
 ## Color Palettes (CLUTs)
 
 4-bit and 8-bit textures each have a **CLUT** (Color Look-Up Table) stored separately in VRAM. CLUTs are small (16 or 256 entries at 16 bits each) and are packed into available VRAM space.
