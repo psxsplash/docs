@@ -1,7 +1,8 @@
 # Networking
 
-psxsplash games play together over **SIO1**, the PlayStation's serial port - the
-link cable port, not the controller port. Two consoles can share one cable
+psxsplash games play together over **[SIO1](../reference/glossary.md#sio1)**,
+the PlayStation's serial port - the link cable port, not the controller port
+([SIO0](../reference/glossary.md#sio0)). Two consoles can share one cable
 directly, or many can meet on a server.
 
 This page is the reference. For a worked example of both topologies, see the

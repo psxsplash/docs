@@ -1,9 +1,9 @@
 # Changelog
 
-## Unreleased - since 2.3.0
+## 2.4.0 - since 2.3.0
 
 Four new subsystems, and the Lua API to drive them. The Lua surface grows from 142
-functions in 20 tables to 232 in 25, and from 13 event callbacks to 22.
+functions in 20 tables to 234 in 25, and from 13 event callbacks to 22.
 
 ### Sprites
 

@@ -97,3 +97,8 @@ The remaining tools are handled automatically:
 When all required tools show green badges, the Control Panel status bar shows **"Ready"**. You're good to go.
 
 If SplashEdit detects a missing toolchain on first launch, it automatically opens the Control Panel to guide you through setup.
+
+## Troubleshooting
+
+!!! warning "Avoid spaces in the project path"
+    Avoid spaces in the project path. Put your Unity project (and the cloned psxsplash native project) somewhere with no spaces in the full path.

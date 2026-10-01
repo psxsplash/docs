@@ -82,7 +82,7 @@ The memory preview in the Control Panel is very limited and approximate. Do not 
 Some editor functionality may behave inconsistently on Linux. The primary development and testing platform is Windows.
 
 ### macOS support is experimental
-macOS (Apple Silicon) is supported end-to-end via the setup wizard: it detects the toolchain across Homebrew paths, downloads and wraps PCSX-Redux from the `.dmg` (with a font fallback to avoid an ImGui crash), and guides you through the one-time MIPS compiler install through Homebrew. See [Installation → Platform notes](../getting-started/installation.md#platform-notes). It has not been as extensively tested as Windows, so edge cases may remain — especially around GUI-app PATH detection.
+macOS (Apple Silicon) is supported end-to-end via the setup wizard: it detects the toolchain across Homebrew paths, downloads and wraps PCSX-Redux from the `.dmg` (with a font fallback to avoid an ImGui crash), and guides you through the one-time MIPS compiler install through Homebrew. See [Installation → macOS Setup](../getting-started/installation.md#macos-setup). It has not been as extensively tested as Windows, so edge cases may remain — especially around GUI-app PATH detection.
 
 ## Build Pipeline
 

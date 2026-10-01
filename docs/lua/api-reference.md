@@ -171,6 +171,8 @@ function onUpdate(self, dt)
 end
 ```
 
+See also: [attaching a camera to a moving entity](../components/player.md#attaching-a-camera-or-anything-else-to-a-moving-entity), including why Unity's own parent/child hierarchy does not carry over.
+
 ### Self Properties
 
 Object scripts have shorthand access via `self`:

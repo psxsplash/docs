@@ -27,6 +27,14 @@ This auto-generates a bitmap texture and calculates per-character advance widths
 
 The grid should contain ASCII characters 0x20-0x7F (96 glyphs total) laid out left-to-right, top-to-bottom.
 
+!!! note "Font size is baked into the asset"
+    A `PSXFontAsset`'s `Font Size` (the `FontSize` field on the asset) is baked
+    into the generated bitmap when you click **Generate Bitmap**, and is
+    completely independent of any Unity `Text` component's font size setting.
+    Changing a `Text` component's size in the Inspector does not regenerate or
+    rescale the PSXFontAsset - to change the rendered size on PS1, change the
+    **Font Size** on the asset itself and regenerate.
+
 ## PSXFontAsset Fields
 
 | Field | Description |
