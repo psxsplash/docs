@@ -11,7 +11,7 @@ Go to **GameObject -> PlayStation 1 -> Scene Exporter**. SplashEdit enforces a s
 | Field | Description | Default |
 |-------|-------------|---------|
 | Scene Type | **Interior** or **Exterior** (see below) | Exterior |
-| GTE Scaling | Vertex position scale factor. Higher = more precision, but can overflow on large scenes. | 100.0 |
+| GTE Scaling | Unity units per PS1 unit; every coordinate is divided by it. Higher = more range and draw distance, coarser positions. See [GTE Scaling](player.md#gte-scaling). | 100.0 |
 | Scene Lua File | Optional [Lua script](../lua/index.md) that runs at the scene level. Used for initialization, UI setup, and shared functions. | None |
 | Fog Color | RGB color for distance fog. Also used as the background/clear color. | Black |
 | Fog Enabled | Toggle fog on/off | Off |
