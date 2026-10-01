@@ -30,14 +30,20 @@ You work entirely in Unity. SplashEdit handles texture quantization, mesh conver
 - **VRAM packing** with deduplication
 - **Lua scripting** for all game logic (event-driven architecture)
 - **UI system** with canvases, text, images, progress bars, and custom fonts
+- **[Agents & AI](components/agents.md)** that path, see, hear and patrol natively, with no per-frame Lua required
+- **[Sprites](components/sprites.md)** - 2D sheets and animations for HUDs, markers, effects, or a fully 2D game
+- **[Tilemaps](components/tilemaps.md)** - grid-based 2D levels with per-tile walkability
 - **Cutscene and animation** system with keyframed tracks, easing, and time-based playback
 - **Skinned mesh animation** with bone-based character animation and sub-frame interpolation
 - **Navigation mesh** generation via DotRecast
 - **Room/portal occlusion** for interior scenes
 - **Audio** conversion to PS1 SPU ADPCM format
+- **[Networking](components/networking.md)** - serial multiplayer over SIO1, cable or server
 - **Multi-scene** support with persistent data across scene loads
 - **One-click build** to emulator, real hardware (via serial), or ISO disc image
 - **Loading screens** with their own lightweight binary format
+
+See the [changelog](reference/changelog.md) for what's new in each release.
 
 ## Quick Links
 

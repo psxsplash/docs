@@ -75,22 +75,35 @@ nav:
     - Building & Running: getting-started/building.md
   - Scene Components:
     - components/index.md
-    - Scene Exporter: components/scene-exporter.md
-    - Objects & Meshes: components/objects.md
-    - Player: components/player.md
-    - Textures & VRAM: components/textures.md
-    - Skinned Meshes: components/skinned-meshes.md
-    - Navigation & Collision: components/navigation.md
-    - Rooms & Portals: components/rooms-portals.md
-    - UI System: components/ui.md
-    - Custom Fonts: components/fonts.md
-    - Audio: components/audio.md
-    - Interactables: components/interactables.md
-    - Trigger Boxes: components/trigger-boxes.md
-    - Cutscenes: components/cutscenes.md
-    - Animations: components/animations.md
-    - Loading Screens: components/loading-screens.md
-    - Memory Cards: components/memory-cards.md
+    - Core:
+      - Scene Exporter: components/scene-exporter.md
+      - Objects & Meshes: components/objects.md
+      - Player: components/player.md
+    - Visual:
+      - Textures & VRAM: components/textures.md
+      - Skinned Meshes: components/skinned-meshes.md
+      - Sprites: components/sprites.md
+      - Tilemaps: components/tilemaps.md
+      - Custom Fonts: components/fonts.md
+      - Loading Screens: components/loading-screens.md
+    - Spatial:
+      - Navigation & Collision: components/navigation.md
+      - Agents & AI: components/agents.md
+      - Rooms & Portals: components/rooms-portals.md
+    - Interactivity:
+      - UI System: components/ui.md
+      - Audio: components/audio.md
+      - Interactables: components/interactables.md
+      - Trigger Boxes: components/trigger-boxes.md
+    - Sequencing:
+      - Cutscenes: components/cutscenes.md
+      - Animations: components/animations.md
+    - Multiplayer:
+      - Networking: components/networking.md
+      - Networked Multiplayer Tutorial: tutorials/networking.md
+      - psnl_server (GitHub): https://github.com/psxsplash/psnl_server
+    - Persistence:
+      - Memory Cards: components/memory-cards.md
   - Lua Scripting:
     - lua/index.md
     - Fixed-Point Math: lua/fixed-point.md
@@ -104,9 +117,12 @@ nav:
     - Animated Doors: tutorials/animated-doors.md
     - Scene Transitions: tutorials/scene-transitions.md
     - Health & Damage: tutorials/health-damage.md
+    - Networked Multiplayer: tutorials/networking.md
   - Reference:
     - reference/index.md
+    - Changelog: reference/changelog.md
     - Multi-Scene Projects: reference/multi-scene.md
     - Memory & Performance: reference/memory.md
     - Known Issues: reference/known-issues.md
+    - Glossary: reference/glossary.md
     - Contributing: reference/contributing.md

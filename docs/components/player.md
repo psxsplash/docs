@@ -60,15 +60,41 @@ When navigation regions exist (walkable floor is present), the **navigation cont
 !!! note "Camera API limitations"
     The Camera Lua API (`Camera.SetPosition`, `Camera.SetRotation`) is currently not very useful in scenes with a PSXPlayer and navigation, because the nav controller continuously overrides camera state. Use `Camera.FollowPsxPlayer(false)` to take manual control of the camera from Lua. The Camera API is also usable during cutscenes, which temporarily suspend the nav controller.
 
+### Attaching a camera (or anything else) to a moving entity
+
+!!! important "Unity's parent/child hierarchy is not carried to the runtime"
+    SplashEdit exports each object's transform, not the Unity scene hierarchy.
+    If you parent a camera or prop to a moving object in the Unity editor for
+    convenience, that parenting relationship does **not** exist at runtime —
+    the exported objects are flat. To attach something to a moving entity at
+    runtime, use `Entity.SetParent` from Lua.
+
+`Entity.SetParent(parent, child, offset)` snaps `child` to `parent`: the child is
+placed at the parent's position plus `offset` (a `Vec3` in the **parent's local
+space**) and its rotation is set to match the parent's. It is a one-shot snap,
+not a persistent link — call it every frame (typically from `onUpdate`) to keep
+the child attached as the parent moves or turns. See
+[`Entity.SetParent`](../lua/api-reference.md#parenting) for the full reference.
+
+```lua
+-- Keep a camera-mount object riding just above a moving platform
+function onUpdate(self, dt)
+    local platform = Entity.Find("Platform")
+    Entity.SetParent(platform, self, Vec3.new(FixedPoint.new(0), FixedPoint.new(1.5), FixedPoint.new(0)))
+end
+```
+
 ## GTE Scaling
 
-The **GTE Scaling** setting on the [Scene Exporter](scene-exporter.md) controls how Unity world units map to PS1 fixed-point coordinates. This is important to get right:
+The **GTE Scaling** setting on the [Scene Exporter](scene-exporter.md) controls how Unity world units map to PS1 fixed-point coordinates. The exporter divides every Unity coordinate by it, so with the default 100, 100 Unity units become 1.0 on the PlayStation, stored in 4.12 fixed point (steps of 1/4096).
 
-- **Higher values** (e.g., 200) give more precision for small details but can overflow on large scenes. Good for small, detailed environments.
-- **Lower values** (e.g., 50) allow larger scenes but with less positional precision. Good for big open areas.
+- **Higher values** shrink the scene on the PlayStation side: more room for big scenes, and coarser positions. Good for large open areas.
+- **Lower values** give finer positions for small, detailed rooms, at the cost of range.
 - **Default (100)** is a reasonable middle ground.
 
-A good approach: if your scene is roughly 20x20 Unity units, the default 100 works well. If your scene is 100x100 units, consider lowering to 50. If it's a tiny detailed room, consider raising to 200. Watch for visual jitter or objects snapping to grid positions - that means your precision is too low.
+Watch for visual jitter or objects snapping to grid positions - that means GTE Scaling is too high for the detail you have. Objects stretching, wrapping or vanishing far from the origin mean it is too low.
+
+**Draw distance follows from it.** Geometry more than 4 PS1 units from the camera is not drawn: the ordering table has 16384 slots at 1/4096 of a unit each. Multiply by GTE Scaling for Unity units, so the default 100 gives a 400-unit draw distance and 200 gives 800. If distant scenery disappears, raise GTE Scaling.
 
 ## Gizmos
 

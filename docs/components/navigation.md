@@ -14,9 +14,33 @@ SplashEdit uses [DotRecast](https://github.com/ikpil/DotRecast) (a C# port of Re
 8. Portals (connections between adjacent regions) are computed with height deltas
 9. The result is exported as binary data in the splashpack
 
-## Navigation Settings
+## Where the settings live
 
-All navigation settings are configured directly on the `PSXPlayer` component inspector. The nav builder UI is integrated into the player inspector — there is no separate Nav Region Builder window.
+Navigation settings live in one of two places, and a scene needs exactly one of them:
+
+| Component | Use it when |
+|---|---|
+| `PSXPlayer` | the scene has a player. Settings sit on the player inspector. |
+| `PSXNavigationSettings` | the scene has **no** player - an AI-only scene, a cutscene, a networked scene where every character is an authored actor |
+
+Either way the nav builder UI is in that component's inspector; there is no separate Nav Region Builder window. The tables below apply to both.
+
+### PSXNavigationSettings
+
+Add a `PSXNavigationSettings` component to any GameObject (Add Component, then search for its name). It carries the same bake settings as the player, plus:
+
+| Field | Default | Description |
+|---|---|---|
+| Agent Height | 1.8 | Reference capsule height for the bake |
+| Agent Radius | 0.5 | Reference capsule radius for the bake |
+| Spawn Anchor | none | Transform used to choose the starting nav region. Falls back to the component's own position. |
+
+This is what makes [agents](agents.md) work in a scene with no `PSXPlayer` - the agent inspector reports an error if neither component is present, since agents cannot path without regions.
+
+!!! note "PSXPlayer wins"
+    If a scene has both, the exporter reads the player and ignores the
+    `PSXNavigationSettings` entirely - including its Spawn Anchor. Keep the
+    settings on the player in any scene that has one.
 
 ### Core Settings
 

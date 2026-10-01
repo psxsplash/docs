@@ -171,6 +171,8 @@ function onUpdate(self, dt)
 end
 ```
 
+See also: [attaching a camera to a moving entity](../components/player.md#attaching-a-camera-or-anything-else-to-a-moving-entity), including why Unity's own parent/child hierarchy does not carry over.
+
 ### Self Properties
 
 Object scripts have shorthand access via `self`:
@@ -277,6 +279,32 @@ if Input.IsPressedPlayer2(Input.CROSS) then jump(2) end
 !!! note "Button events fire for both players"
     The `onButtonPress` / `onButtonRelease` object callbacks fire for presses on **either** controller. They receive only the button id, not the player number — if you need to tell players apart, poll `Input.*Player1` / `Input.*Player2` directly (e.g. in `onUpdate`).
 
+### Driving something other than the player
+
+```lua
+Input.BindToActor(player, actor)
+```
+Point a controller's built-in locomotion at any [actor](#actor). `player` is `1` or
+`2`. The pad then walks and turns that actor with the engine's normal movement,
+collision and camera handling, instead of the `PSXPlayer`.
+
+```lua
+Input.GetBoundActor(player)   -- -> actor id as a plain number
+```
+
+```lua
+-- hand pad 1 back to the player
+Input.BindToActor(1, Actor.GetPlayer())
+```
+
+Binding is how you build split-screen-free local co-op, possessable NPCs, or a
+[networked](../components/networking.md) scene where the local avatar is one of
+several authored actors rather than the scene's `PSXPlayer`.
+
+!!! warning "GetBoundActor returns an id, not a handle"
+    It gives you the actor **index** as a number. Pass it through
+    `Actor.FindByIndex` before calling any other `Actor.*` function on it.
+
 ---
 
 ## Camera
@@ -352,6 +380,23 @@ The relationship between H and vertical FOV is: $\text{vFOV} = 2 \cdot \arctan\l
 | 120 | ~90° (default) |
 | 200 | ~62° |
 | 400 | ~33° (telephoto) |
+
+### Following an actor
+
+```lua
+Camera.SetFollowTarget(actor)
+```
+Point the follow camera at any [actor](#actor) instead of the player. The camera
+keeps its usual orbit behaviour; only the thing it orbits changes.
+
+```lua
+Camera.GetFollowTarget()   -- -> actor handle, or nil if following nothing
+Camera.ClearFollowTarget() -- stop following; the camera holds its last transform
+```
+
+This is how you hand the camera to a vehicle, a spectator target, or the local
+player's avatar in a [networked](../components/networking.md) scene where the
+`PSXPlayer` is not the thing being controlled.
 
 !!! warning "Navigation controller override"
     In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Manual camera changes via these functions will be overwritten on the next frame. The Camera API is primarily useful during cutscenes, which temporarily suspend the navigation controller.
@@ -451,6 +496,36 @@ UI.SetPosition(handle, x, y)
 UI.GetPosition(handle)                   -- Returns x, y
 UI.SetSize(handle, w, h)
 UI.GetSize(handle)                       -- Returns w, h
+```
+
+!!! warning "These are ANCHOR-relative, not screen coordinates"
+    `x` and `y` are the element's offset from its anchor, which is what the
+    splashpack stores; the runtime adds the anchor's own position when it draws.
+    For a centre-anchored canvas on a 320x240 display that is a (160, 120)
+    difference. `GetPosition` and `SetPosition` speak the same space, so reading
+    a position and writing it back is exact — but passing a screen coordinate to
+    `SetPosition` is not.
+
+### Sheet-backed Images (PSX UI Sprite)
+
+A `PSXUISprite` element draws one cell of a sprite sheet. Because the whole
+sheet is already resident in the VRAM atlas, changing which cell an element
+shows is free — no upload, no allocation.
+
+```lua
+UI.SetFrame(handle, cell)                -- Point at another cell of its sheet
+UI.GetFrame(handle)                      -- Current cell, or -1 if not sheet-backed
+```
+
+`UI.GetFrame` returning `-1` is how you ask whether an element can be re-framed
+at all: a plain `PSXUIImage` owns a texture rather than a cell of a grid, and
+`UI.SetFrame` on one does nothing rather than pointing its UVs at whatever
+happens to sit beside it in the atlas.
+
+```lua
+local h = UI.FindElement(canvas, "digit1")
+UI.SetFrame(h, DIGIT0 + value)           -- draw a different digit
+UI.SetColor(h, 90, 230, 120)             -- tint it (128 = the art's own colours)
 ```
 
 ### Immediate-Mode Drawing
@@ -946,3 +1021,472 @@ Development tools.
 Debug.Log(message)
 ```
 Print to the console. Visible in PCSX-Redux stdout when running on emulator.
+
+```lua
+Debug.DrawLine(fromVec3, toVec3 [, colorVec3])
+Debug.DrawBox(centerVec3, sizeVec3 [, colorVec3])
+```
+
+!!! warning "The draw calls are accepted but nothing is drawn"
+    Both functions validate their arguments and return without queueing anything.
+    They are safe to leave in a script - they simply have no visible effect yet.
+    See [Known Issues](../reference/known-issues.md).
+
+---
+
+## Actor
+
+An **actor** is a movable thing with a position and rotation: the player, or any
+scene object you address by name. Actor handles are what the sprite and tilemap
+systems bind to, and what the networking layer replicates.
+
+!!! warning "Actor handles are not Entity handles"
+    `Entity.*` functions take an object handle from `Entity.Find`; `Actor.*`
+    functions take an actor handle from `Actor.Find`. Calling `Entity.GetPosition`
+    on an actor handle returns `nil` rather than raising, so the mistake shows up
+    later as a nil-index error somewhere unrelated. Use `Actor.GetEntity(actor)`
+    to cross over deliberately.
+
+### Finding actors
+
+```lua
+Actor.GetPlayer()         -- the player's actor
+Actor.Find(name)          -- by GameObject name -> actor or nil
+Actor.FindByIndex(index)  -- by actor id -> actor or nil
+Actor.GetCount()          -- how many actors the scene has
+Actor.IsPlayer(actor)     -- true if this is the player
+Actor.GetName(actor)      -- GameObject name -> string or nil
+Actor.GetEntity(actor)    -- the matching Entity handle, for Entity.* calls
+```
+
+### Position and rotation
+
+```lua
+Actor.GetPosition(actor)          -- -> {x, y, z} of FixedPoint
+Actor.SetPosition(actor, vec3)
+Actor.GetRotation(actor)          -- -> {x, y, z}
+Actor.SetRotation(actor, vec3)
+```
+
+```lua
+local x, z = Actor.GetPositionXZ(actor)
+```
+The same position as **two plain integers**, in pixels, on the ground plane.
+
+!!! tip "Prefer GetPositionXZ in per-frame code"
+    `GetPosition` builds four Lua tables per call (the vector, plus a FixedPoint
+    for each component). Called for every actor every frame that is thousands of
+    short-lived tables a second for the collector to deal with on a 33MHz CPU.
+    `GetPositionXZ` allocates nothing.
+
+### Navigation
+
+```lua
+Actor.GetNavRegion(actor)         -- current nav region index, or nil
+Actor.FindPath(actor, x, y, z)    -- path to a point, for Agent movement
+```
+
+---
+
+## Agent
+
+An **agent** is an actor with a `PSXAgent` component: it walks the navigation mesh
+by itself, can see and hear other actors, and runs a small state machine. Movement,
+sensing and patrolling are all native, so an NPC that walks a route and reacts to
+the player needs no per-frame Lua.
+
+Every function here takes an **actor handle**, the same one `Actor.Find` returns.
+Calls against an actor that has no `PSXAgent` are ignored, and the getters return
+`false` or `0`.
+
+See [Agents](../components/agents.md) for the component and its inspector fields.
+
+### Identity and lifetime
+
+```lua
+Agent.IsAgent(actor)              -- does this actor have a PSXAgent? -> bool
+Agent.SetEnabled(actor, enabled)  -- stop/resume ticking this agent
+Agent.IsEnabled(actor)            -- -> bool
+```
+
+A disabled agent keeps its state, target and waypoints; it simply stops moving and
+stops sensing. Use it for an NPC that should freeze during a cutscene.
+
+### Movement
+
+```lua
+Agent.MoveTo(actor, vec3)         -- walk to a world position
+Agent.MoveTo(actor, targetActor)  -- walk to another actor, updated as it moves
+Agent.SetTarget(actor, target)    -- follow another actor
+Agent.Stop(actor)                 -- cancel the current move
+Agent.IsMoving(actor)             -- -> bool
+Agent.GetTarget(actor)            -- the actor being followed, or nil
+```
+
+`MoveTo` accepts either a `Vec3` or another actor handle, and it paths through the
+navigation mesh rather than walking in a straight line. Arrival fires
+[`onTargetReached`](events.md#agent-callbacks); a route that cannot be completed
+fires `onPathBlocked`.
+
+```lua
+Agent.SetSpeed(actor, unitsPerSecond)
+Agent.GetSpeed(actor)             -- -> number
+```
+
+Speed is in the same world units per second as the player's **Move Speed**.
+
+### Vision and hearing
+
+```lua
+Agent.CanSee(actor, target)       -- line of sight, range and FOV -> bool
+Agent.CanHear(actor, target)      -- within hearing range -> bool
+```
+
+`CanSee` is a real test: range, the field-of-view cone, and line of sight through
+the nav-region portal graph. `CanHear` is range only, with no geometry check, so a
+target behind a wall is still heard.
+
+```lua
+Agent.SetVisionRange(actor, units)
+Agent.GetVisionRange(actor)
+Agent.SetVisionAngle(actor, halfAngleDegrees)  -- 0..180; 180 = omnidirectional
+Agent.SetHearingRange(actor, units)
+Agent.GetHearingRange(actor)
+```
+
+!!! warning "SetVisionAngle takes the HALF angle"
+    The inspector's **Vision Fov Degrees** is the full cone; this function takes
+    half of it. A 90 degree cone in the inspector is `Agent.SetVisionAngle(a, 45)`
+    from Lua. Passing 90 here gives a 180 degree cone, and an NPC that notices
+    things beside it.
+
+```lua
+Agent.SetAlertTimeout(actor, frames)
+Agent.GetLastKnownPos(actor)      -- -> {x, y, z} or nil
+```
+
+After losing sight of a target the agent stays alert for `frames` (at 30fps) before
+`onTargetLost` fires. `GetLastKnownPos` is where the target was last sensed, which
+is what an "investigate" state wants to walk to.
+
+### State machine
+
+```lua
+Agent.GetState(actor)             -- -> number
+Agent.SetState(actor, state)      -- fires onStateExit then onStateEnter
+```
+
+| Value | State | Meaning |
+|---|---|---|
+| 0 | Idle | standing still |
+| 1 | Patrol | walking the waypoint list |
+| 2 | Seek | moving toward a target |
+| 3 | Flee | moving away from a target |
+| 4 | Attack | in contact with a target |
+| 5 | Wander | moving without a target |
+| 6 | Investigate | heading for the last known position |
+| 7 | Custom | yours; the engine never enters it on its own |
+
+The engine drives these transitions from sensing, and the per-state animation set
+on the component plays automatically. Your script reacts through the
+[agent callbacks](events.md#agent-callbacks) rather than polling `GetState`.
+
+Define your own constants; there is no `Agent.STATE_*` table:
+
+```lua
+local IDLE, PATROL, SEEK, FLEE = 0, 1, 2, 3
+local ATTACK, WANDER, INVESTIGATE, CUSTOM = 4, 5, 6, 7
+```
+
+### Patrol waypoints
+
+```lua
+Agent.AddWaypoint(actor, vec3)        -- max 8
+Agent.ClearWaypoints(actor)
+Agent.SetPatrolEnabled(actor, enabled)
+```
+
+Waypoints are usually authored on the component and only touched from Lua when the
+route changes at runtime. They are visited in order and the list loops; reaching one
+fires `onPatrolPoint(self, index)`.
+
+---
+
+## Sprite
+
+2D sprites drawn between the 3D scene and the UI. Sheets and animations are
+authored in Unity as `PSXSpriteSheet` assets and referenced by name.
+
+### Sheets and animations
+
+```lua
+Sprite.SheetIndex(name)   -- -> index, or -1 if the sheet is not in this scene
+Sprite.AnimIndex(name)    -- -> index, or -1
+```
+
+Both take the names given in the sprite sheet asset. A missing name returns `-1`
+rather than raising, so check it once at scene start instead of every frame.
+
+### Creating
+
+```lua
+local id = Sprite.Create(sheet)   -- sheet name or index -> sprite id, or -1
+Sprite.Destroy(id)
+Sprite.Count()                    -- live sprites
+```
+
+!!! warning "The pool is 128 sprites"
+    `Sprite.Create` returns `-1` when the pool is full, and every other `Sprite.*`
+    call ignores an invalid id silently. Check the id once on creation. Create
+    sprites at scene start and re-frame them; creating and destroying per frame
+    fragments the pool.
+
+### Placing
+
+```lua
+Sprite.SetPos(id, x, y)                          -- screen pixels
+Sprite.SetWorldPos(id, x, y, z)                  -- world space
+Sprite.BindToActor(id, actor, plane, offX, offY) -- follow an actor
+```
+
+`BindToActor` is the usual way to attach a sprite to a character: the sprite
+tracks the actor's position every frame with no per-frame Lua. `plane` is `0` for
+the screen plane (the actor's X/Z becomes the 2D ground plane) and the offsets
+shift the sprite from that point, usually up and left to centre it on the actor's
+feet.
+
+```lua
+Sprite.SetViewOffset(x, y)     -- scroll ALL non-pinned sprites (the camera)
+Sprite.GetViewOffset()         -- -> x, y
+Sprite.SetIgnoreViewOffset(id, true)   -- pin this one to the screen (HUD)
+```
+
+### Frames and animation
+
+```lua
+Sprite.SetFrame(id, frame)            -- absolute cell in the sheet
+Sprite.PlayAnim(id, anim, restart)    -- anim name or index
+Sprite.StopAnim(id)
+```
+
+`restart` defaults to **false**, so re-issuing the same animation every frame -
+the natural way to write a movement script - does not pin it to frame 0.
+
+```lua
+Sprite.SetFacingFromYaw(id, animBase, dirCount, yaw)
+```
+Pick one of `dirCount` directional animations starting at `animBase`, from a yaw
+in the same units as `Entity.SetRotationY` (1.0 is 180 degrees). The animation's
+current frame and timer carry across the switch, so a turning character does not
+stutter back to frame 0.
+
+### Appearance
+
+```lua
+Sprite.SetVisible(id, visible)
+Sprite.IsVisible(id)
+Sprite.SetFlip(id, flipX, flipY)
+Sprite.SetColor(id, r, g, b)     -- 0..255; 128,128,128 is neutral
+Sprite.SetSize(id, w, h)         -- 0,0 uses the sheet's cell size
+Sprite.SetLayer(id, layer)       -- 0 is frontmost
+```
+
+!!! warning "There is no alpha"
+    `SetColor` tints; it cannot fade. The hardware has no per-sprite alpha in this
+    path, so a "dimmed" overlay is simply an opaque one. To darken part of the
+    screen, draw a mask with a hole in it rather than a translucent rectangle.
+
+---
+
+## Tile
+
+Query the scene's tilemap: walkability, line of sight, and the objects painted
+into it. See the [Tilemaps guide](../components/tilemaps.md).
+
+```lua
+Tile.Active()      -- does this scene have a tilemap?
+Tile.MapSize()     -- -> width, height, tileW, tileH (0,0,0,0 if inactive)
+```
+
+### Collision
+
+```lua
+Tile.Walkable(x, z)              -- pixel coords -> boolean
+Tile.RayClear(x0, z0, x1, z1)    -- unobstructed line of sight -> boolean
+```
+
+**A scene with no tilemap reports everything walkable**, so a movement script
+written against `Tile.Walkable` keeps working unchanged in scenes that have none.
+Off the edge of a map that *does* exist is not walkable.
+
+### Moving
+
+```lua
+local nx, nz = Tile.MoveActor(actor, dx, dz, ignoreWalls)
+```
+Move an actor by a delta, stopping at walls, and return where it ended up. Each
+axis is tested separately, so running into a wall at an angle slides along it
+instead of stopping dead.
+
+`ignoreWalls` (optional) moves without consulting the map at all, for anything
+present but not physical - a ghost, a spectator camera, a debug free-fly.
+
+!!! warning "Deltas are whole pixels"
+    `dx` and `dz` are truncated to integers. A speed below 1 pixel per frame
+    therefore rounds to zero and the actor never moves, and scaling a speed of 2
+    by 0.707 for a diagonal gives 1, which is a 50% cut rather than the 29% you
+    wanted. Accumulate sub-pixel movement in Lua and spend whole pixels:
+
+    ```lua
+    local SUB = 256                       -- 1/256 pixel units
+    accX = accX + vx                      -- vx in sub-pixels per frame
+    local dx = (accX - accX % SUB) / SUB  -- whole pixels to spend
+    accX = accX - dx * SUB                -- keep the remainder
+    ```
+
+### Painted objects
+
+```lua
+Tile.ObjectCount()
+local kind, id, x, z = Tile.ObjectAt(i)   -- 1-based; nil if out of range
+```
+
+`kind` is whatever byte your tileset painted. **The engine attaches no meaning to
+it** - define your own constants and make sure they match what the map was
+painted with.
+
+---
+
+## Net
+
+Serial multiplayer over SIO1: two consoles on a link cable, or many through a
+server. See the [Networked Multiplayer tutorial](../tutorials/networking.md) for
+a worked example of both.
+
+### Session
+
+```lua
+Net.Connect(baud, rxMode)   -- both optional; defaults are correct
+Net.Disconnect()
+Net.IsConnected()
+Net.IsHost()                -- true if this console holds slot 0
+Net.LocalSlot()             -- our slot, or 255 before the handshake completes
+Net.PlayerCount()
+Net.State()                 -- 0 disconnected, 1 connecting, 2 connected,
+                            -- 3 version mismatch, 4 scene mismatch
+```
+
+**Call `Net.Connect()` with no arguments.** The baud defaults to the engine's own
+constant, and the receive strategy resolves itself: interrupt-driven on real
+hardware, polled under an emulator. Passing a literal baud here is how the console
+and the far end end up at different rates, and a baud mismatch is
+indistinguishable from an unplugged cable.
+
+!!! warning "States 3 and 4 are terminal and silent"
+    A version or scene mismatch latches, and the console stops talking. Nothing
+    times out and nothing retries, so a screen that only says "connecting" will say
+    it forever. Check `Net.State()` and tell the player which it was.
+
+### Replicating avatars
+
+```lua
+Net.SetLocalAvatar(actor)          -- the actor we send
+Net.SetRemoteAvatar(slot, actor)   -- the actor a given slot drives
+Net.SetReplicationEnabled(on)
+```
+
+The engine sends the local avatar's transform automatically and applies incoming
+ones to the actors you have mapped. Interpolation between snapshots is handled for
+you.
+
+!!! tip "Turn replication off in scenes with no avatar"
+    A menu or a lobby has nothing worth sending, and sending anyway is not free: a
+    console in an avatar-less scene was measured spending 894 B/s broadcasting the
+    position of a player that did not exist, while the message it was waiting for
+    queued behind that traffic.
+
+### Shared world objects
+
+```lua
+Net.RegisterActor(actor)      -- host-authoritative sync for this actor
+Net.UnregisterActor(actor)
+Net.SyncActor(actor)          -- push this actor's self.sync table now
+```
+
+Registered actors are replicated by whoever holds slot 0. `SyncActor` sends the
+object's `self.sync` table; it returns `false` if there is no such table or it
+exceeds the size budget.
+
+### Messages
+
+```lua
+Net.Send(eventId, arg)        -- two integers, reliable
+Net.SendData(payload)         -- an arbitrary byte string, reliable
+Net.ReliableQueueDepth()      -- messages waiting to go out
+```
+
+Received on the other side as:
+
+```lua
+function onNetEvent(id, arg) end
+function onNetData(payload) end
+```
+
+`Net.Send` carries a fixed `(id, arg)` pair, which cannot express a name or a
+list. `Net.SendData` carries **bytes** - build them with `string.char` and read
+them with `string.byte`. The engine never looks inside the payload; the format is
+entirely yours.
+
+!!! warning "Check the return value"
+    Both return `false` when the reliable queue is full. A dropped payload is
+    otherwise silent, and the symptom appears later as the far end disagreeing
+    about what happened. Queue it and retry:
+
+    ```lua
+    local outbox = {}
+    local function send(payload)
+        if #outbox == 0 and Net.SendData(payload) then return true end
+        outbox[#outbox + 1] = payload      -- keep order; a vote must not
+        return false                       -- overtake the meeting it belongs to
+    end
+    ```
+
+### Surviving a scene load
+
+```lua
+Net.SetPersistent(true)   -- before Scene.Load
+Net.IsPersistent()
+```
+
+`Scene.Load` normally tears the session down. With persistence set, the slot and
+the link survive, and the console re-announces itself in the new scene rather than
+arriving as a brand new player. This is what lets a lobby hand over to a game
+scene without everyone being assigned new slots.
+
+### Diagnostics
+
+```lua
+local s = Net.Stats()
+```
+Returns a table of link counters. On a console the screen is the only channel
+there is, so these exist to be drawn:
+
+| Field | Means |
+|---|---|
+| `bytesRx`, `bytesTx` | totals |
+| `goodput`, `inbound` | bytes per second, measured |
+| `rttMillis`, `rttSamples` | round trip; 0 samples means no reply has ever come back |
+| `rxIrqs` | receive interrupts serviced. 0 with bytes arriving means the interrupt never fired |
+| `frames`, `crcErrors`, `resyncs` | framing health |
+| `rxOverrunErrors` | the 8-byte hardware FIFO overflowed: our latency |
+| `rxFramingErrors` | bit timing disagreement: cable, baud, or grounding |
+| `txPending`, `txCapacity` | outbound queue depth |
+| `baud` | what the console actually programmed, for comparing with the far end |
+| `heapKB` | heap in use, for spotting a leak during play |
+
+!!! tip "Reading them"
+    `rxOverrunErrors` and `rxFramingErrors` look alike and mean opposite things.
+    Overruns are the console being too slow to drain the FIFO, and get better with
+    a lower baud. Framing errors are the two ends disagreeing about bit timing, and
+    point at the cable or the adapter. Both get worse with baud, which is why one
+    combined counter is not enough to tell them apart.

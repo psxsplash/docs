@@ -16,6 +16,8 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 |-----------|---------|
 | [Textures & VRAM](textures.md) | How textures are quantized and packed |
 | [Skinned Meshes](skinned-meshes.md) | Bone-based character animation |
+| [Sprites](sprites.md) | 2D sprite sheets, animations and HUD elements |
+| [Tilemaps](tilemaps.md) | Grid-based 2D levels with per-tile walkability |
 | [Custom Fonts](fonts.md) | Bitmap fonts for UI text |
 | [Loading Screens](loading-screens.md) | Shown during scene transitions |
 
@@ -24,7 +26,10 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 | Component | Purpose |
 |-----------|---------|
 | [Navigation & Collision](navigation.md) | Walkable surfaces and collision |
-| [Rooms & Portals](rooms-portals.md) | Interior scene occlusion culling || [Walkoff Zones](navigation.md#walkoff-zones) | Allow the player to walk off specific nav region edges |
+| [Walkoff Zones](navigation.md#walkoff-zones) | Allow the player to walk off specific nav region edges |
+| [Agents & AI](agents.md) | NPCs that path, see, hear and patrol natively |
+| [Rooms & Portals](rooms-portals.md) | Interior scene occlusion culling |
+
 ## Interactivity
 
 | Component | Purpose |
@@ -40,6 +45,12 @@ Everything you can place in a SplashEdit scene. Each component is a Unity MonoBe
 |-----------|---------|
 | [Cutscenes](cutscenes.md) | Keyframed sequences with camera control |
 | [Animations](animations.md) | Multi-instance object/UI animations |
+
+## Multiplayer
+
+| Feature | Purpose |
+|---------|---------|
+| [Networking](networking.md) | Serial multiplayer over SIO1, cable or server |
 
 ## Persistence
 
