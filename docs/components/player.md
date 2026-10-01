@@ -86,13 +86,15 @@ end
 
 ## GTE Scaling
 
-The **GTE Scaling** setting on the [Scene Exporter](scene-exporter.md) controls how Unity world units map to PS1 fixed-point coordinates. This is important to get right:
+The **GTE Scaling** setting on the [Scene Exporter](scene-exporter.md) controls how Unity world units map to PS1 fixed-point coordinates. The exporter divides every Unity coordinate by it, so with the default 100, 100 Unity units become 1.0 on the PlayStation, stored in 4.12 fixed point (steps of 1/4096).
 
-- **Higher values** (e.g., 200) give more precision for small details but can overflow on large scenes. Good for small, detailed environments.
-- **Lower values** (e.g., 50) allow larger scenes but with less positional precision. Good for big open areas.
+- **Higher values** shrink the scene on the PlayStation side: more room for big scenes, and coarser positions. Good for large open areas.
+- **Lower values** give finer positions for small, detailed rooms, at the cost of range.
 - **Default (100)** is a reasonable middle ground.
 
-A good approach: if your scene is roughly 20x20 Unity units, the default 100 works well. If your scene is 100x100 units, consider lowering to 50. If it's a tiny detailed room, consider raising to 200. Watch for visual jitter or objects snapping to grid positions - that means your precision is too low.
+Watch for visual jitter or objects snapping to grid positions - that means GTE Scaling is too high for the detail you have. Objects stretching, wrapping or vanishing far from the origin mean it is too low.
+
+**Draw distance follows from it.** Geometry more than 4 PS1 units from the camera is not drawn: the ordering table has 16384 slots at 1/4096 of a unit each. Multiply by GTE Scaling for Unity units, so the default 100 gives a 400-unit draw distance and 200 gives 800. If distant scenery disappears, raise GTE Scaling.
 
 ## Gizmos
 
