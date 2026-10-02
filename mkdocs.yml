@@ -78,6 +78,7 @@ nav:
     - Core:
       - Scene Exporter: components/scene-exporter.md
       - Objects & Meshes: components/objects.md
+      - Point Lights: components/point-lights.md
       - Player: components/player.md
     - Visual:
       - Textures & VRAM: components/textures.md
@@ -90,6 +91,7 @@ nav:
       - Navigation & Collision: components/navigation.md
       - Agents & AI: components/agents.md
       - Rooms & Portals: components/rooms-portals.md
+      - World Streaming: components/world-streaming.md
     - Interactivity:
       - UI System: components/ui.md
       - Audio: components/audio.md

@@ -586,7 +586,7 @@ Play music tracks burned onto the disc as CD-DA audio. CD-DA only works when run
 ```lua
 Audio.PlayCDDA(trackNo)
 ```
-Start playing a CD-DA audio track by track number.
+Start playing a CD-DA audio track by track number. Ignored in a scene with [World Streaming](../components/world-streaming.md) on.
 
 ```lua
 Audio.PauseCDDA()
@@ -621,6 +621,41 @@ Set the CD-DA output volume for left and right channels independently.
 
 !!! warning "ISO builds only"
     CD-DA audio requires a disc image. It will not work when running via PCdrv (emulator or real hardware targets). Use the ISO build target to include CD-DA tracks.
+
+---
+
+## Light
+
+Control runtime point lights. See [Point Lights](../components/point-lights.md) for setup. Only lights set to **Realtime** or **Mixed** in Unity exist at runtime; **Baked** lights are part of the vertex colors and cannot be found.
+
+```lua
+Light.Find(name)
+```
+Find a light by its GameObject name. Returns a light handle (a number), or `nil` if there is no such light.
+
+```lua
+Light.SetPosition(light, vec3)
+```
+Move a light. Takes a Vec3 table `{x, y, z}` in world coordinates, the same units as [`Entity.SetPosition`](#position).
+
+```lua
+Light.SetColor(light, r, g, b)           -- RGB 0-255 (clamped)
+Light.SetRadius(light, radius)           -- Same units as positions; light fades to zero at this distance
+Light.SetIntensity(light, intensity)     -- 1.0 = normal brightness
+Light.SetEnabled(light, enabled)         -- true / false
+```
+
+```lua
+-- Example: a torch that follows an object
+local torch = Light.Find("Torch")
+
+function onUpdate(self, dt)
+    Light.SetPosition(torch, Entity.GetPosition(self))
+end
+```
+
+!!! note
+    Light functions do nothing if the handle is not a valid light.
 
 ---
 
