@@ -2,8 +2,8 @@
 
 World Streaming lets a scene be bigger than the PS1's RAM. The static level geometry is split into regions that are loaded off the CD as the camera moves, and dropped again when it moves away.
 
-!!! info "Next release"
-    World Streaming arrives in the next release. It is not in 2.4.0.
+!!! info "Not in 2.4.0"
+    World Streaming is on the `main` branch of psxsplash and SplashEdit. It is not in 2.4.0.
 
 ## What Streams
 

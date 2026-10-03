@@ -2,8 +2,8 @@
 
 Point lights light your meshes with a coloured, fading glow. They can be baked into the mesh at export, or run live on the PS1 so they can move, change colour and switch on and off from Lua.
 
-!!! info "Next release"
-    Runtime Point Lights arrive in the next release. They are not in 2.4.0.
+!!! info "Not in 2.4.0"
+    Runtime Point Lights are on the `main` branch of psxsplash and SplashEdit. They are not in 2.4.0.
 
 ## Setup
 

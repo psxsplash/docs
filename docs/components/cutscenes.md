@@ -55,8 +55,8 @@ For **Light** tracks, see [Light Tracks](#light-tracks).
 
 Light tracks drive a [runtime Point Light](point-lights.md). They write the same fields as the [Light Lua API](../lua/api-reference.md#light), so a light moved by a track behaves like one moved from a script.
 
-!!! info "Next release"
-    Light tracks arrive in the next release. They are not in 2.4.0. An older engine ignores them.
+!!! info "Not in 2.4.0"
+    Light tracks are on the `main` branch of psxsplash and SplashEdit. They are not in 2.4.0. An older engine ignores them.
 
 In the timeline, the add-track menu has a **Light** section next to **Object**. Pick a light, then **Position**, **Color**, **Intensity**, **Range** or **Enabled**.
 

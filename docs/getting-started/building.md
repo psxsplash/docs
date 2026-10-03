@@ -49,8 +49,8 @@ When you click **BUILD & RUN**, SplashEdit runs this pipeline:
 
 ## Engine Features
 
-!!! info "Next release"
-    Feature-trimmed builds arrive in the next release. They are not in 2.4.0.
+!!! info "Not in 2.4.0"
+    Feature-trimmed builds are on the `main` branch of psxsplash and SplashEdit. They are not in 2.4.0.
 
 The engine is built with only the features your game uses. There is nothing to configure. After each scene exports, SplashEdit reads the exported splashpack and scans your Lua scripts for the namespaces they call, then builds the engine with the matching `FEATURES` list. If a scene cannot be scanned or the export fails, the full engine is built.
 
