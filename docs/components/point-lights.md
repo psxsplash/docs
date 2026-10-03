@@ -53,6 +53,10 @@ Default lighting is per triangle (flat), so large triangles look faceted. Every 
 - Turn on **Preview Point Lights** on the [Scene Exporter](scene-exporter.md) to draw lines from the selected mesh to its lights. Yellow lines are used, red lines are dropped.
 - A red box marks meshes over the 4-light cap.
 
+## Controlling Lights from Cutscenes and Animations
+
+[Cutscenes](cutscenes.md#light-tracks) and [animations](animations.md) can keyframe a runtime light's position, color, intensity, range and on/off state. Baked lights cannot be targeted. See [Light Tracks](cutscenes.md#light-tracks).
+
 ## Controlling Lights from Lua
 
 ```lua

@@ -37,9 +37,17 @@ Same as cutscene tracks, minus camera:
 | UI Color | Named element |
 | Rumble Small | Controller (global) |
 | Rumble Large | Controller (global) |
+| Light Position | Named [Point Light](point-lights.md) |
+| Light Color | Named Point Light |
+| Light Intensity | Named Point Light |
+| Light Radius | Named Point Light |
+| Light Enabled | Named Point Light (step only) |
 
 !!! tip "Animated textures"
     The **Object UV Offset** track scrolls a textured object's UVs for water, lava, conveyor belts, and flipbook effects. See [UV Offset Animation](objects.md#uv-offset-animation) for setup (including the per-object **UV Offset Material** field).
+
+!!! note "Light tracks"
+    Light tracks work the same as in cutscenes. See [Light Tracks](cutscenes.md#light-tracks). They need an engine newer than 2.4.0.
 
 ## Lua Playback
 

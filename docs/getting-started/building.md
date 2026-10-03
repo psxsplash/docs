@@ -47,6 +47,19 @@ When you click **BUILD & RUN**, SplashEdit runs this pipeline:
 | Room Debug Overlay | Renders all room triangles in per-room colors for culling diagnosis |
 | Profiler Overlay | Shows a per-frame timing breakdown (pie chart) of where each frame is spent |
 
+## Engine Features
+
+!!! info "Next release"
+    Feature-trimmed builds arrive in the next release. They are not in 2.4.0.
+
+The engine is built with only the features your game uses. There is nothing to configure. After each scene exports, SplashEdit reads the exported splashpack and scans your Lua scripts for the namespaces they call, then builds the engine with the matching `FEATURES` list. If a scene cannot be scanned or the export fails, the full engine is built.
+
+The features are `net`, `ui`, `sprites`, `skin`, `cutscene`, `lights`, `streaming`, `memcard`, `nav`, `agents` and `collision`. `agents` also brings in `nav`.
+
+The export log lists each feature as in or out with the reason, for example `in Memory card: scripts using MemCard: lobby`. The same list is written to `PSXBuild/engine-features.txt`.
+
+If a script calls a namespace whose feature was left out, the call raises a Lua error naming the feature, and the game keeps running. To get the feature back, use the namespace in a script that is exported, then export again. The build includes it automatically.
+
 ## Profiler Overlay
 
 Enable **Profiler Overlay** in the build options to compile the runtime with an on-screen profiler. It draws a pie chart and a timing breakdown so you can see exactly where each frame's time goes:
@@ -99,6 +112,7 @@ The build process creates files in `[Unity Project]/PSXBuild/`:
 | `scene_0.splashpack` | Scene 0 data |
 | `scene_0.loading` | Scene 0 loading screen (if assigned) |
 | `manifest.bin` | Scene list metadata |
+| `engine-features.txt` | Which engine features were built in or left out, and why |
 | `psxsplash.ps-exe` | Compiled PS1 executable |
 | `lua_src/` | Extracted Lua source files |
 | `lua_compiled/` | Compiled Lua bytecode |

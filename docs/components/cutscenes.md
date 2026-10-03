@@ -38,12 +38,33 @@ Each track targets a specific property:
 | UI Color | Named element | RGB color |
 | Rumble Small | Controller (global) | On/off (step only) |
 | Rumble Large | Controller (global) | Motor speed 0–255 (interpolated) |
+| Light Position | Named [Point Light](point-lights.md) | World-space XYZ |
+| Light Color | Named Point Light | RGB color |
+| Light Intensity | Named Point Light | Intensity |
+| Light Radius | Named Point Light | Range |
+| Light Enabled | Named Point Light | On/off (step only) |
 
 For **Object** tracks, the Object Name field must match the GameObject's name in the scene.
 For **UI** tracks, set the Canvas Name and Element Name to match your [UI setup](ui.md).
+For **Light** tracks, see [Light Tracks](#light-tracks).
 
 !!! note "Object UV Offset track"
     The **Object UV Offset** track animates the texture UVs of the target object's polygons — perfect for scrolling water, conveyor belts, or flipbook effects. Keyframe values are integer `(U, V)` offsets in the 0-255 range. Which material/submesh it affects is chosen by the **UV Offset Material** field on the object's [PSXObjectExporter](objects.md#uv-offset-animation). The equivalent runtime call is [`Entity.SetUVOffset`](../lua/api-reference.md#texture-manipulation).
+
+## Light Tracks
+
+Light tracks drive a [runtime Point Light](point-lights.md). They write the same fields as the [Light Lua API](../lua/api-reference.md#light), so a light moved by a track behaves like one moved from a script.
+
+!!! info "Next release"
+    Light tracks arrive in the next release. They are not in 2.4.0. An older engine ignores them.
+
+In the timeline, the add-track menu has a **Light** section next to **Object**. Pick a light, then **Position**, **Color**, **Intensity**, **Range** or **Enabled**.
+
+- Baked lights are listed greyed out. Set the light's Mode to Realtime or Mixed to use it.
+- A new keyframe starts from the light's current state. The keyframe inspector has a color picker, an intensity slider, a range field, an enabled toggle, and **Capture from light**.
+- Scrubbing previews on the Unity light and restores it when the preview stops.
+
+At export, a track is skipped with a warning if its light is not exported (Baked, not a point light, inactive, or past the 16-light scene limit). A warning is also shown when a Position or Range key goes past the +-8 GTE unit range of a track.
 
 ## Keyframes
 
@@ -130,7 +151,7 @@ Cutscenes use time-based advancement internally (0.12 fixed-point delta time). P
 
 Cutscenes can be edited in the **PSX Timeline** editor window (**PlayStation 1 > Timeline Editor** from the menu, or double-click a cutscene clip asset). The timeline provides:
 
-- A visual track layout with camera, object, and UI tracks
+- A visual track layout with camera, object, light, and UI tracks
 - Audio event and skin anim event editing on the timeline
 - Drag-and-drop keyframe editing with interpolation mode selection
 - Play/scrub controls to preview the cutscene in the Scene view
