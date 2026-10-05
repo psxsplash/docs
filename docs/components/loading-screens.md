@@ -24,11 +24,14 @@ When a scene loads:
 3. Add child elements:
     - `PSXUIImage` for a background or logo
     - `PSXUIText` for "Loading..." text
-    - `PSXUIProgressBar` for a loading indicator
+    - `PSXUIProgressBar` for a loading indicator, with its **Element Name** set to `loading`
     - `PSXUIBox` for solid-color backgrounds
 4. Save as a Prefab
 
 The loading screen uses the same [UI system](ui.md) and [font pipeline](fonts.md) as regular canvases.
+
+!!! note "The progress bar must be named `loading`"
+    The engine fills only a progress bar whose Element Name is exactly `loading`, from 0 to 100 as the scene loads. A bar with any other name stays at its initial value. The loading screen is drawn directly while the scene loads, so animation tracks and `UI.SetProgress` don't run on it.
 
 ## Sharing Loading Screens
 
