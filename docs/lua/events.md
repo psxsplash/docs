@@ -17,10 +17,6 @@ function onCreate(self)
     -- Use for initialization. Entity.Find() works here for any object.
 end
 
-function onDestroy(self)
-    -- Called when the object is destroyed.
-end
-
 function onEnable(self)
     -- Called when Entity.SetActive(self, true) activates the object.
 end
