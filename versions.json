@@ -1,8 +1,9 @@
 [
   {
     "version": "2.4.0",
-    "title": "2.4.0",
+    "title": "2.4 (Unity editor, legacy)",
     "aliases": [
+      "unity",
       "latest"
     ]
   },
