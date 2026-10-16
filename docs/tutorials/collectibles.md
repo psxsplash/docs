@@ -1,74 +1,51 @@
 # Tutorial: Collectible Pickups
 
-Build objects the player walks into to collect, with score tracking and sound effects.
+Objects the player walks into to collect, with a score on the HUD and a sound.
 
-## What You'll Learn
+You will use `onCollideWithPlayer`, `Entity.SetActive`, `Audio.Play`, `Persist` and UI text.
 
-- `onCollideWithPlayer` callback
-- `Entity.SetActive` to hide objects
-- `Audio.Play` for sound effects
-- `Persist` for score tracking
-- UI text updates
-- Scene-to-object function sharing via `_G`
+## 1. The HUD
 
-## Step 1: Create the HUD
+1. Open the **UI** tab. In the canvas picker choose **New canvas** and name it `hud` in the inspector.
+2. Click **+** in the element list and add a **Text**. Name it `score` and set its text to `Score: 0`. Drag it to the top left.
 
-1. Create a Canvas (**GameObject -> UI -> Canvas**)
-2. Add `PSXCanvas` with name `"HUD"`, startVisible = true
-3. Create a child Text element, add `PSXUIText` with name `"ScoreText"` and default text `"Score: 0"`
+## 2. The scene script
 
-## Step 2: Scene Script
-
-Create `scene.lua` and assign it to the Scene Exporter's **Scene Lua File**:
+Select nothing, and under **Script** in the scene settings click **New Lua**. Paste:
 
 ```lua
-local hudCanvas = -1
 local scoreText = -1
 
 function onSceneCreationEnd()
-    hudCanvas = UI.FindCanvas("HUD")
-    if hudCanvas >= 0 then
-        scoreText = UI.FindElement(hudCanvas, "ScoreText")
-        UI.SetCanvasVisible(hudCanvas, true)
+    local hud = UI.FindCanvas("hud")
+    if hud >= 0 then
+        scoreText = UI.FindElement(hud, "score")
         updateScoreDisplay()
     end
 end
 
 function updateScoreDisplay()
     if scoreText >= 0 then
-        local score = Persist.Get("score") or 0
-        UI.SetText(scoreText, "Score: " .. score)
+        UI.SetText(scoreText, "Score: " .. (Persist.Get("score") or 0))
     end
 end
 
 function addScore(amount)
-    local score = (Persist.Get("score") or 0) + amount
-    Persist.Set("score", score)
+    Persist.Set("score", (Persist.Get("score") or 0) + amount)
     updateScoreDisplay()
-end
-
-function setStatus(msg)
-    Debug.Log("[Status] " .. msg)
 end
 
 -- Publish so object scripts can call these
 _G.addScore = addScore
-_G.setStatus = setStatus
-_G.updateScoreDisplay = updateScoreDisplay
 ```
 
-## Step 3: Collectible Script
+## 3. The pickup
 
-Create `collectible.lua`:
+1. Add a **Mesh** object (a small crate or gem) and give it a **Collider** with shape **Dynamic**. Only dynamic colliders are tested against the player, so only they fire `onCollideWithPlayer`.
+2. On the object click **New Lua** in its Script component, and paste:
 
 ```lua
 local collected = false
-
-function onCreate(self)
-    collected = false
-    Debug.Log("Collectible created at "
-        .. self.position.x .. "," .. self.position.y .. "," .. self.position.z)
-end
 
 function onCollideWithPlayer(self)
     if collected then return end
@@ -76,44 +53,26 @@ function onCollideWithPlayer(self)
 
     Audio.Play("collect", 127, 64)
     Entity.SetActive(self, false)
-
     addScore(100)
-    setStatus("Collected! +100 points")
 end
 ```
 
-## Step 4: Create Collectible Objects
+3. Duplicate the object (**Ctrl+D**) a few times and place the copies around the scene. Each copy has its own `collected` flag.
 
-1. Create 3 small mesh GameObjects (cubes, spheres, gems, etc.)
-2. Add `PSXObjectExporter` to each
-3. Assign `collectible.lua` to each one's **Lua File** field
-4. Position them around the scene where the player can walk into them
+## 4. The sound
 
-!!! tip
-    Each object gets its own instance of the script with its own `collected` flag. You can place as many collectibles as you want using the same script.
+Add an **Audio clip** object, pick a short WAV, and set **Name** to `collect`. See [Audio](../editor/audio.md).
 
-## Step 5: Add Audio
+## 5. Play
 
-1. Add a `PSXAudioClip` component to any GameObject in the scene
-2. Set **Clip Name** to `"collect"`
-3. Assign a short pickup sound to the **Clip** field
+Press **Play** (**F5**), click the game, and walk into a pickup. It disappears, plays the sound, and the score goes up by 100.
 
-## Step 6: Build and Test
+## How it works
 
-1. Open the Control Panel (++ctrl+shift+l++)
-2. Click **BUILD & RUN**
-3. Walk into each collectible - you should hear the sound, see the object disappear, and see the score update
+1. `onCollideWithPlayer` fires every frame the player overlaps the object. The `collected` flag makes it run once.
+2. `Entity.SetActive(self, false)` hides the object.
+3. `addScore` runs in the scene script, because it was published to `_G`. It stores the score in `Persist`, which survives scene loads, and updates the text.
 
-## How It Works
+## With blocks
 
-1. When the player's collision capsule overlaps a collectible, `onCollideWithPlayer` fires
-2. The `collected` flag prevents the callback from running more than once
-3. `Audio.Play("collect", 127, 64)` plays the sound at full volume, centered
-4. `Entity.SetActive(self, false)` hides the object (triggers `onDisable`)
-5. `addScore(100)` is a scene-level function that updates Persist storage and the UI text
-
-## Next Steps
-
-- Add different point values for different collectible types
-- Display a status message when all collectibles are found
-- Add visual feedback (UI text flash, progress bar update)
+The pickup is a **when the player touches me** stack: `if not collected` then `set collected to true`, `play sound collect`, `hide self`, `change score by 100`. Make `collected` and `score` variables of that script. The score would then live in that script instead of `Persist`, so use Lua for the scene script if other scenes need the score.

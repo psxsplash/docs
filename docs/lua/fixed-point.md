@@ -1,6 +1,6 @@
 # Fixed-Point Math
 
-This is the most important page if you're writing Lua for SplashEdit. **The PS1 has no floating-point unit**, so all math uses fixed-point integers.
+This is the most important page if you are writing Lua for psxsplash. **The PS1 has no floating-point unit**, so all math uses fixed-point integers.
 
 ## The Rules
 
@@ -11,7 +11,7 @@ This is the most important page if you're writing Lua for SplashEdit. **The PS1 
 
 ## How It Works
 
-Numbers in SplashEdit Lua are **20.12 fixed-point integers**:
+Numbers in psxsplash Lua are **20.12 fixed-point integers**:
 
 - 20 bits for the integer part
 - 12 bits for the fractional part
