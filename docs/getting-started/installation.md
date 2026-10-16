@@ -1,104 +1,50 @@
 # Installation
 
-## Prerequisites
+psxsplash ships as one archive per OS from the [nightly release](https://github.com/psxsplash/splashedit-ng/releases/tag/nightly), rebuilt from every change to the editor. Each archive holds:
 
-- **Unity 6000.0+** with a **Universal Render Pipeline (URP)** project
-- **Git** installed and available in your system PATH
-- **Windows**, **Linux**, or **macOS** (Apple Silicon)
+| Folder or file | What it is |
+|----------------|------------|
+| `splashedit` (`splashedit.exe` on Windows, `SplashEdit.app` on macOS) | The editor |
+| `engine/` | psxsplash builds: `psxsplash.ps-exe` for Play and Run on hardware, `psxsplash-cdrom.ps-exe` for disc images, and builds with debug overlays |
+| `redux/` | pcsx-redux, the emulator Play boots |
+| `examples/courtyard/` | The example project |
+| `assets/` | Fonts and icons the editor uses |
 
-!!! important "Universal Render Pipeline"
-    Your Unity project must use the Universal Render Pipeline. When creating a new project, select the **Universal 3D** template.
+Unpack it anywhere and start the editor. Nothing else needs installing. On macOS the other folders sit inside `SplashEdit.app`.
 
-## Step 1: Install SplashEdit in Unity
+## Windows
 
-1. Download the latest SplashEdit release as a `.tgz` file from [the releases page](https://github.com/psxsplash/splashedit/releases)
-2. In Unity, go to **Window -> Package Manager**
-3. Click the **+** button and select **Add package from tarball...**
-4. Select the downloaded `.tgz` file
-5. Unity imports the package
+Windows 10 or later. Download `splashedit-windows.zip`, extract it, and run `splashedit.exe`.
 
-## Step 2: Open the Control Panel
+The executable is not signed, so SmartScreen may stop the first launch. Click **More info**, then **Run anyway**.
 
-Go to **PlayStation 1 -> SplashEdit Control Panel** (or press ++ctrl+shift+l++).
+## Linux
 
-The Control Panel is your central hub for dependencies, scene management, and building.
-
-## Step 3: Install the Native Project
-
-In the Control Panel's **Dependencies** tab:
-
-1. Under **Native Project**, click the release dropdown and select the version that **matches your SplashEdit package version**
-2. Click **Clone** to download the [psxsplash](https://github.com/psxsplash/psxsplash) C++ runtime
-3. Wait for the clone to complete (this uses Git under the hood)
-
-!!! tip
-    Alternatively, click **Browse** to point to a local copy of the psxsplash source if you already have it cloned.
-
-## Step 4: Install the Toolchain
-
-Still in the **Dependencies** tab, the toolchain section shows the status of each required tool:
-
-| Tool | Purpose | Install Method |
-|------|---------|---------------|
-| MIPS Cross-Compiler | Compiles C++ to PS1 machine code | Click "Install" (Win/Linux) |
-| GNU Make | Build system | Click "Install" (Win/Linux) |
-| PCSX-Redux | PS1 emulator for testing | Click "Download" |
-| psxavenc | Audio conversion to ADPCM | Click "Download" |
-| mkpsxiso | ISO image creation | Click "Download" |
-
-Each tool shows a green **Ready** badge when installed. On **Windows** and **Linux**, SplashEdit handles downloading and setting up all of these for you. On **macOS**, some tools require manual Terminal commands first — the Dependencies tab shows yellow badges and the exact commands to run (see [macOS Setup](#macos-setup) below).
-
-!!! note "Minimum requirements"
-    You need at minimum the **MIPS compiler** and **Make** to build. **PCSX-Redux** is needed for emulator testing and Lua compilation. **mkpsxiso** is only needed for ISO builds.
-
-### macOS Setup
-
-On macOS, some tools can't be auto-installed. The Dependencies tab shows yellow badges for anything that requires manual action — **Needs setup**, **Needs CLT** (Xcode Command Line Tools), **Needs brew** (Homebrew), or **Needs deps** (build dependencies) — with the exact Terminal commands inline. Install the prerequisites below, then click **Refresh** — the badges will turn green.
-
-**Prerequisites (run in Terminal before opening SplashEdit):**
+x86-64 with glibc 2.38 or newer: Ubuntu 24.04, Debian 13, Fedora 39 and later.
 
 ```bash
-# Install Xcode Command Line Tools (provides GNU Make)
-xcode-select --install
-
-# Install the MIPS cross-compiler helper
-brew install nikitabobko/tap/brew-install-path
-
-# Download the compiler formulas from pcsx-redux
-curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-binutils.rb
-curl -LO https://raw.githubusercontent.com/grumpycoders/pcsx-redux/main/tools/macos-mips/mipsel-none-elf-gcc.rb
-
-# Install (builds from source — expect 15-30 minutes)
-brew install-path ./mipsel-none-elf-binutils.rb
-brew install-path ./mipsel-none-elf-gcc.rb
+tar xzf splashedit-linux.tar.gz
+cd splashedit
+./splashedit
 ```
 
-!!! tip "Don't have Homebrew?"
-    Install it first: `/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"`
+`./install-desktop-entry.sh` adds the editor to your applications menu. Run it again if you move the folder.
 
-!!! info "Why so many steps?"
-    There is no prebuilt MIPS compiler for macOS. The formulas above are maintained by the [pcsx-redux](https://github.com/grumpycoders/pcsx-redux) project (the same team behind the PCSX-Redux emulator). The `brew-install-path` helper is needed because Homebrew no longer supports installing from local formula files directly.
+## macOS
 
-**psxavenc build dependencies** — psxavenc has no prebuilt macOS binary, so SplashEdit builds it from source. The Dependencies tab will show **Needs deps** until you install:
+Apple silicon only. Download `splashedit-macos.tar.gz` and unpack it. The app is not notarized, so clear the download quarantine once before the first launch, then open `SplashEdit.app`:
 
 ```bash
-brew install meson pkg-config ffmpeg
+tar xzf splashedit-macos.tar.gz
+xattr -dr com.apple.quarantine splashedit
 ```
 
-Once installed, click **Refresh**, then **Download** to build psxavenc.
+## Optional extras
 
-The remaining tools are handled automatically:
+- **Blender**, to import `.blend` files directly. The editor runs Blender in the background to read them. It looks for `blender` on your `PATH`, then the usual install folders (`C:/Program Files/Blender Foundation/` on Windows, `/Applications/Blender.app` on macOS). Set `SPLASHEDIT_BLENDER` to the executable to pick one yourself. Every other model format works without it.
+- **A BIOS image.** pcsx-redux boots with its own BIOS when none is set. To use a real one, pick it under **BIOS** in the Play setup window (see [Play, Hardware and Discs](play-and-export.md#setting-up-the-tools)).
+- **A serial cable and Unirom** on a real console, for [Run on hardware](play-and-export.md#run-on-hardware).
 
-- **PCSX-Redux** — Click "Download." SplashEdit downloads the macOS ARM build, creates a launcher wrapper, and configures font paths.
-- **mkpsxiso** — Click "Download." Works the same as Windows/Linux.
+## Updating
 
-## Verifying Installation
-
-When all required tools show green badges, the Control Panel status bar shows **"Ready"**. You're good to go.
-
-If SplashEdit detects a missing toolchain on first launch, it automatically opens the Control Panel to guide you through setup.
-
-## Troubleshooting
-
-!!! warning "Avoid spaces in the project path"
-    Avoid spaces in the project path. Put your Unity project (and the cloned psxsplash native project) somewhere with no spaces in the full path.
+Download the archive again and unpack it over the old folder, or next to it. Projects live in their own folders, so nothing in a project changes when you update the editor.
