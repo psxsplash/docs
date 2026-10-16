@@ -5,7 +5,7 @@ What does not work yet, or works differently than you would guess. Each item was
 ## Scripting
 
 ### The engine never calls `onDestroy`
-`Lua::OnDestroy` exists in psxsplash, but nothing calls it, and no Lua function destroys an object. Objects go away when the scene is cleared, and clearing calls no callback. The block editor's **when destroyed** hat therefore never runs. Use `Entity.SetActive(object, false)` and `onDisable`.
+`Lua::OnDestroy` exists in psxsplash, but nothing calls it, and no Lua function destroys an object. Objects go away when the scene is cleared, and clearing calls no callback, so a Lua `onDestroy` never runs. Use `Entity.SetActive(object, false)` and `onDisable`.
 
 ### `Debug.DrawLine` and `Debug.DrawBox` draw nothing
 Both accept their arguments and return, but neither queues a primitive. Calls are harmless. `UI.DrawLine` and `UI.DrawTriangle` do draw.
