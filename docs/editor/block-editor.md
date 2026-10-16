@@ -32,7 +32,7 @@ Rounded and pointed blocks (**Operators**, **Variables**, positions) are values.
 
 | Category | Blocks |
 |----------|--------|
-| **Events** | when created, every frame, when the player touches me, when the player interacts, when *button* is pressed, when *button* is released, when enabled, when disabled, when destroyed (the engine never fires it; see [Known Issues](../reference/known-issues.md#the-engine-never-calls-ondestroy)), when the scene starts, when the player enters the trigger, when the player leaves the trigger |
+| **Events** | when created, every frame, when the player touches me, when the player interacts, when *button* is pressed, when *button* is released, when enabled, when disabled, when the scene starts, when the player enters the trigger, when the player leaves the trigger |
 | **Control** | wait *n* seconds, if, if/else, repeat, while, repeat until, wait until, stop this script |
 | **Objects** | show, hide, move by, move to, x/y/z position of |
 | **Sound and scenes** | play sound, play cutscene, load scene |
