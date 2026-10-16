@@ -2240,7 +2240,7 @@
 <p>What does not work yet, or works differently than you would guess. Each item was checked against the current editor and engine source.</p>
 <h2 id="scripting">Scripting<a class="headerlink" href="#scripting" title="Permanent link">&para;</a></h2>
 <h3 id="the-engine-never-calls-ondestroy">The engine never calls <code>onDestroy</code><a class="headerlink" href="#the-engine-never-calls-ondestroy" title="Permanent link">&para;</a></h3>
-<p><code>Lua::OnDestroy</code> exists in psxsplash, but nothing calls it, and no Lua function destroys an object. Objects go away when the scene is cleared, and clearing calls no callback. The block editor's <strong>when destroyed</strong> hat therefore never runs. Use <code>Entity.SetActive(object, false)</code> and <code>onDisable</code>.</p>
+<p><code>Lua::OnDestroy</code> exists in psxsplash, but nothing calls it, and no Lua function destroys an object. Objects go away when the scene is cleared, and clearing calls no callback, so a Lua <code>onDestroy</code> never runs. Use <code>Entity.SetActive(object, false)</code> and <code>onDisable</code>.</p>
 <h3 id="debugdrawline-and-debugdrawbox-draw-nothing"><code>Debug.DrawLine</code> and <code>Debug.DrawBox</code> draw nothing<a class="headerlink" href="#debugdrawline-and-debugdrawbox-draw-nothing" title="Permanent link">&para;</a></h3>
 <p>Both accept their arguments and return, but neither queues a primitive. Calls are harmless. <code>UI.DrawLine</code> and <code>UI.DrawTriangle</code> do draw.</p>
 <h3 id="camera-control-is-taken-back-by-the-player">Camera control is taken back by the player<a class="headerlink" href="#camera-control-is-taken-back-by-the-player" title="Permanent link">&para;</a></h3>
