@@ -1,31 +1,21 @@
 # Tutorials
 
-Step-by-step guides for building common game mechanics with SplashEdit. Each tutorial assumes you have a working scene (see [Quick Start](../getting-started/quick-start.md)).
+Step-by-step builds for common game mechanics. Each starts from the courtyard example (see [Your First Project](../getting-started/first-project.md)) or any scene with a floor and a Player, and each gives the logic as Lua you can paste into the [Lua editor](../editor/lua-editor.md). The same logic can be built from [blocks](../editor/block-editor.md).
 
-## Available Tutorials
+| Tutorial | What you build |
+|----------|----------------|
+| [Collectible Pickups](collectibles.md) | Objects the player walks into, with a score on the HUD and a sound |
+| [Animated Doors](animated-doors.md) | A door that opens and closes on a button press, with an animation from the timeline |
+| [Scene Transitions](scene-transitions.md) | A trigger that moves the player to another scene |
+| [Health & Damage](health-damage.md) | Hazard and healing zones and a colour-changing health bar |
 
-| Tutorial | What You'll Build |
-|----------|------------------|
-| [Collectible Pickups](collectibles.md) | Objects the player walks into to collect, with score tracking and sound |
-| [NPC Dialogue](npc-dialogue.md) | An interactive NPC with multi-line dialogue and button advancement |
-| [Animated Doors](animated-doors.md) | A door that opens and closes with animation and sound |
-| [Scene Transitions](scene-transitions.md) | Portals that transport the player between scenes |
-| [Health & Damage](health-damage.md) | Hazard zones, healing zones, and a color-coded health bar |
-| [Networked Multiplayer](networking.md) | Two consoles on a link cable, then many through a server |
+## Before you start
 
-## Prerequisites
+- A scene with a **Player** and floors with a **Static** collider, so Play lets you walk.
+- [Fixed-point math](../lua/fixed-point.md): there are no decimal literals.
 
-Each tutorial builds on these basics:
+## Conventions
 
-- A scene with a `PSXSceneExporter`, `PSXPlayer`, and a floor
-- The scene added to the Control Panel's scene list
-- Familiarity with [fixed-point math](../lua/fixed-point.md) (no float literals)
-
-## Code Style Notes
-
-All tutorial code follows these conventions:
-
-- **Event-driven** - everything responds to events, no per-frame loops
-- **No float literals** - use `FixedPoint.new()` for all fractional values
-- **Scene as controller** - shared functions defined in scene.lua and published to `_G`
-- **One-time flags** - local booleans prevent repeated actions
+- **Event-driven.** Everything responds to events; nothing polls in `onUpdate`.
+- **The scene script as controller.** Shared functions live in the scene script and are published to `_G`, so object scripts can call them. See [Lua scripting](../lua/index.md#script-environments).
+- **One-time flags.** A local boolean stops an action from repeating.

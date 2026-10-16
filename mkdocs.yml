@@ -1,8 +1,13 @@
-site_name: SplashEdit Documentation
-site_description: Build PlayStation 1 games using Unity and SplashEdit
+site_name: psxsplash Documentation
+site_description: Make PlayStation 1 games with psxsplash, the editor, engine and emulator in one download
 site_url: https://psxsplash.github.io/docs/
-repo_url: https://github.com/psxsplash/psxsplash
-repo_name: psxsplash/psxsplash
+repo_url: https://github.com/psxsplash
+repo_name: psxsplash on GitHub
+
+validation:
+  links:
+    anchors: warn
+    unrecognized_links: warn
 
 theme:
   name: material
@@ -51,9 +56,6 @@ markdown_extensions:
   - tables
   - attr_list
   - md_in_html
-  - pymdownx.emoji:
-      emoji_index: !!python/name:material.extensions.emoji.twemoji
-      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - toc:
       permalink: true
 
@@ -70,59 +72,41 @@ nav:
   - Getting Started:
     - getting-started/index.md
     - Installation: getting-started/installation.md
-    - Quick Start: getting-started/quick-start.md
-    - Control Panel: getting-started/control-panel.md
-    - Building & Running: getting-started/building.md
-  - Scene Components:
-    - components/index.md
-    - Core:
-      - Scene Exporter: components/scene-exporter.md
-      - Objects & Meshes: components/objects.md
-      - Player: components/player.md
-    - Visual:
-      - Textures & VRAM: components/textures.md
-      - Skinned Meshes: components/skinned-meshes.md
-      - Sprites: components/sprites.md
-      - Tilemaps: components/tilemaps.md
-      - Custom Fonts: components/fonts.md
-      - Loading Screens: components/loading-screens.md
-    - Spatial:
-      - Navigation & Collision: components/navigation.md
-      - Agents & AI: components/agents.md
-      - Rooms & Portals: components/rooms-portals.md
-    - Interactivity:
-      - UI System: components/ui.md
-      - Audio: components/audio.md
-      - Interactables: components/interactables.md
-      - Trigger Boxes: components/trigger-boxes.md
-    - Sequencing:
-      - Cutscenes: components/cutscenes.md
-      - Animations: components/animations.md
-    - Multiplayer:
-      - Networking: components/networking.md
-      - Networked Multiplayer Tutorial: tutorials/networking.md
-      - psnl_server (GitHub): https://github.com/psxsplash/psnl_server
-    - Persistence:
-      - Memory Cards: components/memory-cards.md
-  - Lua Scripting:
+    - Your First Project: getting-started/first-project.md
+    - Play, Hardware and Discs: getting-started/play-and-export.md
+  - The Editor:
+    - editor/index.md
+    - Objects & Components: editor/objects.md
+    - Importing Models & Textures: editor/importing.md
+    - Materials & Bit Depth: editor/materials.md
+    - Lighting: editor/lighting.md
+    - The Lua Editor: editor/lua-editor.md
+    - The Block Editor: editor/block-editor.md
+    - UI Canvases: editor/ui-canvas.md
+    - Cutscenes & Animations: editor/timeline.md
+    - Skinned Animation: editor/skinned-animation.md
+    - Player, Navigation & Rooms: editor/navigation-rooms.md
+    - Audio: editor/audio.md
+    - Scene Settings: editor/scene-settings.md
+    - World Streaming: editor/world-streaming.md
+    - Building & Running: editor/building.md
+  - Scripting:
     - lua/index.md
     - Fixed-Point Math: lua/fixed-point.md
     - Event Callbacks: lua/events.md
     - API Reference: lua/api-reference.md
-    - Patterns & Best Practices: lua/patterns.md
+    - Patterns: lua/patterns.md
   - Tutorials:
     - tutorials/index.md
     - Collectible Pickups: tutorials/collectibles.md
-    - NPC Dialogue: tutorials/npc-dialogue.md
     - Animated Doors: tutorials/animated-doors.md
     - Scene Transitions: tutorials/scene-transitions.md
     - Health & Damage: tutorials/health-damage.md
-    - Networked Multiplayer: tutorials/networking.md
   - Reference:
     - reference/index.md
-    - Changelog: reference/changelog.md
-    - Multi-Scene Projects: reference/multi-scene.md
     - Memory & Performance: reference/memory.md
     - Known Issues: reference/known-issues.md
     - Glossary: reference/glossary.md
     - Contributing: reference/contributing.md
+    - Changelog: reference/changelog.md
+  - Legacy (Unity) docs: https://psxsplash.github.io/docs/unity/

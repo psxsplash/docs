@@ -1,103 +1,52 @@
 # Known Issues
 
-The following are known issues with the current version of SplashEdit and psxsplash. Pull requests are welcome for any of these - the project has grown significantly and contributions are greatly appreciated.
+What does not work yet, or works differently than you would guess. Each item was checked against the current editor and engine source.
 
-## Rendering
+## Scripting
 
-### Exterior scene BVH rendering may have issues
-The BVH frustum culling system has been rewritten with a proper frustum extraction and AABB test, but may still have edge cases. **Interior scene type with rooms and portals is still recommended for best performance.**
+### The engine never calls `onDestroy`
+`Lua::OnDestroy` exists in psxsplash, but nothing calls it, and no Lua function destroys an object. Objects go away when the scene is cleared, and clearing calls no callback. The block editor's **when destroyed** hat therefore never runs. Use `Entity.SetActive(object, false)` and `onDisable`.
 
-### BVH preview visualization is broken
-The BVH preview toggle in the Scene Exporter inspector does not display correctly. The Rooms/Portals preview works fine.
+### `Debug.DrawLine` and `Debug.DrawBox` draw nothing
+Both accept their arguments and return, but neither queues a primitive. Calls are harmless. `UI.DrawLine` and `UI.DrawTriangle` do draw.
 
-### Near-plane triangle artifacts
-Triangles crossing the near plane are subdivided in 3D and re-projected. This replaced the previous Sutherland-Hodgman clipping approach. Rasterizer-limit triangles use vertex clamping instead of subdivision to avoid T-junction cracks. Minor visual artifacts may still appear on triangles very close to the camera.
+### Camera control is taken back by the player
+In a scene with a Player and a nav mesh, the player controller overrides the camera every frame. Call `Camera.FollowPsxPlayer(false)` before moving the camera from Lua. Cutscenes suspend the controller by themselves.
 
-### Fog edge cases
-Distance fog uses a Silent Hill-style two-pass approach (per-vertex fog blending with additive overlay). Most configurations work well, but extreme density values or very close geometry may produce visual artifacts.
+### `Persist` holds 16 numbers
+Setting more silently fails. Use the memory card API for larger or longer-lived state.
 
-### PSX UI images overblown with white tint
-Using a full white tint (255, 255, 255) on `PSXUIImage` elements causes washed-out, overblown colors. Use a tint around 128, 128, 128 for normal appearance.
+### Controller rumble has no Lua API
+The motors can be driven by **Rumble** tracks in the [timeline](../editor/timeline.md#tracks), not from a script.
 
-### Portal visibility at close range
-Portal projection has been improved (int16 overflow fix, conservative fullscreen rect for near-camera portals), but edge cases may remain when standing exactly on a portal boundary.
+## Editor
 
-## Scene Setup
+### The inspector cannot set a light to runtime
+Runtime point lights exist in the engine, the `Light` API and timeline tracks, but the Light component has no switch for them; set `"runtime": true` in the scene file. See [Lighting](../editor/lighting.md#runtime-lights).
 
-### Interior scenes need at least one room defined
-If you set the scene type to Interior but don't add any `PSXRoom` components, rendering glitches will occur. Always define at least one room volume.
+### Fonts and finer nav settings live in the scene file
+The UI tab picks from the scene's fonts but does not add them, and the nav bake's cell size and region merging keep their defaults unless you edit the scene file.
 
-### All geometry must be enclosed in rooms
-In interior scenes, geometry not contained within any `PSXRoom` volume goes to a catch-all bucket that's always rendered. Make sure room volumes fully enclose all visible geometry.
+### No agents, sprites, tilemaps or networking in the editor
+The engine has them (`Agent`, `Sprite`, `Tile`, `Net`), but the editor has no way to author them yet, so they are not in these docs.
 
-### Textures must be power-of-two
-All textures must be power-of-two in both width and height, with a maximum size of 256x256. SplashEdit does NOT validate this - incorrect textures produce broken results silently.
+### Scene type is stored but not used
+**Exterior** and **Interior** change nothing. Culling follows the Room objects.
 
-## Physics & Navigation
+## Engine
 
-### Navigation mesh plane error on terrain
-On undulating terrain, some navigation regions may have high floor-plane error, causing the player to float above or sink below the actual surface. Use the **Terrain** preset or lower the **Merge Region Area** and **Max Edge Length** to produce smaller regions that track terrain height more accurately. The build statistics panel in the PSXPlayer inspector flags regions exceeding the Max Plane Error threshold.
+### A dynamic collider does not rotate
+Rotating an object from Lua does not recalculate its collision box. Position changes do.
 
-### Rotating objects doesn't update collision bounds
-Rotating objects via Lua does not recalculate their AABB (axis-aligned bounding box) collision bounds. The collision volume stays in the original orientation. Position changes via `Entity.SetPosition` now correctly shift the AABB and mark the object as dynamically moved for proper frustum culling.
-
-### CD-DA audio requires ISO build
-CD-DA playback only works from a disc image. It will not produce any audio when running via PCdrv (Emulator or Real Hardware build targets). Use the ISO build target.
-
-## API Limitations
-
-### Camera API overridden by navigation controller
-In scenes with a PSXPlayer and navigation regions, the navigation controller continuously overrides camera position and rotation. Use `Camera.FollowPsxPlayer(false)` to take manual control of the camera from Lua. The Camera API is also usable during cutscenes, which temporarily suspend the nav controller.
-
-### Camera.LookAt is incomplete
-The `Camera.LookAt()` function exists in the Lua API but is a placeholder. It does not correctly point the camera at the target position.
-
-### Debug.DrawLine and Debug.DrawBox draw nothing
-Both are registered and accept their arguments, but neither queues a primitive, so nothing appears on screen. Calls are harmless and can be left in a script.
-
-### onPathBlocked is never fired
-The agent callback is recognised and dispatchable, but nothing in the engine raises it. An agent whose destination is unreachable stops moving with no event. Poll `Agent.IsMoving` against a timeout instead. See [Agents](../components/agents.md).
-
-### Agent onTargetSeen passes nil for the player
-An agent with no explicit `Agent.SetTarget` senses the player by default, and the player has no GameObject, so the callback's `target` argument is `nil`. Treat `nil` as "the player". Hearing a target sets the alert state but does not fire `onTargetSeen` at all.
-
-### Sprites have no per-sprite alpha
-`Sprite.SetColor` tints; it cannot fade. A translucent overlay drawn as a dimmed rectangle comes out fully opaque. To darken part of the screen, draw a mask with a hole cut in it. See [Sprites](../components/sprites.md).
-
-### Tilemap movement deltas are whole pixels
-`Tile.MoveActor` truncates its deltas to integers, so a speed below one pixel per frame rounds to zero and the actor never moves. Accumulate in sub-pixels and spend whole ones. See [Tilemaps](../components/tilemaps.md).
-
-### Network version and scene mismatches are terminal and silent
-`Net.State()` 3 (version mismatch) and 4 (scene mismatch) latch: the console stops talking and nothing retries or times out. Draw the state somewhere the player can see it, or a mismatched pair of discs looks identical to an unplugged cable. See [Networking](../components/networking.md).
-
-### Persist storage limited to 16 entries
-The cross-scene `Persist` data system supports only 16 key-value pairs (numbers only) and exceeding this limit silently fails. For larger or structured state — and for data that must survive power-off — use the [memory card API](../components/memory-cards.md), which serializes whole nested tables.
-
-### Memory report is very approximate
-The memory preview in the Control Panel is very limited and approximate. Do not trust the numbers as accurate. A safe margin is when it shows around 50%.
+### No CD-DA from the editor
+The disc images the editor writes have one data track, and Play and Run on hardware use PCdrv. `Audio.PlayCDDA` has nothing to play. Use audio clips.
 
 ## Platform
 
-### Can get a little moody on Linux
-Some editor functionality may behave inconsistently on Linux. The primary development and testing platform is Windows.
+- **Windows:** the executable is not signed. SmartScreen stops the first launch: **More info**, then **Run anyway**.
+- **macOS:** Apple silicon only, and the app is not notarized. Clear the quarantine once; see [Installation](../getting-started/installation.md#macos).
+- **Linux:** needs glibc 2.38 or newer.
 
-### macOS support is experimental
-macOS (Apple Silicon) is supported end-to-end via the setup wizard: it detects the toolchain across Homebrew paths, downloads and wraps PCSX-Redux from the `.dmg` (with a font fallback to avoid an ImGui crash), and guides you through the one-time MIPS compiler install through Homebrew. See [Installation → macOS Setup](../getting-started/installation.md#macos-setup). It has not been as extensively tested as Windows, so edge cases may remain — especially around GUI-app PATH detection.
+## Reporting
 
-## Build Pipeline
-
-### PCSX-Redux startup logs may be missed
-When launching the emulator from the Control Panel, Unity can hang briefly during the process launch. Early console output from PCSX-Redux may be lost. This doesn't affect gameplay.
-
-## Fonts
-
-### Custom fonts can have character cropping issues
-Individual characters in custom bitmap fonts may appear slightly cropped or cut off.
-
-## Internal
-
-### Controller rumble has no Lua API
-The PS1 runtime supports DualShock rumble/vibration motors, and they can be driven via Rumble Small and Rumble Large tracks in [cutscenes](../components/cutscenes.md#controller-rumble) and [animations](../components/animations.md#controller-rumble). However, there is no Lua API for controlling rumble directly from scripts yet. This will be exposed in a future update.
-
-### Default ISO license shows "Made with psxsplash"
-When building an ISO without a custom license file, the default license displays "Made with psxsplash" on boot. Provide your own `.dat` license file in the build settings to override this.
+Found one that is not listed? **Help > Report a Problem** opens the issue tracker.

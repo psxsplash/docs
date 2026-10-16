@@ -6,7 +6,7 @@ Working code patterns for common game mechanics, with tested examples.
 
 ## Core Pattern: Event-Driven Design
 
-SplashEdit games work best with fully event-driven architecture:
+Scripts stay small and fast when they react to events instead of polling:
 
 - `onInteract` for player-initiated actions
 - `onButtonPress` for button-driven controls
@@ -22,7 +22,7 @@ SplashEdit games work best with fully event-driven architecture:
 The scene script is the central coordinator. Define shared functions there and publish them to `_G` so object scripts can access them:
 
 ```lua
--- scene.lua
+-- the scene script
 
 local score = 0
 local scoreText = -1
@@ -51,7 +51,7 @@ _G.setStatus = setStatus
 Object scripts call these directly:
 
 ```lua
--- collectible.lua
+-- a pickup object script
 function onCollideWithPlayer(self)
     addScore(100)
     setStatus("Got it!")
@@ -125,7 +125,7 @@ Build a dialogue system in the scene script, then call it from NPC scripts:
 ### Scene Script (Dialogue System)
 
 ```lua
--- scene.lua
+-- the scene script
 local dialogueCanvas = -1
 local dialogueText = -1
 local inDialogue = false
@@ -180,7 +180,7 @@ _G.isInDialogue = isInDialogue
 ### NPC Script
 
 ```lua
--- npc.lua
+-- an NPC object script
 local talked = false
 
 function onCreate(self)
@@ -343,7 +343,7 @@ Only use onUpdate if you really need to. This example script just demonstrates h
 -- use circle to load the saved position+rotation
 --
 -- Warning!
--- PsxPlayer player will overwrite these values
+-- the Player will overwrite these values
 --
 
 local camRotStep = FixedPoint.new(1) / 128
@@ -410,12 +410,12 @@ end
 
 ---
 
-## Pattern: PsxPlayer Position and Rotation
+## Pattern: Player Position and Rotation
 
-Control the PsxPlayer with lua functions
+Control the player with Lua functions
 
 ```lua
--- Example PsxPlayer Teleportation and Rotation --
+-- Example Player Teleportation and Rotation --
 -- Author: Latch
 --
 -- Multiple ways to teleport the player
@@ -505,7 +505,7 @@ end
 Color-coded health bar with damage and healing:
 
 ```lua
--- scene.lua
+-- the scene script
 local health = 100
 local healthBar = -1
 
@@ -572,7 +572,7 @@ end
 Transition between scenes with data preservation:
 
 ```lua
--- portal_trigger.lua
+-- a trigger box script
 function onTriggerEnter()
     setStatus("Loading next scene...")
     Persist.Set("came_from", Scene.GetIndex())

@@ -1,63 +1,48 @@
 # Tutorial: Health & Damage
 
-Create hazard zones that damage the player, healing zones that restore health, and a color-coded health bar.
+Hazard and healing zones and a health bar that changes colour.
 
-## What You'll Learn
+You will use a UI **Progress bar**, `UI.SetProgress`, `UI.SetProgressColors`, `PSXMath.Clamp` and Trigger boxes.
 
-- Progress bar UI for health display
-- `PSXMath.Clamp` for bounded values
-- `UI.SetProgress` and `UI.SetProgressColors`
-- Trigger boxes for damage/heal zones
-- Death and scene reload
+## 1. The health bar
 
-## Step 1: Health Bar UI
+In the **UI** tab, make a canvas named `hud` if you do not have one, **+** a **Progress bar**, and name it `health`. Set its **Value** to 100 and place it near a corner.
 
-1. In your HUD canvas, create a child element
-2. Add `PSXUIProgressBar` with:
-    - Element Name: `"HealthBar"`
-    - Initial Value: 100
-    - Background Color: dark green (0, 40, 0)
-    - Fill Color: bright green (0, 255, 0)
+## 2. Health in the scene script
 
-## Step 2: Health System in Scene Script
-
-Add to your `scene.lua`:
+Select nothing and **New Lua** under **Script**. Paste:
 
 ```lua
 local health = 100
 local healthBar = -1
 
--- In onSceneCreationEnd, add:
--- healthBar = UI.FindElement(hudCanvas, "HealthBar")
--- UI.SetProgress(healthBar, 100)
--- updateHealthBar()
-
 function updateHealthBar()
     if healthBar < 0 then return end
     UI.SetProgress(healthBar, health)
 
-    -- Color-code based on health level
     if health > 50 then
-        -- Green
-        UI.SetProgressColors(healthBar, 0, 40, 0, 0, 255, 0)
+        UI.SetProgressColors(healthBar, 0, 40, 0, 0, 255, 0)      -- green
     elseif health > 25 then
-        -- Yellow (warning)
-        UI.SetProgressColors(healthBar, 40, 40, 0, 255, 255, 0)
+        UI.SetProgressColors(healthBar, 40, 40, 0, 255, 255, 0)   -- yellow
     else
-        -- Red (danger)
-        UI.SetProgressColors(healthBar, 40, 0, 0, 255, 0, 0)
+        UI.SetProgressColors(healthBar, 40, 0, 0, 255, 0, 0)      -- red
+    end
+end
+
+function onSceneCreationEnd()
+    local hud = UI.FindCanvas("hud")
+    if hud >= 0 then
+        healthBar = UI.FindElement(hud, "health")
+        updateHealthBar()
     end
 end
 
 function applyDamage(amount)
     health = PSXMath.Clamp(health - amount, 0, 100)
     updateHealthBar()
-
     if health <= 0 then
-        setStatus("You died! Reloading...")
         Controls.SetEnabledPlayer1(false)
-        Persist.Set("score", 0)       -- Reset score on death
-        Scene.Load(Scene.GetIndex())  -- Reload current scene
+        Scene.Load(Scene.GetIndex())    -- reload this scene
     end
 end
 
@@ -66,55 +51,43 @@ function applyHeal(amount)
     updateHealthBar()
 end
 
--- Publish
 _G.applyDamage = applyDamage
 _G.applyHeal = applyHeal
-_G.updateHealthBar = updateHealthBar
 ```
 
-## Step 3: Damage Zone
+## 3. A damage zone
 
-1. Create an empty GameObject in a hazard area (lava, spikes, etc.)
-2. Add `PSXTriggerBox`, set size to cover the area
-
-Create `damage_trigger.lua`:
+**Add Object > Trigger box**, size it over the hazard, and **New Lua** on its Script field:
 
 ```lua
 function onTriggerEnter()
     applyDamage(25)
-    Debug.Log("Player took 25 damage!")
 end
 ```
 
-## Step 4: Healing Zone
+## 4. A healing zone
 
-1. Create an empty GameObject in a safe area
-2. Add `PSXTriggerBox`, set size
-
-Create `heal_trigger.lua`:
+Another Trigger box in a safe spot:
 
 ```lua
 function onTriggerEnter()
     applyHeal(50)
-    Audio.Play("heal", 100, 64)
-    Debug.Log("Player healed 50 HP!")
 end
 ```
 
-## Step 5: Build and Test
+## 5. Play
 
-Walk into the damage zone to see health decrease and the bar change color. Walk into the heal zone to restore. If health hits 0, the scene reloads.
+Walk into the damage zone: the bar drops and goes yellow, then red. Walk into the healing zone to refill it. At zero the scene reloads.
 
-## How It Works
+## How it works
 
-1. Trigger boxes fire `onTriggerEnter` when the player enters
-2. `applyDamage` / `applyHeal` use `PSXMath.Clamp` to keep health in 0-100 range
-3. `updateHealthBar` sets both the progress value and the colors based on thresholds
-4. At 0 health, `Scene.Load(Scene.GetIndex())` reloads the current scene (a simple death/restart)
+1. `onTriggerEnter` fires when the player walks into the box.
+2. `PSXMath.Clamp` keeps health between 0 and 100.
+3. `updateHealthBar` sets the fill and the colours from thresholds.
+4. At zero, `Scene.Load(Scene.GetIndex())` reloads the current scene, a simple restart. The scene script runs again, so `health` is back to 100.
 
-## Customization Ideas
+## Ideas
 
-- **Invincibility frames**: Track a cooldown flag to prevent rapid re-damage
-- **Health pickups**: Use `onCollideWithPlayer` on objects instead of trigger zones
-- **Different damage amounts**: Create different trigger scripts with different values
-- **Visual feedback**: Flash the health bar color or show a status message on hit
+- A cooldown flag stops a zone from hurting every time the player steps in.
+- Use `onCollideWithPlayer` on a Dynamic collider for a pickup that heals.
+- Show a message on a Text element when health runs out.

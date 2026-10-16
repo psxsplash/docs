@@ -1,12 +1,9 @@
 # Reference
 
-Technical details, constraints, and additional information for SplashEdit development.
-
 | Page | Contents |
 |------|----------|
-| [Changelog](changelog.md) | What changed in each release |
-| [Multi-Scene Projects](multi-scene.md) | Scene indices, transitions, persistent data |
-| [Memory & Performance](memory.md) | PS1 hardware limits, optimization tips, tuning |
-| [Known Issues](known-issues.md) | Current bugs and limitations |
-| [Glossary](glossary.md) | PS1 and SplashEdit terms used throughout these docs |
-| [Contributing](contributing.md) | How to contribute to the project |
+| [Memory & Performance](memory.md) | PS1 limits, the editor's meters, how to stay inside them |
+| [Known Issues](known-issues.md) | What does not work yet |
+| [Glossary](glossary.md) | PS1 and psxsplash terms used in these docs |
+| [Contributing](contributing.md) | Repositories, how to help, how these docs are built |
+| [Changelog](changelog.md) | What changed |
