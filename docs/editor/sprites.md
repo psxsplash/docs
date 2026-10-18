@@ -72,16 +72,18 @@ end
 
 ### Facing directions
 
-For a character drawn from several directions, give one sheet an animation per direction, **one after another in the list**, starting with the direction for yaw 0 and going the way the yaw increases: for example `walk_s`, `walk_w`, `walk_n`, `walk_e`. `Sprite.SetFacingFromYaw` takes the first one's name, the number of directions and a yaw, and plays the nearest direction's animation without restarting the walk cycle.
+For a character drawn from several directions, click **Add direction set** under the sheet's animations. Give it a name, 4 or 8 directions, the frames each direction plays and the cell the first one starts on: it adds one animation per direction (`walk_n`, `walk_ne`, `walk_e` ... `walk_nw`), each starting where the previous one ends, so a sheet with one row per direction fills in by itself.
+
+`n` is the character seen from behind, facing the same way as the camera, and the names go round clockwise: `e` faces +X, `s` faces the camera. Select any animation of the set to see the dial and the line to call each frame:
 
 ```lua
-Sprite.PlayAnim(hero, "walk_s")           -- start the cycle once
+Sprite.PlayAnim(hero, "walk_n")           -- start the cycle once
 -- every frame:
-local yaw = Entity.GetRotationY(self)     -- 1 = 180 degrees
-Sprite.SetFacingFromYaw(hero, "walk_s", 4, yaw)
+local yaw = Entity.GetRotationY(self) - Camera.GetRotation().y   -- 1 = 180 degrees
+Sprite.SetFacingFromYaw(hero, "walk_n", 8, yaw)
 ```
 
-`SetFacingFromYaw` keeps whether the animation is playing: start it with `PlayAnim` first, or the sprite holds still on the new direction's cell.
+`SetFacingFromYaw` plays the animation of the direction nearest to the yaw without restarting the walk cycle, and keeps whether it is playing: start it with `PlayAnim` first, or the sprite holds still on the new direction's cell. The set's animations must stay together and in order in the list; Problems warns when one is missing or out of place.
 
 ### What is drawn
 
