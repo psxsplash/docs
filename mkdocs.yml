@@ -86,6 +86,7 @@ nav:
     - Cutscenes & Animations: editor/timeline.md
     - Skinned Animation: editor/skinned-animation.md
     - Player, Navigation & Rooms: editor/navigation-rooms.md
+    - Agents (NPCs): editor/agents.md
     - Audio: editor/audio.md
     - Scene Settings: editor/scene-settings.md
     - World Streaming: editor/world-streaming.md

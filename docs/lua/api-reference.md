@@ -2,7 +2,7 @@
 
 Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are [fixed-point](fixed-point.md).
 
-Not listed: the `Agent`, `Sprite`, `Tile` and `Net` tables. The engine has them, but the editor has no way to author agents, sprite sheets, tilemaps or a network link yet.
+Not listed: the `Sprite`, `Tile` and `Net` tables. The engine has them, but the editor has no way to author sprite sheets, tilemaps or a network link yet.
 
 ---
 
@@ -1110,3 +1110,62 @@ The same position as **two plain integers**, in pixels, on the ground plane.
 Actor.GetNavRegion(actor)         -- current nav region index, or nil
 Actor.FindPath(actor, x, y, z)    -- path to a point
 ```
+
+---
+
+## Agent
+
+Agents are objects with an **Agent (NPC)** component (see [Agents](../editor/agents.md)): the engine walks them along the nav regions, patrols their waypoints and checks what they see and hear. Every function takes an **actor** handle: `self` in the agent's own script, or `Actor.Find(name)`. Positions are `{x, y, z}` tables in engine units (scene metres divided by the GTE scaling), Y down, like `Actor.GetPosition`. The engine runs agents only in a scene with nav regions.
+
+### Enabling and moving
+
+```lua
+Agent.IsAgent(actor)              -- true if the object has an agent (or was moved by one of these calls)
+Agent.SetEnabled(actor, bool)     -- off stops it where it is
+Agent.IsEnabled(actor)
+Agent.MoveTo(actor, vec3)         -- walk to a position (or pass another actor to follow it)
+Agent.SetTarget(actor, target)    -- follow another actor (Actor.GetPlayer() for the player)
+Agent.GetTarget(actor)            -- the actor it follows, or nil
+Agent.Stop(actor)
+Agent.IsMoving(actor)
+Agent.SetSpeed(actor, speed)      -- per frame, in engine units (FixedPoint)
+Agent.GetSpeed(actor)
+```
+
+`MoveTo` and `SetTarget` enable the agent first. In the Patrol state the next waypoint is picked again whenever a move ends.
+
+### State machine
+
+```lua
+Agent.GetState(actor)             -- 0 Idle, 1 Patrol, 2 Seek, 3 Flee, 4 Attack, 5 Wander, 6 Investigate, 7 Custom
+Agent.SetState(actor, state)      -- runs onStateExit / onStateEnter and plays the state's clip
+```
+
+### Senses
+
+```lua
+Agent.CanSee(actor, target)       -- inside the vision range and cone, within the region hops
+Agent.CanHear(actor, target)      -- inside the hearing range
+Agent.SetVisionRange(actor, range)
+Agent.GetVisionRange(actor)
+Agent.SetVisionAngle(actor, deg)  -- HALF the cone, 0..180 (the inspector's Field of view is the whole cone)
+Agent.SetHearingRange(actor, range)
+Agent.GetHearingRange(actor)
+Agent.SetAlertTimeout(actor, frames)
+Agent.GetLastKnownPos(actor)      -- where it last sensed its target, or nil
+```
+
+Ranges are measured as the larger of the X and Z distances, so they are squares, not circles.
+
+!!! warning "The getters return whole numbers"
+    `GetSpeed`, `GetVisionRange` and `GetHearingRange` return a plain number, the engine value with its fraction dropped: at the default GTE scaling an 8 m vision range (0.08 engine units) reads back as 0. Keep your own copy of a value you set.
+
+### Patrol
+
+```lua
+Agent.AddWaypoint(actor, vec3)    -- appended; the engine holds 8
+Agent.ClearWaypoints(actor)
+Agent.SetPatrolEnabled(actor, bool)
+```
+
+Agent events (`onStateEnter`, `onTargetSeen`, `onPatrolPoint`, ...) are listed under [Events](events.md#agent-callbacks).
