@@ -25,6 +25,15 @@ If a script changes on disk while it is open (your own text editor, git) and the
 
 Closing a tab with unsaved edits asks first: **Save**, **Don't save** or **Cancel**.
 
+## Using VS Code or another editor
+
+**View > Set up external editor (VS Code)** writes two files into the project folder:
+
+- `psxsplash.d.lua`, the psxsplash API as [lua-language-server](https://luals.github.io/) definitions: completion and signatures for every table and function, with hover docs where the API reference has them, made from the same list the editor's autocomplete uses.
+- `.luarc.json`, which sets Lua 5.2 and turns off the libraries the PS1 does not have (`math`, `io`, `os`, `require`). It is only written when the project has none, so your own settings are kept.
+
+Open the project folder in VS Code with the **Lua** extension (sumneko) installed. When a newer editor opens the project, it brings `psxsplash.d.lua` up to date on its own.
+
 ## Fixed-point numbers
 
 The PS1 has no floating-point unit, so a decimal like `0.5` is not a number in these scripts. Read [Fixed-Point Math](../lua/fixed-point.md) first. The compile check accepts what the compiler accepts, so it will not flag a script that does the wrong arithmetic.
