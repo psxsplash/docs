@@ -482,6 +482,17 @@ UI.SetProgress(handle, value)            -- 0-100 (clamped)
 UI.GetProgress(handle)                   -- Returns number
 ```
 
+### Sheet Cell
+
+An Image backed by a sprite sheet cell (set in the editor's **Sheet** field) can show another cell of the same sheet:
+
+```lua
+UI.SetFrame(handle, cell)                -- cell 0-255, row by row from the top left
+UI.GetFrame(handle)                      -- Returns the cell, or -1 for a plain Image
+```
+
+`SetFrame` does nothing on an Image that is not backed by a sheet.
+
 ### Color
 
 ```lua
