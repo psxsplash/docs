@@ -2,7 +2,7 @@
 
 Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are [fixed-point](fixed-point.md).
 
-Not listed: the `Sprite`, `Tile` and `Net` tables. The engine has them, but the editor has no way to author sprite sheets, tilemaps or a network link yet.
+Not listed: the `Tile` and `Net` tables. The engine has them, but the editor has no way to author tilemaps or a network link yet.
 
 ---
 
@@ -1249,3 +1249,122 @@ Agent.SetPatrolEnabled(actor, bool)
 Turns patrolling on or off; on, an Idle agent with waypoints switches to Patrol.
 
 Agent events (`onStateEnter`, `onTargetSeen`, `onPatrolPoint`, ...) are listed under [Events](events.md#agent-callbacks).
+
+---
+
+## Sprite
+
+2D pictures cut from the scene's [sprite sheets](../editor/sprites.md). Sheets and animations are authored in the editor; sprites are made here, at run time. A sprite is a plain number, its slot in a pool of **128**: keep it in a variable or a table. Functions given an id that is not a live sprite do nothing (`IsVisible` returns false).
+
+!!! warning "Pass names, not numbers"
+    `Sprite.Create`, `Sprite.PlayAnim` and `Sprite.SetFacingFromYaw` take a sheet or animation name. They also mean to take an index, but the engine checks for a string first and Lua counts a number as a string, so `Sprite.Create(0)` looks for a sheet **named** "0" and returns -1. Always pass the name.
+
+### Sheets and animations
+
+```lua
+Sprite.SheetIndex(name)  -- -> index or -1
+```
+The sheet's index in the scene, or -1 when no sheet has that name.
+
+```lua
+Sprite.AnimIndex(name)  -- -> index or -1
+```
+The animation's index, or -1 when none has that name. It searches every sheet and returns the first match, which is why the editor makes animation names unique across the scene.
+
+### Creating and destroying
+
+```lua
+Sprite.Create(sheetName)  -- -> id or -1
+```
+Makes a sprite from a sheet and returns its id, 0 to 127. Returns -1 when the sheet does not exist or all 128 are in use. A new sprite is visible, on the screen plane at (0, 0), on layer 0, with a neutral tint, showing cell 0 and no animation.
+
+```lua
+Sprite.Destroy(id)
+```
+Frees the slot. The id may be handed out again by the next `Create`.
+
+```lua
+Sprite.Count()  -- -> number
+```
+How many sprites exist.
+
+### Position
+
+```lua
+Sprite.SetPos(id, x, y)
+```
+Screen position of the sprite's top left corner, in whole pixels (-32768 to 32767).
+
+```lua
+Sprite.BindToActor(id, actor, plane, offsetX, offsetY)
+```
+Makes the sprite follow an object every frame. `actor` is an `Actor.Find` or `Entity.Find` handle; `nil` unbinds it. `plane` is 0 for the screen plane (the default) or 1 for the world plane; the offsets default to 0. On the screen plane the sprite's x is the object's X and its y the object's **Z**, in whole engine units, plus the offsets; the object's height is ignored. The bound position replaces whatever `SetPos` set.
+
+```lua
+Sprite.SetWorldPos(id, x, y, z)
+```
+Position on the world plane. The engine keeps it but does **not draw** world-plane sprites yet.
+
+```lua
+Sprite.SetViewOffset(x, y)
+Sprite.GetViewOffset()  -- -> x, y
+```
+A scroll for every sprite at once, in pixels: each one is drawn at its position minus this offset. Starts at 0, 0.
+
+```lua
+Sprite.SetIgnoreViewOffset(id, bool)
+```
+True pins the sprite to the screen, ignoring the view offset (for a score or a cursor).
+
+### Animation
+
+```lua
+Sprite.PlayAnim(id, animName, restart)
+```
+Plays an animation; the sprite switches to the animation's sheet. If the same animation is already playing it carries on, so calling this every frame is fine; pass `true` as `restart` to start it again from its first cell. An unknown name does nothing. Each cell shows for the animation's frame time in vsyncs, 60 a second of real time. A looping animation starts again after its last cell; otherwise it stops there.
+
+```lua
+Sprite.StopAnim(id)
+```
+Stops the animation on the cell it is showing.
+
+```lua
+Sprite.SetFrame(id, cell)
+```
+Shows one cell of the sprite's sheet, 0 to 255, counted row by row from the top left, and drops the animation. The cell is not checked against the sheet's size.
+
+```lua
+Sprite.SetFacingFromYaw(id, firstAnimName, directions, yaw)
+```
+For a character drawn from several directions: plays animation `firstAnimName` + n, where n (0 to `directions` - 1) is the direction nearest to `yaw`. The directional animations must follow one another in the sheet's list, starting with yaw 0 and going the way yaw increases. `yaw` is in pi-units like `Entity.SetRotationY` (1 = 180 degrees). Changing direction keeps the cell and timing, so a walk cycle does not restart, and keeps whether it is playing: call `PlayAnim` first. `directions` of 0 does nothing.
+
+### Look
+
+```lua
+Sprite.SetVisible(id, bool)
+Sprite.IsVisible(id)  -- -> bool
+```
+Hides or shows the sprite.
+
+```lua
+Sprite.SetFlip(id, flipX, flipY)
+```
+Mirrors the picture left to right and/or top to bottom.
+
+```lua
+Sprite.SetColor(id, r, g, b)
+```
+Tints the sprite, each 0 to 255. 128, 128, 128 is the picture's own colours; higher brightens, up to double.
+
+```lua
+Sprite.SetSize(id, w, h)
+```
+Draws the cell stretched to `w` x `h` pixels. 0 for either keeps the cell's own width or height.
+
+```lua
+Sprite.SetLayer(id, layer)
+```
+Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are drawn in front of the 3D scene and behind UI canvases.
+
+!!! tip "Unscaled sprites are cheapest"
+    A sprite at its cell size and not flipped is drawn as a single GPU sprite. Flipping or a size other than the cell's makes it a textured quad.
