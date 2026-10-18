@@ -19,6 +19,7 @@ Everything in a scene is an object: a name, a transform, a **Start active** swit
 | Navigation | A Navigation component |
 | Room | A Room |
 | Portal | A Portal |
+| Agent (NPC) | An Agent |
 
 New objects appear in front of the camera, after the selected object. Dropping a model file on the viewport or the scene tree also makes an object; see [Importing](importing.md).
 
@@ -99,6 +100,10 @@ A sound scripts can play by name. See [Audio](audio.md).
 ### Skinned animation
 
 Plays animation clips on a skinned mesh. See [Skinned Animation](skinned-animation.md).
+
+### Agent (NPC)
+
+A character the engine walks along the nav regions: patrol waypoints, vision and hearing, and a skin clip per state. See [Agents](agents.md).
 
 ### Room and Portal
 

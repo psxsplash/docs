@@ -88,6 +88,42 @@ function onSceneCreationEnd()
 end
 ```
 
+## Agent Callbacks
+
+Defined in the script of an object with an **Agent (NPC)** component (see [Agents](../editor/agents.md)). States are the numbers `Agent.GetState` returns.
+
+```lua
+function onStateEnter(self, newState, oldState)
+    -- Called after the agent's state changes (Agent.SetState, or Idle -> Patrol on its own).
+end
+
+function onStateExit(self, state)
+    -- Called just before it leaves `state`.
+end
+
+function onTargetSeen(self, target)
+    -- Called when it starts seeing its target (the player unless Agent.SetTarget set another).
+    -- target is nil for the player.
+end
+
+function onTargetLost(self, target)
+    -- Called once the alert timeout runs out after it last saw or heard the target.
+end
+
+function onTargetReached(self)
+    -- Called when it arrives at a position in the Seek, Wander or Investigate state
+    -- (not while following an actor).
+end
+
+function onPatrolPoint(self, index)
+    -- Called at each patrol waypoint, index counting from 0.
+end
+
+function onPathBlocked(self)
+    -- Registered, but the engine never calls it yet.
+end
+```
+
 ## Trigger Callbacks
 
 Defined in the script of a **Trigger box** component. **No `self` argument**: the one argument is `index`, the trigger's index in the scene.
