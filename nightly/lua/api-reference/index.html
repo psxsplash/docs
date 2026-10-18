@@ -652,6 +652,8 @@
       
         
       
+        
+      
     
     
     
@@ -975,6 +977,34 @@
     
   
     Player, Navigation & Rooms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../editor/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents (NPCs)
   
 
     
@@ -2068,6 +2098,67 @@
     <span class="md-ellipsis">
       
         Navigation
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-and-moving" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling and moving
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State machine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#senses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Senses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patrol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrol
       
     </span>
   </a>
@@ -3368,6 +3459,67 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#agent" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Agent">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#enabling-and-moving" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enabling and moving
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#state-machine" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        State machine
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#senses" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Senses
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#patrol" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Patrol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3390,7 +3542,7 @@
 
 <h1 id="lua-api-reference">Lua API Reference<a class="headerlink" href="#lua-api-reference" title="Permanent link">&para;</a></h1>
 <p>Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are <a href="../fixed-point/">fixed-point</a>.</p>
-<p>Not listed: the <code>Agent</code>, <code>Sprite</code>, <code>Tile</code> and <code>Net</code> tables. The engine has them, but the editor has no way to author agents, sprite sheets, tilemaps or a network link yet.</p>
+<p>Not listed: the <code>Sprite</code>, <code>Tile</code> and <code>Net</code> tables. The engine has them, but the editor has no way to author sprite sheets, tilemaps or a network link yet.</p>
 <hr />
 <h2 id="entity">Entity<a class="headerlink" href="#entity" title="Permanent link">&para;</a></h2>
 <p>Manage game objects in the scene.</p>
@@ -4170,6 +4322,90 @@ short-lived tables a second for the collector to deal with on a 33MHz CPU.
 <div class="highlight"><pre><span></span><code><a id="__codelineno-123-1" name="__codelineno-123-1" href="#__codelineno-123-1"></a><span class="nv">Actor</span><span class="p">.</span><span class="nf">GetNavRegion</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">         </span><span class="c1">-- current nav region index, or nil</span>
 <a id="__codelineno-123-2" name="__codelineno-123-2" href="#__codelineno-123-2"></a><span class="nv">Actor</span><span class="p">.</span><span class="nf">FindPath</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">y</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">)</span><span class="w">    </span><span class="c1">-- path to a point</span>
 </code></pre></div>
+<hr />
+<h2 id="agent">Agent<a class="headerlink" href="#agent" title="Permanent link">&para;</a></h2>
+<p>Agents are objects with an <strong>Agent (NPC)</strong> component (see <a href="../../editor/agents/">Agents</a>): the engine walks them along the nav regions, patrols their waypoints and checks what they see and hear. Every function takes an <strong>actor</strong> handle: <code>self</code> in the agent's own script, or <code>Actor.Find(name)</code>. Positions are <code>{x, y, z}</code> tables in engine units (scene metres divided by the GTE scaling), Y down, like <code>Actor.GetPosition</code>. The engine runs agents only in a scene with nav regions.</p>
+<h3 id="enabling-and-moving">Enabling and moving<a class="headerlink" href="#enabling-and-moving" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-124-1" name="__codelineno-124-1" href="#__codelineno-124-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">IsAgent</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+True if the object has an Agent component, or was moved by <code>MoveTo</code> or <code>SetTarget</code>.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-125-1" name="__codelineno-125-1" href="#__codelineno-125-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetEnabled</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">bool</span><span class="p">)</span>
+</code></pre></div>
+Turns the agent on or off. Off stops it where it is and drops its target.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-126-1" name="__codelineno-126-1" href="#__codelineno-126-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">IsEnabled</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+Whether the agent is running.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-127-1" name="__codelineno-127-1" href="#__codelineno-127-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">MoveTo</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">vec3</span><span class="p">)</span>
+</code></pre></div>
+Walks to a position along the nav regions; pass another actor instead of a position to follow it. Enables the agent first. In the Patrol state the next waypoint is picked again whenever a move ends.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-128-1" name="__codelineno-128-1" href="#__codelineno-128-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetTarget</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">target</span><span class="p">)</span>
+</code></pre></div>
+Follows another actor (<code>Actor.GetPlayer()</code> for the player); it is also who the agent watches and listens for. Enables the agent first.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-129-1" name="__codelineno-129-1" href="#__codelineno-129-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetTarget</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; actor or nil</span>
+</code></pre></div>
+The actor it follows, or nil.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-130-1" name="__codelineno-130-1" href="#__codelineno-130-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">Stop</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span>
+</code></pre></div>
+Stops moving and drops the target.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-131-1" name="__codelineno-131-1" href="#__codelineno-131-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">IsMoving</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+Whether it is walking somewhere.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-132-1" name="__codelineno-132-1" href="#__codelineno-132-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetSpeed</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">speed</span><span class="p">)</span>
+</code></pre></div>
+Walking speed per frame, in engine units (a FixedPoint).</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-133-1" name="__codelineno-133-1" href="#__codelineno-133-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetSpeed</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+Walking speed per frame as a whole number of engine units: see the warning below.</p>
+<h3 id="state-machine">State machine<a class="headerlink" href="#state-machine" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-134-1" name="__codelineno-134-1" href="#__codelineno-134-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetState</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; state</span>
+</code></pre></div>
+The state number: 0 Idle, 1 Patrol, 2 Seek, 3 Flee, 4 Attack, 5 Wander, 6 Investigate, 7 Custom.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-135-1" name="__codelineno-135-1" href="#__codelineno-135-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetState</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">state</span><span class="p">)</span>
+</code></pre></div>
+Changes the state: runs <code>onStateExit</code> and <code>onStateEnter</code> on the agent's script and plays the state's skin clip when one is set.</p>
+<h3 id="senses">Senses<a class="headerlink" href="#senses" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-136-1" name="__codelineno-136-1" href="#__codelineno-136-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">CanSee</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">target</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+True when <code>target</code> is inside the vision range and cone and within the region hops. Ranges are measured as the larger of the X and Z distances, so they are squares, not circles.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-137-1" name="__codelineno-137-1" href="#__codelineno-137-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">CanHear</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">target</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+True when <code>target</code> is inside the hearing range (a square, like the vision range).</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-138-1" name="__codelineno-138-1" href="#__codelineno-138-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetVisionRange</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">range</span><span class="p">)</span>
+</code></pre></div>
+Vision range in engine units; 0 sees nothing.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-139-1" name="__codelineno-139-1" href="#__codelineno-139-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetVisionRange</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+Vision range as a whole number of engine units: see the warning below.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-140-1" name="__codelineno-140-1" href="#__codelineno-140-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetVisionAngle</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">deg</span><span class="p">)</span>
+</code></pre></div>
+HALF the cone in degrees, 0 to 180 (the inspector's Field of view is the whole cone); 180 sees all around.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-141-1" name="__codelineno-141-1" href="#__codelineno-141-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetHearingRange</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">range</span><span class="p">)</span>
+</code></pre></div>
+Hearing range in engine units; 0 hears nothing.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-142-1" name="__codelineno-142-1" href="#__codelineno-142-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetHearingRange</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+Hearing range as a whole number of engine units: see the warning below.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-143-1" name="__codelineno-143-1" href="#__codelineno-143-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetAlertTimeout</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">frames</span><span class="p">)</span>
+</code></pre></div>
+Frames after it last sensed the target before <code>onTargetLost</code> runs.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-144-1" name="__codelineno-144-1" href="#__codelineno-144-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">GetLastKnownPos</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; {x, y, z} or nil</span>
+</code></pre></div>
+Where it last saw or heard its target, or nil.</p>
+<div class="admonition warning">
+<p class="admonition-title">The getters return whole numbers</p>
+<p><code>GetSpeed</code>, <code>GetVisionRange</code> and <code>GetHearingRange</code> return a plain number, the engine value with its fraction dropped: at the default GTE scaling an 8 m vision range (0.08 engine units) reads back as 0. Keep your own copy of a value you set.</p>
+</div>
+<h3 id="patrol">Patrol<a class="headerlink" href="#patrol" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-145-1" name="__codelineno-145-1" href="#__codelineno-145-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">AddWaypoint</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">vec3</span><span class="p">)</span>
+</code></pre></div>
+Appends a patrol waypoint and turns patrolling on; the engine holds 8 and ignores more.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-146-1" name="__codelineno-146-1" href="#__codelineno-146-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">ClearWaypoints</span><span class="p">(</span><span class="nv">actor</span><span class="p">)</span>
+</code></pre></div>
+Removes every waypoint and turns patrolling off.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-147-1" name="__codelineno-147-1" href="#__codelineno-147-1"></a><span class="nv">Agent</span><span class="p">.</span><span class="nf">SetPatrolEnabled</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">bool</span><span class="p">)</span>
+</code></pre></div>
+Turns patrolling on or off; on, an Idle agent with waypoints switches to Patrol.</p>
+<p>Agent events (<code>onStateEnter</code>, <code>onTargetSeen</code>, <code>onPatrolPoint</code>, ...) are listed under <a href="../events/#agent-callbacks">Events</a>.</p>
 
 
 

@@ -652,6 +652,8 @@
       
         
       
+        
+      
     
     
     
@@ -975,6 +977,34 @@
     
   
     Player, Navigation & Rooms
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../editor/agents/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Agents (NPCs)
   
 
     
@@ -1347,6 +1377,17 @@
     <span class="md-ellipsis">
       
         Scene Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#agent-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Callbacks
       
     </span>
   </a>
@@ -2006,6 +2047,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#agent-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Agent Callbacks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#trigger-callbacks" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2129,15 +2181,47 @@
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span><span class="c1">-- Good for: UI setup, starting ambient effects, initial game state.</span>
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="kr">end</span>
 </code></pre></div>
-<h2 id="trigger-callbacks">Trigger Callbacks<a class="headerlink" href="#trigger-callbacks" title="Permanent link">&para;</a></h2>
-<p>Defined in the script of a <strong>Trigger box</strong> component. <strong>No <code>self</code> argument</strong>: the one argument is <code>index</code>, the trigger's index in the scene.</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTriggerEnter</span><span class="p">(</span><span class="nv">index</span><span class="p">)</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="c1">-- Called when the player enters the trigger volume.</span>
+<h2 id="agent-callbacks">Agent Callbacks<a class="headerlink" href="#agent-callbacks" title="Permanent link">&para;</a></h2>
+<p>Defined in the script of an object with an <strong>Agent (NPC)</strong> component (see <a href="../../editor/agents/">Agents</a>). States are the numbers <code>Agent.GetState</code> returns.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onStateEnter</span><span class="p">(</span><span class="nv">self</span><span class="p">,</span><span class="w"> </span><span class="nv">newState</span><span class="p">,</span><span class="w"> </span><span class="nv">oldState</span><span class="p">)</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span><span class="c1">-- Called after the agent's state changes (Agent.SetState, or Idle -&gt; Patrol on its own).</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="kr">end</span>
 <a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTriggerExit</span><span class="p">(</span><span class="nv">index</span><span class="p">)</span>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="c1">-- Called when the player leaves the trigger volume.</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onStateExit</span><span class="p">(</span><span class="nv">self</span><span class="p">,</span><span class="w"> </span><span class="nv">state</span><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span><span class="c1">-- Called just before it leaves `state`.</span>
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="kr">end</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTargetSeen</span><span class="p">(</span><span class="nv">self</span><span class="p">,</span><span class="w"> </span><span class="nv">target</span><span class="p">)</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span><span class="c1">-- Called when it starts seeing its target (the player unless Agent.SetTarget set another).</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="c1">-- target is nil for the player.</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a><span class="kr">end</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTargetLost</span><span class="p">(</span><span class="nv">self</span><span class="p">,</span><span class="w"> </span><span class="nv">target</span><span class="p">)</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">    </span><span class="c1">-- Called once the alert timeout runs out after it last saw or heard the target.</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="kr">end</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTargetReached</span><span class="p">(</span><span class="nv">self</span><span class="p">)</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a><span class="w">    </span><span class="c1">-- Called when it arrives at a position in the Seek, Wander or Investigate state</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a><span class="w">    </span><span class="c1">-- (not while following an actor).</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a><span class="kr">end</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onPatrolPoint</span><span class="p">(</span><span class="nv">self</span><span class="p">,</span><span class="w"> </span><span class="nv">index</span><span class="p">)</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a><span class="w">    </span><span class="c1">-- Called at each patrol waypoint, index counting from 0.</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a><span class="kr">end</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onPathBlocked</span><span class="p">(</span><span class="nv">self</span><span class="p">)</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a><span class="w">    </span><span class="c1">-- Registered, but the engine never calls it yet.</span>
+<a id="__codelineno-5-29" name="__codelineno-5-29" href="#__codelineno-5-29"></a><span class="kr">end</span>
+</code></pre></div>
+<h2 id="trigger-callbacks">Trigger Callbacks<a class="headerlink" href="#trigger-callbacks" title="Permanent link">&para;</a></h2>
+<p>Defined in the script of a <strong>Trigger box</strong> component. <strong>No <code>self</code> argument</strong>: the one argument is <code>index</code>, the trigger's index in the scene.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTriggerEnter</span><span class="p">(</span><span class="nv">index</span><span class="p">)</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="c1">-- Called when the player enters the trigger volume.</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kr">end</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="kr">function</span><span class="w"> </span><span class="nf">onTriggerExit</span><span class="p">(</span><span class="nv">index</span><span class="p">)</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span><span class="c1">-- Called when the player leaves the trigger volume.</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="kr">end</span>
 </code></pre></div>
 <h2 id="callback-execution-order">Callback Execution Order<a class="headerlink" href="#callback-execution-order" title="Permanent link">&para;</a></h2>
 <p>On scene load, callbacks fire in this order:</p>
