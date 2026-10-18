@@ -654,6 +654,8 @@
       
         
       
+        
+      
     
     
     
@@ -893,6 +895,34 @@
     
   
     UI Canvases
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../editor/sprites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sprite Sheets
   
 
     
@@ -2159,6 +2189,78 @@
     <span class="md-ellipsis">
       
         Patrol
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sprite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sprite
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sprite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sheets-and-animations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sheets and animations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-and-destroying" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating and destroying
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#animation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Look
       
     </span>
   </a>
@@ -3520,6 +3622,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#sprite" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sprite
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Sprite">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#sheets-and-animations" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Sheets and animations
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#creating-and-destroying" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Creating and destroying
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#position_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Position
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#animation_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Animation
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#look" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Look
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3542,7 +3716,7 @@
 
 <h1 id="lua-api-reference">Lua API Reference<a class="headerlink" href="#lua-api-reference" title="Permanent link">&para;</a></h1>
 <p>Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are <a href="../fixed-point/">fixed-point</a>.</p>
-<p>Not listed: the <code>Sprite</code>, <code>Tile</code> and <code>Net</code> tables. The engine has them, but the editor has no way to author sprite sheets, tilemaps or a network link yet.</p>
+<p>Not listed: the <code>Tile</code> and <code>Net</code> tables. The engine has them, but the editor has no way to author tilemaps or a network link yet.</p>
 <hr />
 <h2 id="entity">Entity<a class="headerlink" href="#entity" title="Permanent link">&para;</a></h2>
 <p>Manage game objects in the scene.</p>
@@ -4406,6 +4580,81 @@ Removes every waypoint and turns patrolling off.</p>
 </code></pre></div>
 Turns patrolling on or off; on, an Idle agent with waypoints switches to Patrol.</p>
 <p>Agent events (<code>onStateEnter</code>, <code>onTargetSeen</code>, <code>onPatrolPoint</code>, ...) are listed under <a href="../events/#agent-callbacks">Events</a>.</p>
+<hr />
+<h2 id="sprite">Sprite<a class="headerlink" href="#sprite" title="Permanent link">&para;</a></h2>
+<p>2D pictures cut from the scene's <a href="../../editor/sprites/">sprite sheets</a>. Sheets and animations are authored in the editor; sprites are made here, at run time. A sprite is a plain number, its slot in a pool of <strong>128</strong>: keep it in a variable or a table. Functions given an id that is not a live sprite do nothing (<code>IsVisible</code> returns false).</p>
+<div class="admonition warning">
+<p class="admonition-title">Pass names, not numbers</p>
+<p><code>Sprite.Create</code>, <code>Sprite.PlayAnim</code> and <code>Sprite.SetFacingFromYaw</code> take a sheet or animation name. They also mean to take an index, but the engine checks for a string first and Lua counts a number as a string, so <code>Sprite.Create(0)</code> looks for a sheet <strong>named</strong> "0" and returns -1. Always pass the name.</p>
+</div>
+<h3 id="sheets-and-animations">Sheets and animations<a class="headerlink" href="#sheets-and-animations" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-148-1" name="__codelineno-148-1" href="#__codelineno-148-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SheetIndex</span><span class="p">(</span><span class="nv">name</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; index or -1</span>
+</code></pre></div>
+The sheet's index in the scene, or -1 when no sheet has that name.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-149-1" name="__codelineno-149-1" href="#__codelineno-149-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">AnimIndex</span><span class="p">(</span><span class="nv">name</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; index or -1</span>
+</code></pre></div>
+The animation's index, or -1 when none has that name. It searches every sheet and returns the first match, which is why the editor makes animation names unique across the scene.</p>
+<h3 id="creating-and-destroying">Creating and destroying<a class="headerlink" href="#creating-and-destroying" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-150-1" name="__codelineno-150-1" href="#__codelineno-150-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">Create</span><span class="p">(</span><span class="nv">sheetName</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; id or -1</span>
+</code></pre></div>
+Makes a sprite from a sheet and returns its id, 0 to 127. Returns -1 when the sheet does not exist or all 128 are in use. A new sprite is visible, on the screen plane at (0, 0), on layer 0, with a neutral tint, showing cell 0 and no animation.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-151-1" name="__codelineno-151-1" href="#__codelineno-151-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">Destroy</span><span class="p">(</span><span class="nv">id</span><span class="p">)</span>
+</code></pre></div>
+Frees the slot. The id may be handed out again by the next <code>Create</code>.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-152-1" name="__codelineno-152-1" href="#__codelineno-152-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">Count</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+How many sprites exist.</p>
+<h3 id="position_1">Position<a class="headerlink" href="#position_1" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-153-1" name="__codelineno-153-1" href="#__codelineno-153-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetPos</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+</code></pre></div>
+Screen position of the sprite's top left corner, in whole pixels (-32768 to 32767).</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-154-1" name="__codelineno-154-1" href="#__codelineno-154-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">BindToActor</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">plane</span><span class="p">,</span><span class="w"> </span><span class="nv">offsetX</span><span class="p">,</span><span class="w"> </span><span class="nv">offsetY</span><span class="p">)</span>
+</code></pre></div>
+Makes the sprite follow an object every frame. <code>actor</code> is an <code>Actor.Find</code> or <code>Entity.Find</code> handle; <code>nil</code> unbinds it. <code>plane</code> is 0 for the screen plane (the default) or 1 for the world plane; the offsets default to 0. On the screen plane the sprite's x is the object's X and its y the object's <strong>Z</strong>, in whole engine units, plus the offsets; the object's height is ignored. The bound position replaces whatever <code>SetPos</code> set.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-155-1" name="__codelineno-155-1" href="#__codelineno-155-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetWorldPos</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">y</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">)</span>
+</code></pre></div>
+Position on the world plane. The engine keeps it but does <strong>not draw</strong> world-plane sprites yet.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-156-1" name="__codelineno-156-1" href="#__codelineno-156-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetViewOffset</span><span class="p">(</span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">y</span><span class="p">)</span>
+<a id="__codelineno-156-2" name="__codelineno-156-2" href="#__codelineno-156-2"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">GetViewOffset</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; x, y</span>
+</code></pre></div>
+A scroll for every sprite at once, in pixels: each one is drawn at its position minus this offset. Starts at 0, 0.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-157-1" name="__codelineno-157-1" href="#__codelineno-157-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetIgnoreViewOffset</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">bool</span><span class="p">)</span>
+</code></pre></div>
+True pins the sprite to the screen, ignoring the view offset (for a score or a cursor).</p>
+<h3 id="animation_1">Animation<a class="headerlink" href="#animation_1" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-158-1" name="__codelineno-158-1" href="#__codelineno-158-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">PlayAnim</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">animName</span><span class="p">,</span><span class="w"> </span><span class="nv">restart</span><span class="p">)</span>
+</code></pre></div>
+Plays an animation; the sprite switches to the animation's sheet. If the same animation is already playing it carries on, so calling this every frame is fine; pass <code>true</code> as <code>restart</code> to start it again from its first cell. An unknown name does nothing. Each cell shows for the animation's frame time in vsyncs, 60 a second of real time. A looping animation starts again after its last cell; otherwise it stops there.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-159-1" name="__codelineno-159-1" href="#__codelineno-159-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">StopAnim</span><span class="p">(</span><span class="nv">id</span><span class="p">)</span>
+</code></pre></div>
+Stops the animation on the cell it is showing.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-160-1" name="__codelineno-160-1" href="#__codelineno-160-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetFrame</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">cell</span><span class="p">)</span>
+</code></pre></div>
+Shows one cell of the sprite's sheet, 0 to 255, counted row by row from the top left, and drops the animation. The cell is not checked against the sheet's size.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-161-1" name="__codelineno-161-1" href="#__codelineno-161-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetFacingFromYaw</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">firstAnimName</span><span class="p">,</span><span class="w"> </span><span class="nv">directions</span><span class="p">,</span><span class="w"> </span><span class="nv">yaw</span><span class="p">)</span>
+</code></pre></div>
+For a character drawn from several directions: plays animation <code>firstAnimName</code> + n, where n (0 to <code>directions</code> - 1) is the direction nearest to <code>yaw</code>. The directional animations must follow one another in the sheet's list, starting with yaw 0 and going the way yaw increases. <code>yaw</code> is in pi-units like <code>Entity.SetRotationY</code> (1 = 180 degrees). Changing direction keeps the cell and timing, so a walk cycle does not restart, and keeps whether it is playing: call <code>PlayAnim</code> first. <code>directions</code> of 0 does nothing.</p>
+<h3 id="look">Look<a class="headerlink" href="#look" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-162-1" name="__codelineno-162-1" href="#__codelineno-162-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetVisible</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">bool</span><span class="p">)</span>
+<a id="__codelineno-162-2" name="__codelineno-162-2" href="#__codelineno-162-2"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">IsVisible</span><span class="p">(</span><span class="nv">id</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+Hides or shows the sprite.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-163-1" name="__codelineno-163-1" href="#__codelineno-163-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetFlip</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">flipX</span><span class="p">,</span><span class="w"> </span><span class="nv">flipY</span><span class="p">)</span>
+</code></pre></div>
+Mirrors the picture left to right and/or top to bottom.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-164-1" name="__codelineno-164-1" href="#__codelineno-164-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetColor</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">r</span><span class="p">,</span><span class="w"> </span><span class="nv">g</span><span class="p">,</span><span class="w"> </span><span class="nv">b</span><span class="p">)</span>
+</code></pre></div>
+Tints the sprite, each 0 to 255. 128, 128, 128 is the picture's own colours; higher brightens, up to double.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-165-1" name="__codelineno-165-1" href="#__codelineno-165-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetSize</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">w</span><span class="p">,</span><span class="w"> </span><span class="nv">h</span><span class="p">)</span>
+</code></pre></div>
+Draws the cell stretched to <code>w</code> x <code>h</code> pixels. 0 for either keeps the cell's own width or height.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-166-1" name="__codelineno-166-1" href="#__codelineno-166-1"></a><span class="nv">Sprite</span><span class="p">.</span><span class="nf">SetLayer</span><span class="p">(</span><span class="nv">id</span><span class="p">,</span><span class="w"> </span><span class="nv">layer</span><span class="p">)</span>
+</code></pre></div>
+Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are drawn in front of the 3D scene and behind UI canvases.</p>
+<div class="admonition tip">
+<p class="admonition-title">Unscaled sprites are cheapest</p>
+<p>A sprite at its cell size and not flipped is drawn as a single GPU sprite. Flipping or a size other than the cell's makes it a textured quad.</p>
+</div>
 
 
 
