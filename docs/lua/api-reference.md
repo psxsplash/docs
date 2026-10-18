@@ -1120,42 +1120,113 @@ Agents are objects with an **Agent (NPC)** component (see [Agents](../editor/age
 ### Enabling and moving
 
 ```lua
-Agent.IsAgent(actor)              -- true if the object has an agent (or was moved by one of these calls)
-Agent.SetEnabled(actor, bool)     -- off stops it where it is
-Agent.IsEnabled(actor)
-Agent.MoveTo(actor, vec3)         -- walk to a position (or pass another actor to follow it)
-Agent.SetTarget(actor, target)    -- follow another actor (Actor.GetPlayer() for the player)
-Agent.GetTarget(actor)            -- the actor it follows, or nil
-Agent.Stop(actor)
-Agent.IsMoving(actor)
-Agent.SetSpeed(actor, speed)      -- per frame, in engine units (FixedPoint)
-Agent.GetSpeed(actor)
+Agent.IsAgent(actor)  -- -> bool
 ```
+True if the object has an Agent component, or was moved by `MoveTo` or `SetTarget`.
 
-`MoveTo` and `SetTarget` enable the agent first. In the Patrol state the next waypoint is picked again whenever a move ends.
+```lua
+Agent.SetEnabled(actor, bool)
+```
+Turns the agent on or off. Off stops it where it is and drops its target.
+
+```lua
+Agent.IsEnabled(actor)  -- -> bool
+```
+Whether the agent is running.
+
+```lua
+Agent.MoveTo(actor, vec3)
+```
+Walks to a position along the nav regions; pass another actor instead of a position to follow it. Enables the agent first. In the Patrol state the next waypoint is picked again whenever a move ends.
+
+```lua
+Agent.SetTarget(actor, target)
+```
+Follows another actor (`Actor.GetPlayer()` for the player); it is also who the agent watches and listens for. Enables the agent first.
+
+```lua
+Agent.GetTarget(actor)  -- -> actor or nil
+```
+The actor it follows, or nil.
+
+```lua
+Agent.Stop(actor)
+```
+Stops moving and drops the target.
+
+```lua
+Agent.IsMoving(actor)  -- -> bool
+```
+Whether it is walking somewhere.
+
+```lua
+Agent.SetSpeed(actor, speed)
+```
+Walking speed per frame, in engine units (a FixedPoint).
+
+```lua
+Agent.GetSpeed(actor)  -- -> number
+```
+Walking speed per frame as a whole number of engine units: see the warning below.
 
 ### State machine
 
 ```lua
-Agent.GetState(actor)             -- 0 Idle, 1 Patrol, 2 Seek, 3 Flee, 4 Attack, 5 Wander, 6 Investigate, 7 Custom
-Agent.SetState(actor, state)      -- runs onStateExit / onStateEnter and plays the state's clip
+Agent.GetState(actor)  -- -> state
 ```
+The state number: 0 Idle, 1 Patrol, 2 Seek, 3 Flee, 4 Attack, 5 Wander, 6 Investigate, 7 Custom.
+
+```lua
+Agent.SetState(actor, state)
+```
+Changes the state: runs `onStateExit` and `onStateEnter` on the agent's script and plays the state's skin clip when one is set.
 
 ### Senses
 
 ```lua
-Agent.CanSee(actor, target)       -- inside the vision range and cone, within the region hops
-Agent.CanHear(actor, target)      -- inside the hearing range
-Agent.SetVisionRange(actor, range)
-Agent.GetVisionRange(actor)
-Agent.SetVisionAngle(actor, deg)  -- HALF the cone, 0..180 (the inspector's Field of view is the whole cone)
-Agent.SetHearingRange(actor, range)
-Agent.GetHearingRange(actor)
-Agent.SetAlertTimeout(actor, frames)
-Agent.GetLastKnownPos(actor)      -- where it last sensed its target, or nil
+Agent.CanSee(actor, target)  -- -> bool
 ```
+True when `target` is inside the vision range and cone and within the region hops. Ranges are measured as the larger of the X and Z distances, so they are squares, not circles.
 
-Ranges are measured as the larger of the X and Z distances, so they are squares, not circles.
+```lua
+Agent.CanHear(actor, target)  -- -> bool
+```
+True when `target` is inside the hearing range (a square, like the vision range).
+
+```lua
+Agent.SetVisionRange(actor, range)
+```
+Vision range in engine units; 0 sees nothing.
+
+```lua
+Agent.GetVisionRange(actor)  -- -> number
+```
+Vision range as a whole number of engine units: see the warning below.
+
+```lua
+Agent.SetVisionAngle(actor, deg)
+```
+HALF the cone in degrees, 0 to 180 (the inspector's Field of view is the whole cone); 180 sees all around.
+
+```lua
+Agent.SetHearingRange(actor, range)
+```
+Hearing range in engine units; 0 hears nothing.
+
+```lua
+Agent.GetHearingRange(actor)  -- -> number
+```
+Hearing range as a whole number of engine units: see the warning below.
+
+```lua
+Agent.SetAlertTimeout(actor, frames)
+```
+Frames after it last sensed the target before `onTargetLost` runs.
+
+```lua
+Agent.GetLastKnownPos(actor)  -- -> {x, y, z} or nil
+```
+Where it last saw or heard its target, or nil.
 
 !!! warning "The getters return whole numbers"
     `GetSpeed`, `GetVisionRange` and `GetHearingRange` return a plain number, the engine value with its fraction dropped: at the default GTE scaling an 8 m vision range (0.08 engine units) reads back as 0. Keep your own copy of a value you set.
@@ -1163,9 +1234,18 @@ Ranges are measured as the larger of the X and Z distances, so they are squares,
 ### Patrol
 
 ```lua
-Agent.AddWaypoint(actor, vec3)    -- appended; the engine holds 8
+Agent.AddWaypoint(actor, vec3)
+```
+Appends a patrol waypoint and turns patrolling on; the engine holds 8 and ignores more.
+
+```lua
 Agent.ClearWaypoints(actor)
+```
+Removes every waypoint and turns patrolling off.
+
+```lua
 Agent.SetPatrolEnabled(actor, bool)
 ```
+Turns patrolling on or off; on, an Idle agent with waypoints switches to Patrol.
 
 Agent events (`onStateEnter`, `onTargetSeen`, `onPatrolPoint`, ...) are listed under [Events](events.md#agent-callbacks).
