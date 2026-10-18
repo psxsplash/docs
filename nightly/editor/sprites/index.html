@@ -1055,6 +1055,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#hud-sprites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HUD sprites
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2049,6 +2060,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#hud-sprites" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        HUD sprites
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2183,10 +2205,8 @@
 <li><strong>World plane</strong> (<code>Sprite.BindToActor(sprite, actor, 1)</code>, or <code>Sprite.SetWorldPos</code>): carried by the engine but <strong>not drawn yet</strong>. A sprite on the world plane is invisible.</li>
 </ul>
 <p>Every function, with its arguments and ranges, is in the <a href="../../lua/api-reference/#sprite"><code>Sprite</code> API</a>.</p>
-<div class="admonition note">
-<p class="admonition-title">HUD sprites are not in the editor yet</p>
-<p>The engine can also back a <a href="../ui-canvas/">UI canvas</a> Image with a sprite sheet cell (<code>UI.SetFrame</code>), but the editor has no way to author that yet. Use Lua sprites for now.</p>
-</div>
+<h3 id="hud-sprites">HUD sprites<a class="headerlink" href="#hud-sprites" title="Permanent link">&para;</a></h3>
+<p>A <a href="../ui-canvas/">UI canvas</a> Image can show one cell of a sprite sheet instead of its own texture: pick the sheet in the Image's <strong>Sheet</strong> field and click a cell. It draws on the canvas like any element, and Lua switches cells with <a href="../../lua/api-reference/#sheet-cell"><code>UI.SetFrame</code></a>. The sheet is packed once, whether Lua sprites, Images or both use it.</p>
 
 
 

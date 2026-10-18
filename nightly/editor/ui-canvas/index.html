@@ -2064,7 +2064,7 @@
 <p>Per type:</p>
 <ul>
 <li><strong>Text</strong> has the <strong>Text</strong> itself and a <strong>Font</strong>: the built-in system font (8 x 16, fixed width), or one of the scene's fonts. Fonts live in the scene file; see the scene format notes in the editor's repository. At most 3 fonts per scene.</li>
-<li><strong>Image</strong> has a <strong>Texture</strong> (<strong>Browse</strong> copies a file from outside the project into <code>textures/</code>), <strong>Native size</strong>, <strong>Bit depth</strong> (4 and 8 bpp use a palette and less VRAM) and <strong>Cutout</strong> (transparent texels, alpha under half, are left out instead of drawn black).</li>
+<li><strong>Image</strong> has a <strong>Texture</strong> (<strong>Browse</strong> copies a file from outside the project into <code>textures/</code>), <strong>Native size</strong>, <strong>Bit depth</strong> (4 and 8 bpp use a palette and less VRAM) and <strong>Cutout</strong> (transparent texels, alpha under half, are left out instead of drawn black). Set <strong>Sheet</strong> to one of the scene's <a href="../sprites/">sprite sheets</a> and the Image shows a single cell instead: click the cell in the picker, and <strong>Snap size</strong> sets the size to one cell. Renaming the sheet carries the Images along. A <strong>Colour</strong> of <code>#808080</code> draws the texture as it is; brighter values brighten it, up to double at white.</li>
 <li><strong>Progress bar</strong> has a <strong>Value</strong>, 0 to 100.</li>
 </ul>
 <h2 id="canvases">Canvases<a class="headerlink" href="#canvases" title="Permanent link">&para;</a></h2>
