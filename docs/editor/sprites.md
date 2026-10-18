@@ -92,5 +92,6 @@ Sprites are drawn in front of all 3D geometry and behind UI canvases, in layers 
 
 Every function, with its arguments and ranges, is in the [`Sprite` API](../lua/api-reference.md#sprite).
 
-!!! note "HUD sprites are not in the editor yet"
-    The engine can also back a [UI canvas](ui-canvas.md) Image with a sprite sheet cell (`UI.SetFrame`), but the editor has no way to author that yet. Use Lua sprites for now.
+### HUD sprites
+
+A [UI canvas](ui-canvas.md) Image can show one cell of a sprite sheet instead of its own texture: pick the sheet in the Image's **Sheet** field and click a cell. It draws on the canvas like any element, and Lua switches cells with [`UI.SetFrame`](../lua/api-reference.md#sheet-cell). The sheet is packed once, whether Lua sprites, Images or both use it.

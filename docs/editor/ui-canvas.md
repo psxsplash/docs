@@ -28,7 +28,7 @@ All elements have a **Name** (what Lua and timeline tracks find them by), **Visi
 Per type:
 
 - **Text** has the **Text** itself and a **Font**: the built-in system font (8 x 16, fixed width), or one of the scene's fonts. Fonts live in the scene file; see the scene format notes in the editor's repository. At most 3 fonts per scene.
-- **Image** has a **Texture** (**Browse** copies a file from outside the project into `textures/`), **Native size**, **Bit depth** (4 and 8 bpp use a palette and less VRAM) and **Cutout** (transparent texels, alpha under half, are left out instead of drawn black).
+- **Image** has a **Texture** (**Browse** copies a file from outside the project into `textures/`), **Native size**, **Bit depth** (4 and 8 bpp use a palette and less VRAM) and **Cutout** (transparent texels, alpha under half, are left out instead of drawn black). Set **Sheet** to one of the scene's [sprite sheets](sprites.md) and the Image shows a single cell instead: click the cell in the picker, and **Snap size** sets the size to one cell. Renaming the sheet carries the Images along. A **Colour** of `#808080` draws the texture as it is; brighter values brighten it, up to double at white.
 - **Progress bar** has a **Value**, 0 to 100.
 
 ## Canvases
