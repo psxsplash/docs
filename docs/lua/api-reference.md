@@ -1347,7 +1347,7 @@ Shows one cell of the sprite's sheet, 0 to 255, counted row by row from the top 
 ```lua
 Sprite.SetFacingFromYaw(id, firstAnimName, directions, yaw)
 ```
-For a character drawn from several directions: plays animation `firstAnimName` + n, where n (0 to `directions` - 1) is the direction nearest to `yaw`. The directional animations must follow one another in the sheet's list, starting with yaw 0 and going the way yaw increases. `yaw` is in pi-units like `Entity.SetRotationY` (1 = 180 degrees). Changing direction keeps the cell and timing, so a walk cycle does not restart, and keeps whether it is playing: call `PlayAnim` first. `directions` of 0 does nothing.
+For a character drawn from several directions: plays animation `firstAnimName` + n, where n (0 to `directions` - 1) is the direction nearest to `yaw`. The directional animations must follow one another in the sheet's list, starting with yaw 0 and going the way yaw increases. `yaw` is in pi-units like `Entity.SetRotationY` (1 = 180 degrees); yaw 0 is an object facing the same way as the camera, so pass the object's yaw minus `Camera.GetRotation().y`. The editor's **Add direction set** names them in this order, starting with `_n`. Changing direction keeps the cell and timing, so a walk cycle does not restart, and keeps whether it is playing: call `PlayAnim` first. `directions` of 0 does nothing.
 
 ### Look
 
