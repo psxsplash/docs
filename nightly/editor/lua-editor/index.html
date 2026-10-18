@@ -916,6 +916,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#using-vs-code-or-another-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using VS Code or another editor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fixed-point-numbers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1944,6 +1955,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#using-vs-code-or-another-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Using VS Code or another editor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#fixed-point-numbers" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1993,6 +2015,13 @@
 <h2 id="files-changed-outside-the-editor">Files changed outside the editor<a class="headerlink" href="#files-changed-outside-the-editor" title="Permanent link">&para;</a></h2>
 <p>If a script changes on disk while it is open (your own text editor, git) and the tab has unsaved edits, the tab says <strong>Changed on disk</strong> and offers <strong>Reload</strong> or <strong>Keep mine</strong>. <strong>Ctrl+Z</strong> after a reload brings your edits back. A file deleted on disk can be written again with <strong>Save</strong>.</p>
 <p>Closing a tab with unsaved edits asks first: <strong>Save</strong>, <strong>Don't save</strong> or <strong>Cancel</strong>.</p>
+<h2 id="using-vs-code-or-another-editor">Using VS Code or another editor<a class="headerlink" href="#using-vs-code-or-another-editor" title="Permanent link">&para;</a></h2>
+<p><strong>View &gt; Set up external editor (VS Code)</strong> writes two files into the project folder:</p>
+<ul>
+<li><code>psxsplash.d.lua</code>, the psxsplash API as <a href="https://luals.github.io/">lua-language-server</a> definitions: completion and signatures for every table and function, with hover docs where the API reference has them, made from the same list the editor's autocomplete uses.</li>
+<li><code>.luarc.json</code>, which sets Lua 5.2 and turns off the libraries the PS1 does not have (<code>math</code>, <code>io</code>, <code>os</code>, <code>require</code>). It is only written when the project has none, so your own settings are kept.</li>
+</ul>
+<p>Open the project folder in VS Code with the <strong>Lua</strong> extension (sumneko) installed. When a newer editor opens the project, it brings <code>psxsplash.d.lua</code> up to date on its own.</p>
 <h2 id="fixed-point-numbers">Fixed-point numbers<a class="headerlink" href="#fixed-point-numbers" title="Permanent link">&para;</a></h2>
 <p>The PS1 has no floating-point unit, so a decimal like <code>0.5</code> is not a number in these scripts. Read <a href="../../lua/fixed-point/">Fixed-Point Math</a> first. The compile check accepts what the compiler accepts, so it will not flag a script that does the wrong arithmetic.</p>
 
