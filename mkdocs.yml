@@ -85,6 +85,7 @@ nav:
     - UI Canvases: editor/ui-canvas.md
     - Sprite Sheets: editor/sprites.md
     - Tilemaps: editor/tilemaps.md
+    - Prefabs: editor/prefabs.md
     - Cutscenes & Animations: editor/timeline.md
     - Skinned Animation: editor/skinned-animation.md
     - Player, Navigation & Rooms: editor/navigation-rooms.md
