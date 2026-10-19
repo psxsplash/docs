@@ -656,6 +656,8 @@
       
         
       
+        
+      
     
     
     
@@ -923,6 +925,34 @@
     
   
     Sprite Sheets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../editor/tilemaps/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tilemaps
   
 
     
@@ -2272,6 +2302,56 @@
     <span class="md-ellipsis">
       
         Look
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#walls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Walls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objects
       
     </span>
   </a>
@@ -3716,6 +3796,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#tile" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tile
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Tile">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#the-map" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The map
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#walls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Walls
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#objects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Objects
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3738,7 +3868,7 @@
 
 <h1 id="lua-api-reference">Lua API Reference<a class="headerlink" href="#lua-api-reference" title="Permanent link">&para;</a></h1>
 <p>Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are <a href="../fixed-point/">fixed-point</a>.</p>
-<p>Not listed: the <code>Tile</code> and <code>Net</code> tables. The engine has them, but the editor has no way to author tilemaps or a network link yet.</p>
+<p>Not listed: the <code>Net</code> table. The engine has it, but the editor has no way to author a network link yet.</p>
 <hr />
 <h2 id="entity">Entity<a class="headerlink" href="#entity" title="Permanent link">&para;</a></h2>
 <p>Manage game objects in the scene.</p>
@@ -4682,6 +4812,38 @@ Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are 
 <div class="admonition tip">
 <p class="admonition-title">Unscaled sprites are cheapest</p>
 <p>A sprite at its cell size and not flipped is drawn as a single GPU sprite. Flipping or a size other than the cell's makes it a textured quad.</p>
+</div>
+<hr />
+<h2 id="tile">Tile<a class="headerlink" href="#tile" title="Permanent link">&para;</a></h2>
+<p>Questions to the scene's <a href="../../editor/tilemaps/">tilemap</a>: what is walkable, and where its objects are. The map, its brushes and its objects are authored in the editor; Lua only reads them. Positions are whole pixels with the map's top left corner at 0, 0, x across the map and z down it: the same pixel space as the sprites, which a 2D game shares with the world X and Z of its actors. Off the map is not walkable.</p>
+<p>Without a tilemap, <code>Tile.Walkable</code>, <code>Tile.RayClear</code> and <code>Tile.MoveActor</code> behave as if nothing were in the way, so movement written with them works in any scene.</p>
+<h3 id="the-map">The map<a class="headerlink" href="#the-map" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-168-1" name="__codelineno-168-1" href="#__codelineno-168-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Active</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+True when the scene has a tilemap.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-169-1" name="__codelineno-169-1" href="#__codelineno-169-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MapSize</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; width, height, tileW, tileH</span>
+</code></pre></div>
+The map's size in tiles and the tile size in pixels. All four are 0 without a map.</p>
+<h3 id="walls">Walls<a class="headerlink" href="#walls" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-170-1" name="__codelineno-170-1" href="#__codelineno-170-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Walkable</span><span class="p">(</span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+Whether the cell under pixel x, z is walkable. False off the map and on empty or hole cells; true when the scene has no tilemap.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-171-1" name="__codelineno-171-1" href="#__codelineno-171-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">RayClear</span><span class="p">(</span><span class="nv">x0</span><span class="p">,</span><span class="w"> </span><span class="nv">z0</span><span class="p">,</span><span class="w"> </span><span class="nv">x1</span><span class="p">,</span><span class="w"> </span><span class="nv">z1</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+Whether the straight line between two pixels crosses only walkable cells, for line of sight. The first pixel's own cell is not tested; the last one's is, so a point inside a wall is not visible. The line is sampled every half tile (half the smaller tile side) and gives up after 128 samples: a longer line returns false. True without a tilemap.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-172-1" name="__codelineno-172-1" href="#__codelineno-172-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MoveActor</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">dx</span><span class="p">,</span><span class="w"> </span><span class="nv">dz</span><span class="p">,</span><span class="w"> </span><span class="nv">ignoreWalls</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; x, z</span>
+</code></pre></div>
+Moves an actor (an <code>Actor.Find</code> or <code>Actor.GetPlayer</code> handle) by <code>dx</code>, <code>dz</code> pixels on its world X and Z, and returns where it ends up, in whole units. X is tried first, then Z, each on its own: a wall stops the move on that axis, so the actor slides along it. The actor's height is left alone. Pass <code>true</code> as <code>ignoreWalls</code> to move without looking at the map; without a tilemap the whole move is always made. Given something that is not an actor it returns a single null userdata, which is not <code>nil</code>.</p>
+<h3 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link">&para;</a></h3>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-173-1" name="__codelineno-173-1" href="#__codelineno-173-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectCount</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+How many objects the map has, at most 128: one for each cell painted with a brush that has a kind, in reading order. 0 without a map.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-174-1" name="__codelineno-174-1" href="#__codelineno-174-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectAt</span><span class="p">(</span><span class="nv">i</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; kind, id, x, z</span>
+</code></pre></div>
+Object <code>i</code>, counted <strong>from 1</strong>: its kind, its id and the centre of its tile in pixels. Kinds and ids are the numbers set on the brush in the editor; the engine gives them no meaning.</p>
+<div class="admonition warning">
+<p class="admonition-title">Do not ask past the count</p>
+<p>For an index outside 1 to <code>Tile.ObjectCount()</code>, <code>ObjectAt</code> returns a single value that is <strong>not</strong> <code>nil</code> (a null userdata), so <code>if Tile.ObjectAt(i) then</code> does not find the end. Loop with <code>for i = 1, Tile.ObjectCount() do</code>.</p>
 </div>
 
 
