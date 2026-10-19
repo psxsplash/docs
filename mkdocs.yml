@@ -84,6 +84,7 @@ nav:
     - The Block Editor: editor/block-editor.md
     - UI Canvases: editor/ui-canvas.md
     - Sprite Sheets: editor/sprites.md
+    - Tilemaps: editor/tilemaps.md
     - Cutscenes & Animations: editor/timeline.md
     - Skinned Animation: editor/skinned-animation.md
     - Player, Navigation & Rooms: editor/navigation-rooms.md
