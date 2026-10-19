@@ -2,7 +2,7 @@
 
 Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are [fixed-point](fixed-point.md).
 
-Not listed: the `Tile` and `Net` tables. The engine has them, but the editor has no way to author tilemaps or a network link yet.
+Not listed: the `Net` table. The engine has it, but the editor has no way to author a network link yet.
 
 ---
 
@@ -1379,3 +1379,55 @@ Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are 
 
 !!! tip "Unscaled sprites are cheapest"
     A sprite at its cell size and not flipped is drawn as a single GPU sprite. Flipping or a size other than the cell's makes it a textured quad.
+
+---
+
+## Tile
+
+Questions to the scene's [tilemap](../editor/tilemaps.md): what is walkable, and where its objects are. The map, its brushes and its objects are authored in the editor; Lua only reads them. Positions are whole pixels with the map's top left corner at 0, 0, x across the map and z down it: the same pixel space as the sprites, which a 2D game shares with the world X and Z of its actors. Off the map is not walkable.
+
+Without a tilemap, `Tile.Walkable`, `Tile.RayClear` and `Tile.MoveActor` behave as if nothing were in the way, so movement written with them works in any scene.
+
+### The map
+
+```lua
+Tile.Active()  -- -> bool
+```
+True when the scene has a tilemap.
+
+```lua
+Tile.MapSize()  -- -> width, height, tileW, tileH
+```
+The map's size in tiles and the tile size in pixels. All four are 0 without a map.
+
+### Walls
+
+```lua
+Tile.Walkable(x, z)  -- -> bool
+```
+Whether the cell under pixel x, z is walkable. False off the map and on empty or hole cells; true when the scene has no tilemap.
+
+```lua
+Tile.RayClear(x0, z0, x1, z1)  -- -> bool
+```
+Whether the straight line between two pixels crosses only walkable cells, for line of sight. The first pixel's own cell is not tested; the last one's is, so a point inside a wall is not visible. The line is sampled every half tile (half the smaller tile side) and gives up after 128 samples: a longer line returns false. True without a tilemap.
+
+```lua
+Tile.MoveActor(actor, dx, dz, ignoreWalls)  -- -> x, z
+```
+Moves an actor (an `Actor.Find` or `Actor.GetPlayer` handle) by `dx`, `dz` pixels on its world X and Z, and returns where it ends up, in whole units. X is tried first, then Z, each on its own: a wall stops the move on that axis, so the actor slides along it. The actor's height is left alone. Pass `true` as `ignoreWalls` to move without looking at the map; without a tilemap the whole move is always made. Given something that is not an actor it returns a single null userdata, which is not `nil`.
+
+### Objects
+
+```lua
+Tile.ObjectCount()  -- -> number
+```
+How many objects the map has, at most 128: one for each cell painted with a brush that has a kind, in reading order. 0 without a map.
+
+```lua
+Tile.ObjectAt(i)  -- -> kind, id, x, z
+```
+Object `i`, counted **from 1**: its kind, its id and the centre of its tile in pixels. Kinds and ids are the numbers set on the brush in the editor; the engine gives them no meaning.
+
+!!! warning "Do not ask past the count"
+    For an index outside 1 to `Tile.ObjectCount()`, `ObjectAt` returns a single value that is **not** `nil` (a null userdata), so `if Tile.ObjectAt(i) then` does not find the end. Loop with `for i = 1, Tile.ObjectCount() do`.

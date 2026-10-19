@@ -27,8 +27,8 @@ Runtime point lights exist in the engine, the `Light` API and timeline tracks, b
 ### Fonts and finer nav settings live in the scene file
 The UI tab picks from the scene's fonts but does not add them, and the nav bake's cell size and region merging keep their defaults unless you edit the scene file.
 
-### No agents, sprites, tilemaps or networking in the editor
-The engine has them (`Agent`, `Sprite`, `Tile`, `Net`), but the editor has no way to author them yet, so they are not in these docs.
+### No agents, sprites or networking in the editor
+The engine has them (`Agent`, `Sprite`, `Net`), but the editor has no way to author them yet, so they are not in these docs.
 
 ### Scene type is stored but not used
 **Exterior** and **Interior** change nothing. Culling follows the Room objects.
