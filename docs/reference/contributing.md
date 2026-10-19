@@ -19,7 +19,7 @@ Report a problem from **Help > Report a Problem** in the editor, or open an issu
 
 - Bug reports with a project that reproduces them.
 - Fixes to anything in [Known Issues](known-issues.md).
-- Editor controls for engine features that have none yet: agents, sprites, networking, and the runtime-light switch.
+- Editor controls for engine features that have none yet: a network link and the runtime-light switch.
 - Corrections and examples for these docs.
 
 ## Building the editor
