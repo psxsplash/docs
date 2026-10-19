@@ -28,6 +28,7 @@ The **Brushes** list shows each brush with its tile, its cell number, walkable o
 | Field | Meaning |
 |-------|---------|
 | **Name** | Shown in the palette; only for you. Up to 32 characters. |
+| **Colour** | The brush's colour in the palette and on object cells in the Tilemap tab. Only for you: the game draws tiles untinted. Right-click the swatch to copy or paste a colour. |
 | **Tile** | The tileset cell it draws, row by row from 0 at the top left. Click the thumbnail to pick the cell from the tileset, or type the number. -1, or **Hole (draws nothing)** in the picker, draws nothing (a hole). |
 | **Walkable** | On: a player can stand here. Off: a wall; `Tile.MoveActor` stops at it. |
 | **Object kind** | 0, **(none)**: a plain tile. Anything else makes each cell painted with it an object Lua finds with `Tile.ObjectCount` and `Tile.ObjectAt`. The game decides what a kind means. |
@@ -45,20 +46,29 @@ At export, every cell painted with a brush that has a kind becomes one object, i
 
 ## The Tilemap tab
 
-While the scene has a tilemap, a **Tilemap** tab sits beside the **Scene** and **UI** tabs. It shows the map with the tileset in its PS1 colours, on a checkerboard where nothing is drawn, with faint grid lines on the tile edges. Cells painted with a brush that no longer exists, or whose cell is past the end of the sheet, show red. Object cells have a small square of their brush's colour in the top left corner.
+While the scene has a tilemap, a **Tilemap** tab sits beside the **Scene** and **UI** tabs. It shows the map with the tileset in its PS1 colours, on a checkerboard where nothing is drawn, with grid lines on the tile edges, a dark and a light line so they show over busy tiles. **Grid** at the top right hides and shows them. The setting belongs to the editor view; the scene file never stores it. Cells painted with a brush that no longer exists, or whose cell is past the end of the sheet, show red. Object cells have a small square of their brush's colour in the top left corner.
 
 The palette on the left lists the **Eraser** and every brush with its tile, walkable or solid, and its kind and id. Click one to paint with it.
 
+Above the palette are four tools:
+
+| Tool | Left button | Right button |
+|------|-------------|--------------|
+| **Paint** | Paints the selected brush; dragging paints every cell along the way. | Erases. |
+| **Rectangle** | Drag a rectangle, filled with the brush on release. | The same, filled empty. |
+| **Fill** | Fills the area of matching cells under the pointer with the brush: every cell reachable across edges (not corners) that holds the same brush as the clicked one, or is empty like it. | The same area, erased. |
+| **Pick** | Picks the brush of the cell under the pointer (the Eraser for an empty cell), then goes back to Paint. | Erases. |
+
+These work in every tool:
+
 | Control | Does |
 |---------|------|
-| Left button | Paints the selected brush. Dragging paints every cell along the way. |
-| Right button | Erases. |
 | Shift+drag | Fills a rectangle on release, with the brush (left button) or empty (right button). |
 | Alt+click | Picks the brush of the cell under the pointer (the Eraser for an empty cell). |
 | Wheel | Zooms about the pointer, from 25% to 1600%. |
 | Middle drag | Pans. |
 
-A stroke, from press to release, is one undo step, and so is a rectangle. The line under the map shows the cell under the pointer ("0, 3   wall, solid", or "empty") and, on the right, the map's size, tile size and zoom.
+A stroke, from press to release, is one undo step, and so is a rectangle or a fill. The line under the map shows the cell under the pointer ("0, 3   wall, solid", or "empty") and, on the right, the map's size, tile size and zoom.
 
 ## Export
 
@@ -80,6 +90,8 @@ tilemap 20x15 tile=16x16 sheet=0 objects=2 bytes=632
 ```
 
 `sheet` is the tileset's index among the scene's sprite sheets.
+
+The **UI** tab draws the map under the canvases, the way the game does: from pixel 0, 0, untinted, with the canvases on top.
 
 In the scene file the map is the `tilemap` key, its cells one string a row with the brush index of each cell (-1 empty), so it reads as a grid.
 
