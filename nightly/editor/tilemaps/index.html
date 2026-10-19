@@ -2154,6 +2154,10 @@
 <td>Shown in the palette; only for you. Up to 32 characters.</td>
 </tr>
 <tr>
+<td><strong>Colour</strong></td>
+<td>The brush's colour in the palette and on object cells in the Tilemap tab. Only for you: the game draws tiles untinted. Right-click the swatch to copy or paste a colour.</td>
+</tr>
+<tr>
 <td><strong>Tile</strong></td>
 <td>The tileset cell it draws, row by row from 0 at the top left. Click the thumbnail to pick the cell from the tileset, or type the number. -1, or <strong>Hole (draws nothing)</strong> in the picker, draws nothing (a hole).</td>
 </tr>
@@ -2177,8 +2181,41 @@
 <p>At export, every cell painted with a brush that has a kind becomes one object, in reading order: rows from the top, each row left to right. A brush with an <strong>Object id</strong> of -1 numbers its cells per kind as they come in that order, 1, 2, 3, counting every auto-numbered cell of that kind whatever brush painted it. A brush with a fixed id gives all its cells that id, and does not move the count, so mixing fixed and auto ids in one kind can give two objects the same id.</p>
 <p><strong>Kind names</strong> are labels for the kind numbers, shown in the <strong>Object kind</strong> list and the palette. They are for you only; the engine and Lua see the numbers. <strong>Name a kind</strong> adds a label for the next number ("kind 1", "kind 2"), and the bin on the last one removes it.</p>
 <h2 id="the-tilemap-tab">The Tilemap tab<a class="headerlink" href="#the-tilemap-tab" title="Permanent link">&para;</a></h2>
-<p>While the scene has a tilemap, a <strong>Tilemap</strong> tab sits beside the <strong>Scene</strong> and <strong>UI</strong> tabs. It shows the map with the tileset in its PS1 colours, on a checkerboard where nothing is drawn, with faint grid lines on the tile edges. Cells painted with a brush that no longer exists, or whose cell is past the end of the sheet, show red. Object cells have a small square of their brush's colour in the top left corner.</p>
+<p>While the scene has a tilemap, a <strong>Tilemap</strong> tab sits beside the <strong>Scene</strong> and <strong>UI</strong> tabs. It shows the map with the tileset in its PS1 colours, on a checkerboard where nothing is drawn, with grid lines on the tile edges, a dark and a light line so they show over busy tiles. <strong>Grid</strong> at the top right hides and shows them. The setting belongs to the editor view; the scene file never stores it. Cells painted with a brush that no longer exists, or whose cell is past the end of the sheet, show red. Object cells have a small square of their brush's colour in the top left corner.</p>
 <p>The palette on the left lists the <strong>Eraser</strong> and every brush with its tile, walkable or solid, and its kind and id. Click one to paint with it.</p>
+<p>Above the palette are four tools:</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Left button</th>
+<th>Right button</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Paint</strong></td>
+<td>Paints the selected brush; dragging paints every cell along the way.</td>
+<td>Erases.</td>
+</tr>
+<tr>
+<td><strong>Rectangle</strong></td>
+<td>Drag a rectangle, filled with the brush on release.</td>
+<td>The same, filled empty.</td>
+</tr>
+<tr>
+<td><strong>Fill</strong></td>
+<td>Fills the area of matching cells under the pointer with the brush: every cell reachable across edges (not corners) that holds the same brush as the clicked one, or is empty like it.</td>
+<td>The same area, erased.</td>
+</tr>
+<tr>
+<td><strong>Pick</strong></td>
+<td>Picks the brush of the cell under the pointer (the Eraser for an empty cell), then goes back to Paint.</td>
+<td>Erases.</td>
+</tr>
+</tbody>
+</table>
+<p>These work in every tool:</p>
 <table>
 <thead>
 <tr>
@@ -2187,14 +2224,6 @@
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>Left button</td>
-<td>Paints the selected brush. Dragging paints every cell along the way.</td>
-</tr>
-<tr>
-<td>Right button</td>
-<td>Erases.</td>
-</tr>
 <tr>
 <td>Shift+drag</td>
 <td>Fills a rectangle on release, with the brush (left button) or empty (right button).</td>
@@ -2213,7 +2242,7 @@
 </tr>
 </tbody>
 </table>
-<p>A stroke, from press to release, is one undo step, and so is a rectangle. The line under the map shows the cell under the pointer ("0, 3   wall, solid", or "empty") and, on the right, the map's size, tile size and zoom.</p>
+<p>A stroke, from press to release, is one undo step, and so is a rectangle or a fill. The line under the map shows the cell under the pointer ("0, 3   wall, solid", or "empty") and, on the right, the map's size, tile size and zoom.</p>
 <h2 id="export">Export<a class="headerlink" href="#export" title="Permanent link">&para;</a></h2>
 <p>The section lists what export would refuse as you type, and export stops on the same errors:</p>
 <ul>
@@ -2229,6 +2258,7 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>tilemap 20x15 tile=16x16 sheet=0 objects=2 bytes=632
 </code></pre></div>
 <p><code>sheet</code> is the tileset's index among the scene's sprite sheets.</p>
+<p>The <strong>UI</strong> tab draws the map under the canvases, the way the game does: from pixel 0, 0, untinted, with the canvases on top.</p>
 <p>In the scene file the map is the <code>tilemap</code> key, its cells one string a row with the brush index of each cell (-1 empty), so it reads as a grid.</p>
 <h2 id="the-map-in-the-game">The map in the game<a class="headerlink" href="#the-map-in-the-game" title="Permanent link">&para;</a></h2>
 <p>The map's top left corner is at pixel 0, 0, and it uses the same pixel space as the <a href="../sprites/">sprites</a>: the view offset (<code>Sprite.SetViewOffset</code>) scrolls the map and the sprites together. Lua's x is across the map and z down it: tile column <code>x</code> covers pixels <code>x * tileW</code> to <code>x * tileW + tileW - 1</code>. <code>Tile.MoveActor</code> moves an actor on the world X and Z axes in whole units, so an actor at X = 40, Z = 40 stands in tile 2, 2 of a 16 px map. Off the map is not walkable, so its edge is a wall.</p>
