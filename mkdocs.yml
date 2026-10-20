@@ -80,6 +80,7 @@ nav:
     - Importing Models & Textures: editor/importing.md
     - Materials & Bit Depth: editor/materials.md
     - Lighting: editor/lighting.md
+    - Shadows: editor/shadows.md
     - The Lua Editor: editor/lua-editor.md
     - The Block Editor: editor/block-editor.md
     - UI Canvases: editor/ui-canvas.md
