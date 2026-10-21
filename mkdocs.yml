@@ -93,6 +93,7 @@ nav:
     - Audio: editor/audio.md
     - Scene Settings: editor/scene-settings.md
     - World Streaming: editor/world-streaming.md
+    - Multiplayer: editor/multiplayer.md
     - Building & Running: editor/building.md
   - Scripting:
     - lua/index.md

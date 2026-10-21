@@ -2,7 +2,55 @@
 
 Every function the engine gives your Lua scripts, as of the current psxsplash source. Numbers that carry fractions are [fixed-point](fixed-point.md).
 
-Not listed: the `Net` table. The engine has it, but the editor has no way to author a network link yet.
+## Net
+
+Linking consoles over the serial port (SIO1). See [Multiplayer](../editor/multiplayer.md) for how sessions, slots and the host work, and for running several consoles from the editor.
+
+### Session
+
+```lua
+Net.Connect([baud [, rxMode]])  -- start a session -> true
+Net.Disconnect()                -- leave it (tells the others if connected)
+Net.IsConnected()               -- -> true once connected
+Net.State()                     -- -> 0 not connected, 1 connecting, 2 connected,
+                                --    3 version mismatch, 4 scene mismatch
+Net.IsHost()                    -- -> true on the console that owns world objects
+Net.LocalSlot()                 -- -> this console's slot (255: none yet)
+Net.PlayerCount()               -- -> players in the session
+Net.Stats()                     -- -> table of link counters
+```
+`Net.Connect` uses the scene's Network id to check that every console runs the same scene. `baud` defaults to 57600. `rxMode` is `0` Auto (the default), `1` Polled or `2` Interrupt.
+
+`Net.Stats` fields include `bytesRx`, `bytesTx`, `frames`, `crcErrors`, `resyncs`, `serialErrors`, `rttMillis`, `goodput`, `queueDepth`, `baud`, `rxMode` and `heapKB`.
+
+### Avatars and world objects
+
+```lua
+Net.SetLocalAvatar(actor)           -- the actor this console sends as its player
+Net.SetRemoteAvatar(slot, actor)    -- the local actor that shows slot's player
+Net.SetReplicationEnabled(enabled)  -- send this console's avatar at all (default true)
+Net.RegisterActor(actor)            -- host owns this actor -> false if 48 are registered
+Net.UnregisterActor(actor)
+Net.SyncActor(actor)                -- send the object's self.sync table -> bool
+```
+Each takes an actor handle from [`Actor.Find`](#actor). The local avatar defaults to the player. Turn replication off in scenes with no avatar, such as a menu or a lobby. `Net.SyncActor` returns `false` if the object has no `self.sync` table or it does not fit in 254 bytes; the other consoles apply it only for a registered actor, and only when it comes from the host.
+
+### Messages
+
+```lua
+Net.Send(eventId [, arg])   -- two integers, reliable -> bool
+Net.SendData(str)           -- a string of 1 to 256 bytes, reliable and in order -> bool
+Net.ReliableQueueDepth()    -- -> queued, capacity
+```
+The other consoles receive these in the scene script's `onNetEvent(id, arg)` and `onNetData(str)`. Both send functions return `false` when not connected or when the reliable queue is full, and the message is dropped; check the result, or compare `Net.ReliableQueueDepth()` before sending a batch.
+
+### Across scene loads
+
+```lua
+Net.SetPersistent(enabled)  -- keep the session through the next Scene.Load
+Net.IsPersistent()          -- -> bool
+```
+Call `Net.SetPersistent(true)` before `Scene.Load`, then `Net.Connect()` again in the new scene: the console keeps its slot. Avatar mappings and registered actors are still dropped with the old scene.
 
 ---
 
