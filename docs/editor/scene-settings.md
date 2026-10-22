@@ -14,9 +14,10 @@ Every cutscene and animation in the scene, each with **Edit in timeline**. See [
 
 | Field | Meaning |
 |-------|---------|
-| **Background** | The colour the screen clears to every frame. With fog on, distant triangles fade to it. |
+| **Background** | The colour the screen clears to every frame. With fog or Edge fade on, distant triangles fade to it. |
 | **Fog** | Fades distant triangles to the background colour, and culls anything wholly past the fog wall. |
 | **Density** | Fog density, 1 to 10. Kept while fog is off. |
+| **Edge fade** | On by default. Distant objects fade in from the background colour as they come within drawing distance, instead of appearing all at once. Works with fog on or off. |
 | **GTE scaling** | Editor units per PS1 unit, default 100. Positions export as value divided by this, in 16-bit fixed point, so everything must sit within 8 x the scaling of the origin: 800 m at 100. Smaller is finer, larger reaches farther. |
 | **Scene type** | Exterior or Interior. Stored in the scene, but the engine does not read it: culling follows [Room objects](navigation-rooms.md#rooms-and-portals). |
 
