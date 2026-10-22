@@ -458,6 +458,63 @@ Turn the camera toward a world point. It sets the camera's rotation once; call i
 
 ---
 
+## Screen
+
+Effects over the whole picture: fades, flashes, camera shake, letterbox bars and a motion trail. Durations are in frames at 30 per second, like cutscene keys; 0 is at once. The same effects are [timeline](../editor/timeline.md) tracks (Screen Fade, Fade Color, Letterbox, Screen Shake, Motion Trail) and Blocks.
+
+```lua
+Screen.FadeOut(r, g, b, frames)
+```
+Fade the whole screen, UI and text included, to the colour `r, g, b` (0-255 each) over `frames`. The screen stays that colour until `Screen.FadeIn`.
+
+```lua
+Screen.FadeIn(frames)
+```
+Fade back from the fade colour to the picture over `frames`.
+
+```lua
+Screen.IsFading()        -- -> boolean
+```
+True while a `FadeOut` or `FadeIn` is still running (not while the screen just stays faded).
+
+```lua
+Screen.Flash(r, g, b, frames)
+```
+Add the colour `r, g, b` to the whole screen and let it die away over `frames`.
+
+```lua
+Screen.Shake(amplitude, frames)
+```
+Shake the 3D view by up to `amplitude` pixels (0-64), dying away over `frames`. The camera itself does not move and the UI stays still.
+
+```lua
+Screen.Letterbox(height, frames)
+```
+Slide black bars `height` pixels tall over the top and bottom of the 3D view over `frames`; `Screen.Letterbox(0, frames)` removes them. The UI stays above the bars.
+
+```lua
+Screen.Trail(strength)
+```
+Motion trail: each frame blends the previous one back in, half and half. Any nonzero `strength` turns it on (the blend is fixed; the value only says on or off), 0 turns it off. It needs the double-buffered 320x240 mode; in a single-buffer mode the call does nothing and logs once.
+
+```lua
+-- Fade to black, then load the next scene (which starts unfaded)
+local leaving = false
+
+function onInteract(self)
+    leaving = true
+    Screen.FadeOut(0, 0, 0, 20)
+end
+
+function onUpdate(self, dt)
+    if leaving and not Screen.IsFading() then Scene.Load(1) end
+end
+```
+
+A new scene starts with every effect off. A cutscene's screen tracks keep their last value when it ends by itself (one that ends faded out stays faded until `Screen.FadeIn`); `Cutscene.Stop()` takes off the effects that cutscene drove.
+
+---
+
 ## Player
 
 Control the player.
