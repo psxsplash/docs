@@ -39,7 +39,7 @@ F8 and F10 work wherever the keyboard focus is. A breakpoint you add while the g
 
 ### Debug info only while breakpoints exist
 
-Line numbers and local names roughly double the size of the compiled scripts, in memory on the console too. Play therefore only includes them while the project has at least one breakpoint. If you set your first breakpoint while a Play without any is running, the editor reloads the scene with the debug info and the game then stops there. Disc builds and **Export** never include it, so they come out the same as before.
+Line numbers and local names roughly double the size of the compiled scripts, and the console loads them into memory along with the code. Play therefore only includes them while the project has at least one breakpoint. If you set your first breakpoint while a Play without any is running, the editor reloads the scene with the debug info and the game then stops there. Disc builds and **Export** never include it, so they come out the same as before.
 
 ### Limits
 
