@@ -1430,6 +1430,52 @@ Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are 
 
 ---
 
+## Particles
+
+Billboard particles from [particle emitters](../editor/particles.md), authored in the editor. Emitters are not made here: a script starts, stops and counts the ones the scene has. An emitter is named by its **object's name**, or by the number `Particles.Find` returned for it. Most emitters sit on objects with no mesh, which have no `Entity` handle to pass, so the name is the way in.
+
+!!! note "Names and numbers"
+    The engine reads an argument that is a real Lua string as a name, and anything else as a number. A number is truncated to a whole number and used as the emitter's index, from 0 in export order. A name or number that matches no emitter does nothing: the functions return `nil`, `false` or 0 as listed below and never raise an error. A `nil`, a table or a missing argument counts as no emitter.
+
+```lua
+Particles.Find(name)  -- -> number or nil
+```
+The emitter's number, or `nil` when no emitter has that name or `name` is not a string. When two objects share a name it returns the first.
+
+```lua
+Particles.Play(emitter)
+```
+Starts emitting from the beginning: the emitter's burst is spawned, the rate carries on (a one-shot emitter for its duration) and the random spread starts again from the emitter's seed, so every `Play` looks the same. Particles that are alive are kept.
+
+```lua
+Particles.Stop(emitter)
+```
+Stops spawning. The live particles finish their lives.
+
+```lua
+Particles.Clear(emitter)
+```
+Removes every live particle at once. A playing emitter keeps spawning.
+
+```lua
+Particles.Burst(emitter, count)
+```
+Spawns `count` particles at once, playing or not, as many as the pool has room for: it stops at a full pool, so a huge `count` costs nothing. A `count` that is not a number, or is 0 or negative, spawns nothing.
+
+```lua
+Particles.IsPlaying(emitter)  -- -> bool
+```
+True while the emitter spawns: after `Play` until `Stop`, or until a one-shot emitter's duration ends. False for an emitter that does not exist.
+
+```lua
+Particles.Count(emitter)  -- -> number
+```
+How many of the emitter's particles are alive. 0 for an emitter that does not exist.
+
+In an engine built without the `particles` feature, any use of `Particles` raises an error saying the feature is not included in the build.
+
+---
+
 ## Tile
 
 Questions to the scene's [tilemap](../editor/tilemaps.md): what is walkable, and where its objects are. The map, its brushes and its objects are authored in the editor; Lua only reads them. Positions are whole pixels with the map's top left corner at 0, 0, x across the map and z down it: the same pixel space as the sprites, which a 2D game shares with the world X and Z of its actors. Off the map is not walkable.
