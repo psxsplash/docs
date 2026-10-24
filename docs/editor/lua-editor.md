@@ -19,6 +19,41 @@ You can write every script in Lua, build every script from [blocks](block-editor
 
 Press **Play** and open scripts are saved first.
 
+## Breakpoints
+
+![A game stopped at line 10 of a script, with the Debugger panel showing locals and globals](../assets/images/lua-breakpoints.png)
+
+Click in the gutter, left of the line numbers, to set a breakpoint on that line. A red dot marks it; a faint dot shows under the pointer. Click the dot again to clear it. Breakpoints are saved in `.breakpoints.json` in the project folder. It is hidden from the Project panel and is not part of any scene.
+
+Press **Play**. When the game reaches a marked line it stops before running it. The script opens at that line, which gets an amber highlight and an arrow, and a **Debugger** tab appears in the bottom dock. It reads **Stopped at** the script and line (click it to show the line again) and has two columns:
+
+- **Locals**: the locals of the function that stopped. File-level locals the function uses are marked `(file)`.
+- **Globals**: the script's own globals. Functions and the engine's API tables (`Entity`, `Debug`, `Input` and the rest) are left out.
+
+The tab is there while a one-player Play has an engine with the debugger running. While the game runs, **Continue** and **Step** are drawn disabled.
+
+- **Continue** (**F8**) lets the game run until the next breakpoint.
+- **Step** (**F10**) runs to the next line that executes anywhere in Lua. That may be the next line of the same function, or a line in another object's script. Returning from a function that was called from C is not treated specially.
+
+F8 and F10 work wherever the keyboard focus is. A breakpoint you add while the game is stopped takes effect when it resumes.
+
+### Debug info only while breakpoints exist
+
+Line numbers and local names roughly double the size of the compiled scripts, in memory on the console too. Play therefore only includes them while the project has at least one breakpoint. If you set your first breakpoint while a Play without any is running, the editor reloads the scene with the debug info and the game then stops there. Disc builds and **Export** never include it, so they come out the same as before.
+
+### Limits
+
+- Only **Play** stops. **Run on hardware** does not use breakpoints.
+- With 2 to 4 linked players the debugger is off.
+- Scripts built from [blocks](block-editor.md) take no breakpoints.
+- A breakpoint is a fixed line number. It does not move when you add or remove lines above it, or when you rename or move the script.
+- Values are shallow. A table shows its first 6 fields, long strings are cut, and a `FixedPoint` value shows as a table. There is no call stack, no watch list and nothing to expand.
+- The engine has to have the feature. With an older engine the Debugger tab does not appear and the game runs as before.
+
+### Without the editor
+
+The editor drives the engine through two files in the PCdrv folder. `luabp.txt` holds a generation number on the first line, then one `<line> <chunk>` per breakpoint, where the chunk is the script's project path. The engine reads it when the scene loads and again every 15 frames. While stopped, the engine prints `psxsplash: lua break <id> <line> <chunk>` followed by `lua local`, `lua upvalue` and `lua global` lines, then `lua break end <id>`. Write `<id> continue` or `<id> step` to `luabp.cmd` to resume; a command with a different stop id is ignored. The scripts must have been compiled with debug info.
+
 ## Files changed outside the editor
 
 If a script changes on disk while it is open (your own text editor, git) and the tab has unsaved edits, the tab says **Changed on disk** and offers **Reload** or **Keep mine**. **Ctrl+Z** after a reload brings your edits back. A file deleted on disk can be written again with **Save**.
