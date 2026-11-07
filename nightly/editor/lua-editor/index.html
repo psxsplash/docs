@@ -943,6 +943,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breakpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breakpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-info-only-while-breakpoints-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug info only while breakpoints exist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#without-the-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without the editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#files-changed-outside-the-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2094,6 +2144,56 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#breakpoints" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Breakpoints
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Breakpoints">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#debug-info-only-while-breakpoints-exist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Debug info only while breakpoints exist
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#limits" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Limits
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#without-the-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Without the editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#files-changed-outside-the-editor" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -2162,6 +2262,33 @@
 <li><strong>Ctrl+S</strong> saves; <strong>Ctrl+Z</strong> and <strong>Ctrl+Y</strong> undo and redo. The status bar shows the line and column, and <code>Lua 5.2 (psxlua)</code>.</li>
 </ul>
 <p>Press <strong>Play</strong> and open scripts are saved first.</p>
+<h2 id="breakpoints">Breakpoints<a class="headerlink" href="#breakpoints" title="Permanent link">&para;</a></h2>
+<p><img alt="A game stopped at line 10 of a script, with the Debugger panel showing locals and globals" src="../../assets/images/lua-breakpoints.png" /></p>
+<p>Click in the gutter, left of the line numbers, to set a breakpoint on that line. A red dot marks it; a faint dot shows under the pointer. Click the dot again to clear it. Breakpoints are saved in <code>.breakpoints.json</code> in the project folder. It is hidden from the Project panel and is not part of any scene.</p>
+<p>Press <strong>Play</strong>. When the game reaches a marked line it stops before running it. The script opens at that line, which gets an amber highlight and an arrow, and a <strong>Debugger</strong> tab appears in the bottom dock. It reads <strong>Stopped at</strong> the script and line (click it to show the line again) and has two columns:</p>
+<ul>
+<li><strong>Locals</strong>: the locals of the function that stopped. File-level locals the function uses are marked <code>(file)</code>.</li>
+<li><strong>Globals</strong>: the script's own globals. Functions and the engine's API tables (<code>Entity</code>, <code>Debug</code>, <code>Input</code> and the rest) are left out.</li>
+</ul>
+<p>The tab is there while a one-player Play has an engine with the debugger running. While the game runs, <strong>Continue</strong> and <strong>Step</strong> are drawn disabled.</p>
+<ul>
+<li><strong>Continue</strong> (<strong>F8</strong>) lets the game run until the next breakpoint.</li>
+<li><strong>Step</strong> (<strong>F10</strong>) runs to the next line that executes anywhere in Lua. That may be the next line of the same function, or a line in another object's script. Returning from a function that was called from C is not treated specially.</li>
+</ul>
+<p>F8 and F10 work wherever the keyboard focus is. A breakpoint you add while the game is stopped takes effect when it resumes.</p>
+<h3 id="debug-info-only-while-breakpoints-exist">Debug info only while breakpoints exist<a class="headerlink" href="#debug-info-only-while-breakpoints-exist" title="Permanent link">&para;</a></h3>
+<p>Line numbers and local names roughly double the size of the compiled scripts, and the console loads them into memory along with the code. Play therefore only includes them while the project has at least one breakpoint. If you set your first breakpoint while a Play without any is running, the editor reloads the scene with the debug info and the game then stops there. Disc builds and <strong>Export</strong> never include it, so they come out the same as before.</p>
+<h3 id="limits">Limits<a class="headerlink" href="#limits" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Only <strong>Play</strong> stops. <strong>Run on hardware</strong> does not use breakpoints.</li>
+<li>With 2 to 4 linked players the debugger is off.</li>
+<li>Scripts built from <a href="../block-editor/">blocks</a> take no breakpoints.</li>
+<li>A breakpoint is a fixed line number. It does not move when you add or remove lines above it, or when you rename or move the script.</li>
+<li>Values are shallow. A table shows its first 6 fields, long strings are cut, and a <code>FixedPoint</code> value shows as a table. There is no call stack, no watch list and nothing to expand.</li>
+<li>The engine has to have the feature. With an older engine the Debugger tab does not appear and the game runs as before.</li>
+</ul>
+<h3 id="without-the-editor">Without the editor<a class="headerlink" href="#without-the-editor" title="Permanent link">&para;</a></h3>
+<p>The editor drives the engine through two files in the PCdrv folder. <code>luabp.txt</code> holds a generation number on the first line, then one <code>&lt;line&gt; &lt;chunk&gt;</code> per breakpoint, where the chunk is the script's project path. The engine reads it when the scene loads and again every 15 frames. While stopped, the engine prints <code>psxsplash: lua break &lt;id&gt; &lt;line&gt; &lt;chunk&gt;</code> followed by <code>lua local</code>, <code>lua upvalue</code> and <code>lua global</code> lines, then <code>lua break end &lt;id&gt;</code>. Write <code>&lt;id&gt; continue</code> or <code>&lt;id&gt; step</code> to <code>luabp.cmd</code> to resume; a command with a different stop id is ignored. The scripts must have been compiled with debug info.</p>
 <h2 id="files-changed-outside-the-editor">Files changed outside the editor<a class="headerlink" href="#files-changed-outside-the-editor" title="Permanent link">&para;</a></h2>
 <p>If a script changes on disk while it is open (your own text editor, git) and the tab has unsaved edits, the tab says <strong>Changed on disk</strong> and offers <strong>Reload</strong> or <strong>Keep mine</strong>. <strong>Ctrl+Z</strong> after a reload brings your edits back. A file deleted on disk can be written again with <strong>Save</strong>.</p>
 <p>Closing a tab with unsaved edits asks first: <strong>Save</strong>, <strong>Don't save</strong> or <strong>Cancel</strong>.</p>
