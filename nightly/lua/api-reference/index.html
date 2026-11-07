@@ -664,6 +664,8 @@
       
         
       
+        
+      
     
     
     
@@ -959,6 +961,34 @@
     
   
     Sprite Sheets
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../editor/particles/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Particle Emitters
   
 
     
@@ -2483,6 +2513,17 @@
         
       </ul>
     </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#particles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Particles
+      
+    </span>
+  </a>
   
 </li>
       
@@ -4053,6 +4094,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#particles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Particles
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tile" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -5166,31 +5218,60 @@ Drawing order, 0 (front) to 11; a higher number is drawn as 11. All sprites are 
 <p>A sprite at its cell size and not flipped is drawn as a single GPU sprite. Flipping or a size other than the cell's makes it a textured quad.</p>
 </div>
 <hr />
+<h2 id="particles">Particles<a class="headerlink" href="#particles" title="Permanent link">&para;</a></h2>
+<p>Billboard particles from <a href="../../editor/particles/">particle emitters</a>, authored in the editor. Emitters are not made here: a script starts, stops and counts the ones the scene has. An emitter is named by its <strong>object's name</strong>, or by the number <code>Particles.Find</code> returned for it. Most emitters sit on objects with no mesh, which have no <code>Entity</code> handle to pass, so the name is the way in.</p>
+<div class="admonition note">
+<p class="admonition-title">Names and numbers</p>
+<p>The engine reads an argument that is a real Lua string as a name, and anything else as a number. A number is truncated to a whole number and used as the emitter's index, from 0 in export order. A name or number that matches no emitter does nothing: the functions return <code>nil</code>, <code>false</code> or 0 as listed below and never raise an error. A <code>nil</code>, a table or a missing argument counts as no emitter.</p>
+</div>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-182-1" name="__codelineno-182-1" href="#__codelineno-182-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Find</span><span class="p">(</span><span class="nv">name</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; number or nil</span>
+</code></pre></div>
+The emitter's number, or <code>nil</code> when no emitter has that name or <code>name</code> is not a string. When two objects share a name it returns the first.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-183-1" name="__codelineno-183-1" href="#__codelineno-183-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Play</span><span class="p">(</span><span class="nv">emitter</span><span class="p">)</span>
+</code></pre></div>
+Starts emitting from the beginning: the emitter's burst is spawned, the rate carries on (a one-shot emitter for its duration) and the random spread starts again from the emitter's seed, so every <code>Play</code> looks the same. Particles that are alive are kept.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-184-1" name="__codelineno-184-1" href="#__codelineno-184-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Stop</span><span class="p">(</span><span class="nv">emitter</span><span class="p">)</span>
+</code></pre></div>
+Stops spawning. The live particles finish their lives.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-185-1" name="__codelineno-185-1" href="#__codelineno-185-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Clear</span><span class="p">(</span><span class="nv">emitter</span><span class="p">)</span>
+</code></pre></div>
+Removes every live particle at once. A playing emitter keeps spawning.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-186-1" name="__codelineno-186-1" href="#__codelineno-186-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Burst</span><span class="p">(</span><span class="nv">emitter</span><span class="p">,</span><span class="w"> </span><span class="nv">count</span><span class="p">)</span>
+</code></pre></div>
+Spawns <code>count</code> particles at once, playing or not, as many as the pool has room for: it stops at a full pool, so a huge <code>count</code> costs nothing. A <code>count</code> that is not a number, or is 0 or negative, spawns nothing.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-187-1" name="__codelineno-187-1" href="#__codelineno-187-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">IsPlaying</span><span class="p">(</span><span class="nv">emitter</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+</code></pre></div>
+True while the emitter spawns: after <code>Play</code> until <code>Stop</code>, or until a one-shot emitter's duration ends. False for an emitter that does not exist.</p>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-188-1" name="__codelineno-188-1" href="#__codelineno-188-1"></a><span class="nv">Particles</span><span class="p">.</span><span class="nf">Count</span><span class="p">(</span><span class="nv">emitter</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+</code></pre></div>
+How many of the emitter's particles are alive. 0 for an emitter that does not exist.</p>
+<p>In an engine built without the <code>particles</code> feature, any use of <code>Particles</code> raises an error saying the feature is not included in the build.</p>
+<hr />
 <h2 id="tile">Tile<a class="headerlink" href="#tile" title="Permanent link">&para;</a></h2>
 <p>Questions to the scene's <a href="../../editor/tilemaps/">tilemap</a>: what is walkable, and where its objects are. The map, its brushes and its objects are authored in the editor; Lua only reads them. Positions are whole pixels with the map's top left corner at 0, 0, x across the map and z down it: the same pixel space as the sprites, which a 2D game shares with the world X and Z of its actors. Off the map is not walkable.</p>
 <p>Without a tilemap, <code>Tile.Walkable</code>, <code>Tile.RayClear</code> and <code>Tile.MoveActor</code> behave as if nothing were in the way, so movement written with them works in any scene.</p>
 <h3 id="the-map">The map<a class="headerlink" href="#the-map" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-182-1" name="__codelineno-182-1" href="#__codelineno-182-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Active</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-189-1" name="__codelineno-189-1" href="#__codelineno-189-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Active</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
 </code></pre></div>
 True when the scene has a tilemap.</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-183-1" name="__codelineno-183-1" href="#__codelineno-183-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MapSize</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; width, height, tileW, tileH</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-190-1" name="__codelineno-190-1" href="#__codelineno-190-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MapSize</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; width, height, tileW, tileH</span>
 </code></pre></div>
 The map's size in tiles and the tile size in pixels. All four are 0 without a map.</p>
 <h3 id="walls">Walls<a class="headerlink" href="#walls" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-184-1" name="__codelineno-184-1" href="#__codelineno-184-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Walkable</span><span class="p">(</span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-191-1" name="__codelineno-191-1" href="#__codelineno-191-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">Walkable</span><span class="p">(</span><span class="nv">x</span><span class="p">,</span><span class="w"> </span><span class="nv">z</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
 </code></pre></div>
 Whether the cell under pixel x, z is walkable. False off the map and on empty or hole cells; true when the scene has no tilemap.</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-185-1" name="__codelineno-185-1" href="#__codelineno-185-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">RayClear</span><span class="p">(</span><span class="nv">x0</span><span class="p">,</span><span class="w"> </span><span class="nv">z0</span><span class="p">,</span><span class="w"> </span><span class="nv">x1</span><span class="p">,</span><span class="w"> </span><span class="nv">z1</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-192-1" name="__codelineno-192-1" href="#__codelineno-192-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">RayClear</span><span class="p">(</span><span class="nv">x0</span><span class="p">,</span><span class="w"> </span><span class="nv">z0</span><span class="p">,</span><span class="w"> </span><span class="nv">x1</span><span class="p">,</span><span class="w"> </span><span class="nv">z1</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; bool</span>
 </code></pre></div>
 Whether the straight line between two pixels crosses only walkable cells, for line of sight. The first pixel's own cell is not tested; the last one's is, so a point inside a wall is not visible. The line is sampled every half tile (half the smaller tile side) and gives up after 128 samples: a longer line returns false. True without a tilemap.</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-186-1" name="__codelineno-186-1" href="#__codelineno-186-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MoveActor</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">dx</span><span class="p">,</span><span class="w"> </span><span class="nv">dz</span><span class="p">,</span><span class="w"> </span><span class="nv">ignoreWalls</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; x, z</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-193-1" name="__codelineno-193-1" href="#__codelineno-193-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">MoveActor</span><span class="p">(</span><span class="nv">actor</span><span class="p">,</span><span class="w"> </span><span class="nv">dx</span><span class="p">,</span><span class="w"> </span><span class="nv">dz</span><span class="p">,</span><span class="w"> </span><span class="nv">ignoreWalls</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; x, z</span>
 </code></pre></div>
 Moves an actor (an <code>Actor.Find</code> or <code>Actor.GetPlayer</code> handle) by <code>dx</code>, <code>dz</code> pixels on its world X and Z, and returns where it ends up, in whole units. X is tried first, then Z, each on its own: a wall stops the move on that axis, so the actor slides along it. The actor's height is left alone. Pass <code>true</code> as <code>ignoreWalls</code> to move without looking at the map; without a tilemap the whole move is always made. Given something that is not an actor it returns a single null userdata, which is not <code>nil</code>.</p>
 <h3 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link">&para;</a></h3>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-187-1" name="__codelineno-187-1" href="#__codelineno-187-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectCount</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-194-1" name="__codelineno-194-1" href="#__codelineno-194-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectCount</span><span class="p">()</span><span class="w">  </span><span class="c1">-- -&gt; number</span>
 </code></pre></div>
 How many objects the map has, at most 128: one for each cell painted with a brush that has a kind, in reading order. 0 without a map.</p>
-<p><div class="highlight"><pre><span></span><code><a id="__codelineno-188-1" name="__codelineno-188-1" href="#__codelineno-188-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectAt</span><span class="p">(</span><span class="nv">i</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; kind, id, x, z</span>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-195-1" name="__codelineno-195-1" href="#__codelineno-195-1"></a><span class="nv">Tile</span><span class="p">.</span><span class="nf">ObjectAt</span><span class="p">(</span><span class="nv">i</span><span class="p">)</span><span class="w">  </span><span class="c1">-- -&gt; kind, id, x, z</span>
 </code></pre></div>
 Object <code>i</code>, counted <strong>from 1</strong>: its kind, its id and the centre of its tile in pixels. Kinds and ids are the numbers set on the brush in the editor; the engine gives them no meaning.</p>
 <div class="admonition warning">
