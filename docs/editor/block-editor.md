@@ -34,7 +34,7 @@ Rounded and pointed blocks (**Operators**, **Variables**, positions) are values.
 |----------|--------|
 | **Events** | when created, every frame, when the player touches me, when the player interacts, when *button* is pressed, when *button* is released, when enabled, when disabled, when the scene starts, when the player enters the trigger, when the player leaves the trigger |
 | **Control** | wait *n* seconds, if, if/else, repeat, while, repeat until, wait until, stop this script |
-| **Objects** | show, hide, move by, move to, x/y/z position of |
+| **Objects** | show, hide, move by, move to, x/y/z position of, start particles, stop particles, burst particles |
 | **Sound and scenes** | play sound, play cutscene, load scene |
 | **Variables** | set, change by, and a block for each variable |
 | **Operators** | numbers, text, true/false, + - * /, mod, pick random, join, = < >, and, or, not |
