@@ -286,56 +286,91 @@ Input.L1             Input.L2             Input.R1             Input.R2
 Input.START          Input.SELECT
 Input.UP             Input.DOWN           Input.LEFT           Input.RIGHT
 Input.L3             Input.R3
+Input.MOUSE_LEFT     Input.MOUSE_RIGHT
 ```
+
+`MOUSE_LEFT` and `MOUSE_RIGHT` are the PlayStation mouse's buttons. They share their
+values with `R1` and `L1`, so check `Input.GetDevice(player)` when a script has to tell
+a mouse click from a shoulder button.
+
+### Players
+
+Up to eight players. Player 1 is the controller in **port 1** and player 2 the one in
+**port 2**. With a multitap in port 1, its slots B, C and D are players 3, 4 and 5; with
+one in port 2, its slots B, C and D are players 6, 7 and 8. Slot A of a multitap is still
+player 1 or 2.
 
 ### State Queries
 
-!!! warning "Two-player API change"
-    State queries are **per-player**. Player 1 reads the controller in **port 1**, player 2 reads **port 2**. The old single-controller names (`Input.IsPressed`, `Input.IsReleased`, `Input.IsHeld`, `Input.GetAnalog`) were **removed** - use the `Player1` / `Player2` variants below. If you only support one player, use the `Player1` functions.
-
 ```lua
-Input.IsPressedPlayer1(button)
-Input.IsPressedPlayer2(button)
+Input.IsPressed(player, button)
 ```
 Returns `true` **only on the frame** the button was pressed (edge trigger).
 
 ```lua
-Input.IsReleasedPlayer1(button)
-Input.IsReleasedPlayer2(button)
+Input.IsReleased(player, button)
 ```
 Returns `true` **only on the frame** the button was released.
 
 ```lua
-Input.IsHeldPlayer1(button)
-Input.IsHeldPlayer2(button)
+Input.IsHeld(player, button)
 ```
 Returns `true` **every frame** while the button is held down.
 
 ```lua
-Input.GetAnalogPlayer1(stick)
-Input.GetAnalogPlayer2(stick)
+Input.GetAnalog(player, stick)
 ```
-Read analog stick position. `stick` 0 = left stick, 1 = right stick. Returns two values: `x, y` in range -127 to +127 (0 = centered).
+Read an analog stick. `stick` 0 = left stick, 1 = right stick. Returns two values,
+`x, y`, in range -127 to +127 (0 = centered). On a digital pad the D-pad stands in for
+the left stick, and a mouse gives `0, 0`.
+
+```lua
+Input.GetDevice(player)
+```
+What is plugged in for that player: `"none"`, `"pad"` (digital), `"analog"` (an analog
+pad or stick), `"mouse"`, or `"other"` (for example a light gun).
+
+```lua
+Input.GetMouse(player)
+```
+The mouse motion since the last frame, as two integers `dx, dy` (right and down are
+positive). `0, 0` when that player has no mouse.
+
+A `player` outside 1-8 reads as nothing plugged in: `false`, `0, 0` or `"none"`.
 
 ```lua
 -- Player 1, left stick
-local x, y = Input.GetAnalogPlayer1(0)
+local x, y = Input.GetAnalog(1, 0)
 
--- Simple two-player check
-if Input.IsPressedPlayer1(Input.CROSS) then jump(1) end
-if Input.IsPressedPlayer2(Input.CROSS) then jump(2) end
+-- Two players
+if Input.IsPressed(1, Input.CROSS) then jump(1) end
+if Input.IsPressed(2, Input.CROSS) then jump(2) end
+
+-- A mouse-driven cursor
+if Input.GetDevice(1) == "mouse" then
+    local dx, dy = Input.GetMouse(1)
+    cursorX = cursorX + dx
+    cursorY = cursorY + dy
+    if Input.IsPressed(1, Input.MOUSE_LEFT) then click(cursorX, cursorY) end
+end
 ```
 
-!!! note "Button events fire for both players"
-    The `onButtonPress` / `onButtonRelease` object callbacks fire for presses on **either** controller. They receive only the button id, not the player number - if you need to tell players apart, poll `Input.*Player1` / `Input.*Player2` directly (e.g. in `onUpdate`).
+The older `Input.IsPressedPlayer1(button)`, `Input.IsReleasedPlayer1(button)`,
+`Input.IsHeldPlayer1(button)`, `Input.GetAnalogPlayer1(stick)` and their `Player2`
+versions still work and read players 1 and 2.
+
+!!! note "Button events carry the player"
+    The `onButtonPress` / `onButtonRelease` object callbacks fire for presses on any of
+    the eight players, and get the player number as their third argument:
+    `onButtonPress(self, button, player)`.
 
 ### Driving something other than the player
 
 ```lua
 Input.BindToActor(player, actor)
 ```
-Point a controller's built-in locomotion at any [actor](#actor). `player` is `1` or
-`2`. The pad then walks and turns that actor with the engine's normal movement,
+Point a controller's built-in locomotion at any [actor](#actor). `player` is `1` to
+`8`. The pad then walks and turns that actor with the engine's normal movement,
 collision and camera handling, instead of the scene's Player.
 
 ```lua

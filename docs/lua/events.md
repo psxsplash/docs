@@ -58,13 +58,13 @@ end
 ### Input
 
 ```lua
-function onButtonPress(self, button)
+function onButtonPress(self, button, player)
     -- Called on the frame a controller button is pressed (edge trigger).
-    -- button is a number matching Input constants.
-    -- Example: if button == Input.CROSS then ...
+    -- button is a number matching Input constants, player is 1-8.
+    -- Example: if button == Input.CROSS and player == 1 then ...
 end
 
-function onButtonRelease(self, button)
+function onButtonRelease(self, button, player)
     -- Called on the frame a button is released.
 end
 ```
