@@ -951,13 +951,14 @@ Each skinned object can play one clip at a time. Clips are referenced by the **o
 SkinnedAnim.Play(objectName, clipName)
 SkinnedAnim.Play(objectName, clipName, {
     loop = true,                -- Loop the animation (default: false)
+    fade = 8,                   -- Crossfade frames at 30 fps from the current pose (default: 0, snap)
     onComplete = function()     -- Called when a non-looping clip finishes
         -- ...
     end
 })
 ```
 
-Start playing a skinned animation clip. If the object is already playing, the new clip replaces it immediately.
+Start playing a skinned animation clip. If the object is already playing, the new clip replaces it immediately, unless `fade` is set: the mesh then blends from the pose it was showing into the new clip over that many 30 fps frames.
 
 ```lua
 -- Play idle loop
