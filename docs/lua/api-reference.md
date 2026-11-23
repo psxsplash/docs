@@ -321,7 +321,7 @@ Returns `true` **every frame** while the button is held down.
 Input.GetAnalog(player, stick)
 ```
 Read an analog stick. `stick` 0 = left stick, 1 = right stick. Returns two values,
-`x, y`, in range -127 to +127 (0 = centered). On a digital pad the D-pad stands in for
+`x, y`, as fixed-point numbers from about -1.0 to 1.0 (0 = centered). On a digital pad the D-pad stands in for
 the left stick, and a mouse gives `0, 0`.
 
 ```lua
