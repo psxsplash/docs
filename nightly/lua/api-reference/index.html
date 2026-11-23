@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.1">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.2">
     
     
       
@@ -4390,7 +4390,7 @@ Returns <code>true</code> <strong>every frame</strong> while the button is held 
 <p><div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="nv">Input</span><span class="p">.</span><span class="nf">GetAnalog</span><span class="p">(</span><span class="nv">player</span><span class="p">,</span><span class="w"> </span><span class="nv">stick</span><span class="p">)</span>
 </code></pre></div>
 Read an analog stick. <code>stick</code> 0 = left stick, 1 = right stick. Returns two values,
-<code>x, y</code>, in range -127 to +127 (0 = centered). On a digital pad the D-pad stands in for
+<code>x, y</code>, as fixed-point numbers from about -1.0 to 1.0 (0 = centered). On a digital pad the D-pad stands in for
 the left stick, and a mouse gives <code>0, 0</code>.</p>
 <p><div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="nv">Input</span><span class="p">.</span><span class="nf">GetDevice</span><span class="p">(</span><span class="nv">player</span><span class="p">)</span>
 </code></pre></div>
